@@ -45,3 +45,4 @@ components.json
 *.njsproj
 *.sln
 *.sw?
+yarn.lock
