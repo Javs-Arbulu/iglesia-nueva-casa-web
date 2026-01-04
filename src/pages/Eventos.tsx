@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Hero } from '@/components/common/Hero'
 import { Section } from '@/components/common/Section'
 import { EventCard } from '@/components/common/EventCard'
 import { supabase } from '@/services/supabase'
@@ -35,8 +34,6 @@ export default function Eventos() {
 
   return (
     <>
-      <Hero title="Eventos" subtitle="Conoce nuestras próximas actividades" />
-
       <Section>
         {loading && <p>Cargando eventos...</p>}
 

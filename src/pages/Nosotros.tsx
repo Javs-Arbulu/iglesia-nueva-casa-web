@@ -1,14 +1,8 @@
-import { Hero } from '@/components/common/Hero'
 import { Section } from '@/components/common/Section'
 
 export default function Nosotros() {
   return (
     <>
-      <Hero
-        title="Sobre Nosotros"
-        subtitle="Nuestra misión, visión y valores"
-      />
-
       <Section>
         <h2 className="text-2xl font-semibold mb-4">Nuestra Misión</h2>
         <p className="text-muted-foreground">
