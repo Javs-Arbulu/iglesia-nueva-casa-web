@@ -28,7 +28,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <a href="#inicio" className="flex items-center space-x-3 group">
+          <a href="/" className="flex items-center space-x-3 group">
             <div className="w-12 h-12 md:w-12 md:h-12 transition-transform duration-300 group-hover:scale-110">
               <img
                 src={logoUrl}
@@ -107,11 +107,11 @@ const Navbar = () => {
 }
 
 const navLinks = [
-  { name: 'Inicio', href: '#inicio' },
+  { name: 'Inicio', href: '/' },
   { name: 'Nosotros', href: '#nosotros' },
   { name: 'Eventos', href: '#eventos' },
   { name: 'Ministerios', href: '#ministerios' },
-  { name: 'Contacto', href: '#contacto' },
+  { name: 'Contacto', href: '/contacto' },
 ]
 
 export default Navbar
