@@ -6,9 +6,9 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-      <OurPurpose />
-      <Volunteering />
       <ADNIntro />
+      <Volunteering />
+      <OurPurpose />
       {/* <HistorySection /> */}
     </>
   )
