@@ -41,7 +41,7 @@ const OurPurpose = () => {
   ]
 
   return (
-    <section className="py-20 bg-white relative overflow-hidden">
+    <section className="pt-20 pb-20 bg-white relative overflow-hidden -mt-px">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-100 rounded-full blur-3xl opacity-20 -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-100 rounded-full blur-3xl opacity-20 translate-x-1/2 translate-y-1/2" />

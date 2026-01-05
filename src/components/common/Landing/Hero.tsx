@@ -110,10 +110,17 @@ const HeroSection = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button
               size="lg"
+              asChild
               className="bg-cyan-400 hover:bg-cyan-500 text-black font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 hover:scale-105 shadow-lg shadow-cyan-400/50"
             >
-              <MapPin className="w-5 h-5 mr-2" />
-              Ver Nuestra Ubicación
+              <a
+                href="https://maps.app.goo.gl/M4FviVnt4jZnmjGq6"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MapPin className="w-5 h-5 mr-2" />
+                Ver Nuestra Ubicación
+              </a>
             </Button>
 
             {/* <Button
@@ -126,12 +133,12 @@ const HeroSection = () => {
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 z-10">
+        <div className="absolute bottom-0 left-0 right-0 z-10 -mb-px">
           <svg
             viewBox="0 0 1440 120"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="w-full h-auto"
+            className="w-full block h-16 md:h-20 lg:h-24"
             preserveAspectRatio="none"
           >
             <path

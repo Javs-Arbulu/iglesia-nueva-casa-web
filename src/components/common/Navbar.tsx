@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
 import { Menu, X } from 'lucide-react'
 import logoUrl from '@/assets/images/logo-claro-navbar.png'
 
@@ -30,7 +29,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <a href="#inicio" className="flex items-center space-x-3 group">
-            <div className="w-12 h-12 md:w-14 md:h-14 transition-transform duration-300 group-hover:scale-110">
+            <div className="w-12 h-12 md:w-12 md:h-12 transition-transform duration-300 group-hover:scale-110">
               <img
                 src={logoUrl}
                 alt="Iglesia Joven Logo"
@@ -59,9 +58,9 @@ const Navbar = () => {
 
           {/* CTA Button Desktop */}
           <div className="hidden md:block">
-            <Button className="bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-full px-6 transition-all duration-300 hover:scale-105 shadow-lg shadow-cyan-400/30">
+            {/* <Button className="bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-full px-6 transition-all duration-300 hover:scale-105 shadow-lg shadow-cyan-400/30">
               Visítanos
-            </Button>
+            </Button> */}
           </div>
 
           {/* Mobile Menu Button */}
@@ -97,9 +96,9 @@ const Navbar = () => {
                 {link.name}
               </a>
             ))}
-            <Button className="w-full bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-full py-6 transition-all duration-300 shadow-lg shadow-cyan-400/30 mt-4">
+            {/* <Button className="w-full bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-full py-6 transition-all duration-300 shadow-lg shadow-cyan-400/30 mt-4">
               Visítanos
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
