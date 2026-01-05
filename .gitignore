@@ -46,3 +46,4 @@ components.json
 *.sln
 *.sw?
 yarn.lock
+.vercel
