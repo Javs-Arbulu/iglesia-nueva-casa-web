@@ -6,38 +6,23 @@ import {
 } from '@/components/ui/carousel'
 import { Heart, Users, Sparkles, Play } from 'lucide-react'
 import Autoplay from 'embla-carousel-autoplay'
+import Carouse1 from '@/assets/images/Carrusel1.jpg'
+import Carouse2 from '@/assets/images/Carrusel2.jpg'
+import Carouse3 from '@/assets/images/Carrusel3.jpg'
 
 const ADNIntro = () => {
-  const stats = [
-    {
-      image:
-        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
-      alt: 'Persona 1',
-    },
-    {
-      image:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-      alt: 'Persona 2',
-    },
-    {
-      image:
-        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100',
-      alt: 'Persona 3',
-    },
-  ]
-
   const carouselImages = [
     {
-      src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
-      alt: 'Jóvenes conectados',
+      src: Carouse1,
+      alt: 'Enseñanza',
     },
     {
-      src: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80',
-      alt: 'Comunidad',
+      src: Carouse2,
+      alt: 'Bautizo',
     },
     {
-      src: 'https://images.unsplash.com/photo-1520975916090-3105956dac38?w=800&q=80',
-      alt: 'Adoración',
+      src: Carouse3,
+      alt: 'Equipo',
     },
   ]
 
@@ -109,30 +94,6 @@ const ADNIntro = () => {
                 </div>
                 <span>Ver Video Intro</span>
               </button>
-            </div>
-
-            {/* Stats */}
-            <div className="flex items-center space-x-4">
-              <div className="flex -space-x-3">
-                {stats.map((stat, index) => (
-                  <div
-                    key={index}
-                    className="w-12 h-12 rounded-full border-4 border-white overflow-hidden shadow-md"
-                  >
-                    <img
-                      src={stat.image}
-                      alt={stat.alt}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ))}
-                <div className="w-12 h-12 rounded-full border-4 border-white bg-cyan-400 flex items-center justify-center text-black font-bold text-sm shadow-md">
-                  +500
-                </div>
-              </div>
-              <span className="text-gray-600 font-medium">
-                Jóvenes conectados
-              </span>
             </div>
           </div>
 

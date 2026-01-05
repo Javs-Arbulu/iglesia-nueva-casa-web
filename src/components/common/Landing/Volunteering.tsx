@@ -3,9 +3,9 @@ import VolunteeringImage from '@/assets/images/volunteering.png'
 
 const Volunteering = () => {
   return (
-    <section className="relative w-full min-h-[450px] md:min-h-[300px] lg:min-h-[300px] xl:min-h-[450px] ">
-      {/* Background Image */}
-      <div className="absolute inset-0">
+    <section className="relative w-full min-h-[450px] md:min-h-[300px] lg:min-h-[300px] xl:min-h-[450px]">
+      {/* Background Image - Fixed */}
+      <div className="fixed inset-0 -z-10">
         <img
           src={VolunteeringImage}
           alt="Servolución"
