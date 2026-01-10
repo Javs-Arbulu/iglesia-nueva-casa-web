@@ -123,13 +123,20 @@ const HeroSection = () => {
               </a>
             </Button>
 
-            {/* <Button
+            <Button
               size="lg"
               variant="outline"
-              className="border-2 border-white text-white hover:bg-white hover:text-black font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 hover:scale-105"
+              asChild
+              className="border-2 border-white text-white bg-black/40 hover:bg-white hover:text-black font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 hover:scale-105 shadow-lg shadow-black/20"
             >
-              Conoce al Equipo
-            </Button> */}
+              <a
+                href="https://www.youtube.com/@iglesianuevacasa/streams"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver Servicios en Vivo
+              </a>
+            </Button>
           </div>
         </div>
 

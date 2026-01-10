@@ -2,11 +2,15 @@ import { MapPin, Clock, Instagram, Youtube, Facebook } from 'lucide-react'
 
 const Footer = () => {
   const exploreLinks = [
-    { name: 'Nosotros', href: '#nosotros' },
-    { name: 'Ministerios', href: '#ministerios' },
-    { name: 'Sermones', href: '#sermones' },
-    { name: 'Dar', href: '#dar' },
-    { name: 'Eventos', href: '#eventos' },
+    { name: 'Inicio', href: '/' },
+    { name: 'Nosotros', href: '/nosotros' },
+    { name: 'Ministerios', href: '/ministerios' },
+    { name: 'Contacto', href: '/contacto' },
+    {
+      name: 'YouTube en Vivo',
+      href: 'https://www.youtube.com/@iglesianuevacasa/streams',
+      external: true,
+    },
   ]
 
   const socialLinks = [
@@ -84,12 +88,23 @@ const Footer = () => {
             <ul className="space-y-3">
               {exploreLinks.map((link, index) => (
                 <li key={index}>
-                  <a
-                    href={link.href}
-                    className="text-gray-700 hover:text-cyan-400 transition-colors duration-200 inline-block"
-                  >
-                    {link.name}
-                  </a>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-700 hover:text-cyan-400 transition-colors duration-200 inline-block"
+                    >
+                      {link.name}
+                    </a>
+                  ) : (
+                    <a
+                      href={link.href}
+                      className="text-gray-700 hover:text-cyan-400 transition-colors duration-200 inline-block"
+                    >
+                      {link.name}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>

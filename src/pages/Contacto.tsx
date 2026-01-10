@@ -1,8 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { MapPin, Clock, Send } from 'lucide-react'
 
 export default function ContactoSection() {
+  const location = useLocation()
+  useEffect(() => {
+    if (location.hash === '#info') {
+      const el = document.getElementById('info')
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    } else if (location.pathname === '/contacto') {
+      window.scrollTo({ top: 0, behavior: 'auto' })
+    }
+  }, [location])
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -161,7 +173,7 @@ export default function ContactoSection() {
               </div>
 
               {/* Right Side Info - Takes 2 columns */}
-              <div className="lg:col-span-2 space-y-6">
+              <div id="info" className="lg:col-span-2 space-y-6">
                 {/* Location Card */}
                 <div className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300">
                   <div className="p-6 pb-4">

@@ -1,13 +1,27 @@
 import { Button } from '@/components/ui/button'
 import VolunteeringImage from '@/assets/images/volunteering.png'
+import VolunteeringImageMobile from '@/assets/images/volunteering-mobile.png'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const Volunteering = () => {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <section className="relative w-full min-h-[450px] md:min-h-[300px] lg:min-h-[300px] xl:min-h-[450px]">
       {/* Background Image - Fixed */}
       <div className="fixed inset-0 -z-10">
         <img
-          src={VolunteeringImage}
+          src={isMobile ? VolunteeringImageMobile : VolunteeringImage}
           alt="Servolución"
           className="w-full h-full object-cover object-center"
         />
@@ -35,13 +49,15 @@ const Volunteering = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold px-8 py-6 rounded-full text-base transition-all duration-300 hover:scale-105 shadow-lg shadow-red-500/30"
-              >
-                Únete al Equipo
-                <span className="ml-2">→</span>
-              </Button>
+              <Link to="/ministerios">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold px-8 py-6 rounded-full text-base transition-all duration-300 hover:scale-105 shadow-lg shadow-red-500/30"
+                >
+                  Únete al Equipo
+                  <span className="ml-2">→</span>
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Calendar, ArrowRight } from 'lucide-react'
 
 export default function MinisteriosSection() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' })
+  }, [])
   const [activeTab, setActiveTab] = useState('Todos')
 
   const tabs = ['Todos', 'Generaciones', 'Comunidad', 'Servicio']

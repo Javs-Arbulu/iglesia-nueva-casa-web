@@ -1,8 +1,19 @@
 import { Button } from '@/components/ui/button'
 import { Users, Zap, TrendingUp } from 'lucide-react'
 import ADNSection from './ADN'
+import { useEffect } from 'react'
+import { useLocation, Link } from 'react-router-dom'
 
 export default function Nosotros() {
+  const location = useLocation()
+  useEffect(() => {
+    if (location.hash === '#adn') {
+      const el = document.getElementById('adn')
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }
+  }, [location])
   const visionItems = [
     {
       icon: <Users className="w-8 h-8" />,
@@ -69,13 +80,15 @@ export default function Nosotros() {
                 >
                   Únete este Domingo
                 </Button> */}
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-2 border-white !text-blue hover:bg-white/10 hover:!text-white font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 backdrop-blur-sm"
-                >
-                  Ver Horarios
-                </Button>
+                <Link to="/contacto#info">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-2 border-white !text-blue hover:bg-white/10 hover:!text-white font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 backdrop-blur-sm"
+                  >
+                    Ver Horarios
+                  </Button>
+                </Link>
               </div>
             </div>
             <div className="relative">
@@ -96,7 +109,9 @@ export default function Nosotros() {
           </div>
         </div>
       </section>
-      <ADNSection />
+      <div id="adn">
+        <ADNSection />
+      </div>
       {/* Vision Section */}
       <section className="pt-20 pb-20 bg-white relative overflow-hidden -mt-px">
         {/* Decorative Background Elements */}
@@ -193,13 +208,15 @@ export default function Nosotros() {
                   >
                     Planificar Visita
                   </Button> */}
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 border border-white/20"
-                  >
-                    Contáctanos
-                  </Button>
+                  <Link to="/contacto">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 border border-white/20"
+                    >
+                      Contáctanos
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>
