@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button'
 import {
   Carousel,
   CarouselContent,
@@ -47,7 +46,7 @@ const ADNIntro = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* RIGHT - CARRUSEL (ahora a la izquierda) */}
+          {/* LEFT - CARRUSEL */}
           <div className="relative order-2 lg:order-1">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl">
               {/* IMAGE CAROUSEL */}
@@ -144,7 +143,7 @@ const ADNIntro = () => {
             </div>
           </div>
 
-          {/* LEFT - TEXTO (ahora a la derecha) */}
+          {/* RIGHT - TEXT */}
           <div className="relative order-1 lg:order-2 lg:flex lg:flex-col lg:items-end">
             {/* Tag */}
             <div className="flex items-center space-x-2 mb-6 lg:flex-row-reverse lg:space-x-reverse">
@@ -174,15 +173,15 @@ const ADNIntro = () => {
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4 mb-10 lg:justify-end">
-              <Button
-                size="lg"
-                className="bg-cyan-400 hover:bg-cyan-500 text-black font-bold px-8 py-6 rounded-full text-base transition-all duration-300 hover:scale-105 shadow-lg shadow-cyan-400/30"
+              <a
+                href="/nosotros#adn"
+                className="bg-cyan-400 hover:bg-cyan-500 text-black font-bold px-8 py-6 rounded-full text-base transition-all duration-300 hover:scale-105 shadow-lg shadow-cyan-400/30 flex items-center justify-center"
               >
                 <span className="ml-2 inline-flex">
                   <ArrowLeft className="w-4 h-4" />
                 </span>{' '}
                 Ver Nuestro ADN
-              </Button>
+              </a>
             </div>
           </div>
         </div>
