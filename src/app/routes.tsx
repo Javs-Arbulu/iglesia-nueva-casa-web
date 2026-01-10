@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import PublicLayout from '@/layouts/PublicLayout'
 import Home from '@/pages/Home'
 import Nosotros from '@/pages/Nosotros'
-import Eventos from '@/pages/Eventos'
+import Ministerios from '@/pages/Ministerios'
 import Contacto from '@/pages/Contacto'
 
 export const router = createBrowserRouter([
@@ -11,8 +11,9 @@ export const router = createBrowserRouter([
     children: [
       { path: '/', element: <Home /> },
       { path: '/nosotros', element: <Nosotros /> },
-      { path: '/eventos', element: <Eventos /> },
+      { path: '/ministerios', element: <Ministerios /> },
       { path: '/contacto', element: <Contacto /> },
+      // { path: '/nosotros/adn', element: < /> }
     ],
   },
 ])
