@@ -3,10 +3,14 @@
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 import logoUrl from '@/assets/images/logo-claro-navbar.png'
+import { useLocation } from 'react-router-dom'
+import { Button } from '../ui/button'
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const location = useLocation()
+  const isHome = location.pathname === '/'
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,9 +24,11 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled || isMobileMenuOpen
-          ? 'bg-black/95 backdrop-blur-md shadow-lg'
-          : 'bg-transparent'
+        isHome
+          ? isScrolled || isMobileMenuOpen
+            ? 'bg-black/95 backdrop-blur-md shadow-lg'
+            : 'bg-transparent'
+          : 'bg-black/95 backdrop-blur-md shadow-lg'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -58,9 +64,9 @@ const Navbar = () => {
 
           {/* CTA Button Desktop */}
           <div className="hidden md:block">
-            {/* <Button className="bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-full px-6 transition-all duration-300 hover:scale-105 shadow-lg shadow-cyan-400/30">
-              Visítanos
-            </Button> */}
+            <Button className="bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-full px-6 transition-all duration-300 hover:scale-105 shadow-lg shadow-cyan-400/30">
+              Ingresar
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -96,9 +102,9 @@ const Navbar = () => {
                 {link.name}
               </a>
             ))}
-            {/* <Button className="w-full bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-full py-6 transition-all duration-300 shadow-lg shadow-cyan-400/30 mt-4">
-              Visítanos
-            </Button> */}
+            <Button className="w-full bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-full py-6 transition-all duration-300 shadow-lg shadow-cyan-400/30 mt-4">
+              Ingresar
+            </Button>
           </div>
         </div>
       </div>
@@ -108,9 +114,9 @@ const Navbar = () => {
 
 const navLinks = [
   { name: 'Inicio', href: '/' },
-  { name: 'Nosotros', href: '#nosotros' },
-  { name: 'Eventos', href: '#eventos' },
-  { name: 'Ministerios', href: '#ministerios' },
+  { name: 'Nosotros', href: '/nosotros' },
+  // { name: 'Eventos', href: '/eventos' },
+  { name: 'Ministerios', href: '/ministerios' },
   { name: 'Contacto', href: '/contacto' },
 ]
 
