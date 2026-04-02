@@ -1,72 +1,167 @@
-import { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
-import { MapPin, Clock, Send } from 'lucide-react'
+import { MapPin, Clock, Send, Loader2 } from 'lucide-react'
+import { useScrollToHash } from '@/hooks/useScroll'
+import { CHURCH_INFO } from '@/lib/constants'
+import { getSupabase } from '@/services/supabase'
+import type { ContactFormData, ContactFormErrors } from '@/types'
+import SEO from '@/components/common/SEO'
 
-export default function ContactoSection() {
-  const location = useLocation()
-  useEffect(() => {
-    if (location.hash === '#info') {
-      const el = document.getElementById('info')
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+// ─── Validation ────────────────────────────────────────────────────────────────
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function validateForm(data: ContactFormData): ContactFormErrors {
+  const errors: ContactFormErrors = {}
+
+  if (!data.nombre.trim()) {
+    errors.nombre = 'El nombre es requerido.'
+  }
+  if (!data.email.trim()) {
+    errors.email = 'El correo es requerido.'
+  } else if (!EMAIL_REGEX.test(data.email)) {
+    errors.email = 'Ingresa un correo válido.'
+  }
+  if (!data.asunto.trim()) {
+    errors.asunto = 'El asunto es requerido.'
+  }
+  if (!data.mensaje.trim()) {
+    errors.mensaje = 'El mensaje no puede estar vacío.'
+  } else if (data.mensaje.trim().length < 10) {
+    errors.mensaje = 'El mensaje debe tener al menos 10 caracteres.'
+  }
+
+  return errors
+}
+
+const INITIAL_FORM: ContactFormData = {
+  nombre: '',
+  email: '',
+  asunto: '',
+  mensaje: '',
+}
+
+// ─── Sub-components ────────────────────────────────────────────────────────────
+
+interface FieldErrorProps {
+  message?: string
+  id: string
+}
+
+const FieldError = ({ message, id }: FieldErrorProps) =>
+  message ? (
+    <p id={id} role="alert" className="mt-1 text-red-500 text-sm">
+      {message}
+    </p>
+  ) : null
+
+// ─── Page ──────────────────────────────────────────────────────────────────────
+
+export default function Contacto() {
+  // Scroll to #info when navigated with that hash
+  useScrollToHash()
+
+  const [formData, setFormData] = useState<ContactFormData>(INITIAL_FORM)
+  const [errors, setErrors] = useState<ContactFormErrors>({})
+  const [submitted, setSubmitted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target
+      setFormData((prev) => ({ ...prev, [name]: value }))
+      // Clear error for the field being edited
+      setErrors((prev) => ({ ...prev, [name]: undefined }))
+    },
+    []
+  )
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      setSubmitError(null)
+      const validationErrors = validateForm(formData)
+
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors)
+        return
       }
-    } else if (location.pathname === '/contacto') {
-      window.scrollTo({ top: 0, behavior: 'auto' })
-    }
-  }, [location])
-  const [formData, setFormData] = useState({
-    nombre: '',
-    email: '',
-    asunto: '',
-    mensaje: '',
-  })
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
-  }
+      setIsLoading(true)
+      try {
+        const { error } = await getSupabase()
+          .from('contact_submissions')
+          .insert({
+            nombre: formData.nombre.trim(),
+            email: formData.email.trim().toLowerCase(),
+            asunto: formData.asunto.trim(),
+            mensaje: formData.mensaje.trim(),
+          })
 
-  const handleSubmit = () => {
-    console.log('Form submitted:', formData)
-  }
+        if (error) throw error
+
+        setSubmitted(true)
+        setFormData(INITIAL_FORM)
+        setErrors({})
+      } catch (err) {
+        console.error('Error al enviar el formulario:', err)
+        setSubmitError(
+          'No pudimos enviar tu mensaje. Por favor intenta de nuevo más tarde.'
+        )
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [formData]
+  )
+
+  const inputBase =
+    'w-full px-5 py-4 rounded-xl bg-gray-50 border border-transparent text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-white transition-all'
+
+  const inputError = 'border-red-400 bg-red-50 focus:ring-red-400'
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700">
-        {/* Decorative Background */}
-        <div className="absolute inset-0 opacity-20">
+      <SEO
+        title="Contacto | Iglesia Nueva Casa"
+        description="Ponte en contacto con la Iglesia Nueva Casa en Lima. Visítanos cada domingo o envíanos un mensaje. Estamos en San Martín de Porres."
+        url="https://nuevacasa.pe/contacto"
+      />
+      {/* ── Hero ───────────────────────────────────────────────────────────── */}
+      <section
+        aria-label="Contacto — cabecera"
+        className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700"
+      >
+        {/* Decorative blobs */}
+        <div className="absolute inset-0 opacity-20" aria-hidden="true">
           <div className="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl" />
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-300 rounded-full blur-3xl" />
           <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-blue-400 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative z-10 container mx-auto px-4 py-20">
-          <div className="text-center">
-            <div className="inline-block mb-6">
-              <span className="text-xs md:text-sm font-semibold text-cyan-200 tracking-[0.3em] uppercase">
-                # CONTACTO
-              </span>
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Estamos para ti
-            </h1>
-            <p className="text-white/90 text-base md:text-lg max-w-3xl mx-auto leading-relaxed">
-              Ponte en contacto con nosotros o visítanos en una de nuestras
-              reuniones.
-              <br />
-              Queremos conocerte y caminar contigo.
-            </p>
+        <div className="relative z-10 container mx-auto px-4 py-20 text-center">
+          <div className="inline-block mb-6">
+            <span className="text-xs md:text-sm font-semibold text-cyan-200 tracking-[0.3em] uppercase">
+              # CONTACTO
+            </span>
           </div>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+            Estamos para ti
+          </h1>
+          <p className="text-white/90 text-base md:text-lg max-w-3xl mx-auto leading-relaxed">
+            Ponte en contacto con nosotros o visítanos en una de nuestras
+            reuniones.
+            <br />
+            Queremos conocerte y caminar contigo.
+          </p>
         </div>
 
-        {/* SVG Wave Transition */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 -mb-px">
+        {/* Wave transition */}
+        <div
+          className="absolute bottom-0 left-0 right-0 z-10 -mb-px"
+          aria-hidden="true"
+        >
           <svg
             viewBox="0 0 1440 120"
             fill="none"
@@ -82,104 +177,221 @@ export default function ContactoSection() {
         </div>
       </section>
 
-      {/* Contact Form Section */}
-      <section className="py-20 bg-gray-50 relative overflow-hidden -mt-px">
-        {/* Decorative Background Elements */}
-        <div className="absolute top-20 right-20 w-72 h-72 bg-cyan-200/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-20 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl" />
+      {/* ── Contact Section ────────────────────────────────────────────────── */}
+      <section
+        id="info"
+        aria-label="Formulario de contacto e información"
+        className="py-20 bg-gray-50 relative overflow-hidden -mt-px"
+      >
+        <div
+          className="absolute top-20 right-20 w-72 h-72 bg-cyan-200/30 rounded-full blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute bottom-20 left-20 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl"
+          aria-hidden="true"
+        />
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-5 gap-8">
-              {/* Contact Form - Takes 3 columns */}
+              {/* ── Contact Form (3/5 cols) ───────────────────────────────── */}
               <div className="lg:col-span-3">
                 <div className="bg-white rounded-3xl p-8 lg:p-10 shadow-lg border border-gray-100">
                   <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
                     Envíanos un mensaje
                   </h2>
 
-                  <div className="space-y-6">
-                    {/* Name and Email Row */}
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-gray-900 font-semibold mb-3 text-base">
-                          Nombre Completo
-                        </label>
-                        <input
-                          type="text"
-                          name="nombre"
-                          value={formData.nombre}
-                          onChange={handleChange}
-                          placeholder="Escribe tu nombre"
-                          className="w-full px-5 py-4 rounded-xl bg-gray-50 border-0 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-cyan-400 focus:bg-white transition-all"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-gray-900 font-semibold mb-3 text-base">
-                          Correo Electrónico
-                        </label>
-                        <input
-                          type="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          placeholder="ejemplo@correo.com"
-                          className="w-full px-5 py-4 rounded-xl bg-gray-50 border-0 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-cyan-400 focus:bg-white transition-all"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Subject */}
-                    <div>
-                      <label className="block text-gray-900 font-semibold mb-3 text-base">
-                        Asunto
-                      </label>
-                      <input
-                        type="text"
-                        name="asunto"
-                        value={formData.asunto}
-                        onChange={handleChange}
-                        placeholder="¿En qué podemos ayudarte?"
-                        className="w-full px-5 py-4 rounded-xl bg-gray-50 border-0 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-cyan-400 focus:bg-white transition-all"
-                      />
-                    </div>
-
-                    {/* Message */}
-                    <div>
-                      <label className="block text-gray-900 font-semibold mb-3 text-base">
-                        Mensaje
-                      </label>
-                      <textarea
-                        name="mensaje"
-                        value={formData.mensaje}
-                        onChange={handleChange}
-                        rows={7}
-                        placeholder="Escribe tu mensaje aquí..."
-                        className="w-full px-5 py-4 rounded-xl bg-gray-50 border-0 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-cyan-400 focus:bg-white transition-all resize-none"
-                      ></textarea>
-                    </div>
-
-                    {/* Submit Button */}
-                    <Button
-                      onClick={handleSubmit}
-                      size="lg"
-                      className="w-full bg-cyan-400 hover:bg-cyan-500 !text-white font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 hover:scale-105 shadow-lg"
+                  {/* Success message */}
+                  {submitted && (
+                    <div
+                      role="status"
+                      aria-live="polite"
+                      className="mb-6 bg-green-50 border border-green-200 text-green-700 rounded-xl px-6 py-4 font-medium"
                     >
-                      <Send className="w-5 h-5 mr-2" />
-                      Enviar Mensaje
-                    </Button>
-                  </div>
+                      ¡Mensaje enviado! Nos pondremos en contacto pronto.
+                    </div>
+                  )}
+
+                  {/* Error message */}
+                  {submitError && (
+                    <div
+                      role="alert"
+                      aria-live="assertive"
+                      className="mb-6 bg-red-50 border border-red-200 text-red-700 rounded-xl px-6 py-4 font-medium"
+                    >
+                      {submitError}
+                    </div>
+                  )}
+
+                  <form
+                    onSubmit={handleSubmit}
+                    noValidate
+                    aria-label="Formulario de contacto"
+                  >
+                    <div className="space-y-6">
+                      {/* Name & Email */}
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <label
+                            htmlFor="nombre"
+                            className="block text-gray-900 font-semibold mb-3 text-base"
+                          >
+                            Nombre Completo{' '}
+                            <span aria-hidden="true" className="text-red-500">
+                              *
+                            </span>
+                          </label>
+                          <input
+                            id="nombre"
+                            type="text"
+                            name="nombre"
+                            value={formData.nombre}
+                            onChange={handleChange}
+                            placeholder="Escribe tu nombre"
+                            autoComplete="name"
+                            aria-required="true"
+                            aria-describedby={
+                              errors.nombre ? 'nombre-error' : undefined
+                            }
+                            aria-invalid={!!errors.nombre}
+                            className={`${inputBase} ${errors.nombre ? inputError : ''}`}
+                          />
+                          <FieldError
+                            message={errors.nombre}
+                            id="nombre-error"
+                          />
+                        </div>
+
+                        <div>
+                          <label
+                            htmlFor="email"
+                            className="block text-gray-900 font-semibold mb-3 text-base"
+                          >
+                            Correo Electrónico{' '}
+                            <span aria-hidden="true" className="text-red-500">
+                              *
+                            </span>
+                          </label>
+                          <input
+                            id="email"
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="ejemplo@correo.com"
+                            autoComplete="email"
+                            aria-required="true"
+                            aria-describedby={
+                              errors.email ? 'email-error' : undefined
+                            }
+                            aria-invalid={!!errors.email}
+                            className={`${inputBase} ${errors.email ? inputError : ''}`}
+                          />
+                          <FieldError message={errors.email} id="email-error" />
+                        </div>
+                      </div>
+
+                      {/* Subject */}
+                      <div>
+                        <label
+                          htmlFor="asunto"
+                          className="block text-gray-900 font-semibold mb-3 text-base"
+                        >
+                          Asunto{' '}
+                          <span aria-hidden="true" className="text-red-500">
+                            *
+                          </span>
+                        </label>
+                        <input
+                          id="asunto"
+                          type="text"
+                          name="asunto"
+                          value={formData.asunto}
+                          onChange={handleChange}
+                          placeholder="¿En qué podemos ayudarte?"
+                          aria-required="true"
+                          aria-describedby={
+                            errors.asunto ? 'asunto-error' : undefined
+                          }
+                          aria-invalid={!!errors.asunto}
+                          className={`${inputBase} ${errors.asunto ? inputError : ''}`}
+                        />
+                        <FieldError message={errors.asunto} id="asunto-error" />
+                      </div>
+
+                      {/* Message */}
+                      <div>
+                        <label
+                          htmlFor="mensaje"
+                          className="block text-gray-900 font-semibold mb-3 text-base"
+                        >
+                          Mensaje{' '}
+                          <span aria-hidden="true" className="text-red-500">
+                            *
+                          </span>
+                        </label>
+                        <textarea
+                          id="mensaje"
+                          name="mensaje"
+                          value={formData.mensaje}
+                          onChange={handleChange}
+                          rows={7}
+                          placeholder="Escribe tu mensaje aquí..."
+                          aria-required="true"
+                          aria-describedby={
+                            errors.mensaje ? 'mensaje-error' : undefined
+                          }
+                          aria-invalid={!!errors.mensaje}
+                          className={`${inputBase} resize-none ${errors.mensaje ? inputError : ''}`}
+                        />
+                        <FieldError
+                          message={errors.mensaje}
+                          id="mensaje-error"
+                        />
+                      </div>
+
+                      {/* Submit */}
+                      <Button
+                        type="submit"
+                        size="lg"
+                        disabled={isLoading}
+                        className="w-full bg-cyan-400 hover:bg-cyan-500 text-white font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 hover:scale-105 shadow-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2
+                              className="w-5 h-5 mr-2 animate-spin"
+                              aria-hidden="true"
+                            />
+                            Enviando...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-5 h-5 mr-2" aria-hidden="true" />
+                            Enviar Mensaje
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </form>
                 </div>
               </div>
 
-              {/* Right Side Info - Takes 2 columns */}
-              <div id="info" className="lg:col-span-2 space-y-6">
+              {/* ── Right Info (2/5 cols) ─────────────────────────────────── */}
+              <aside
+                className="lg:col-span-2 space-y-6"
+                aria-label="Información de contacto"
+              >
                 {/* Location Card */}
                 <div className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300">
                   <div className="p-6 pb-4">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center">
-                        <MapPin className="w-6 h-6 text-cyan-600" />
+                        <MapPin
+                          className="w-6 h-6 text-cyan-600"
+                          aria-hidden="true"
+                        />
                       </div>
                       <h3 className="text-xl font-bold text-gray-900">
                         Nuestra Ubicación
@@ -190,18 +402,20 @@ export default function ContactoSection() {
                   <div className="relative">
                     <img
                       src="https://images.unsplash.com/photo-1597931752949-98c74b5b159f?w=800&h=400&fit=crop"
-                      alt="Iglesia"
+                      alt="Iglesia Nueva Casa"
                       className="w-full h-56 object-cover"
+                      loading="lazy"
                     />
-
-                    {/* Address Badge Overlay */}
                     <div className="absolute bottom-4 left-4 right-4">
-                      <div className="bg-white rounded-xl px-5 py-3 shadow-lg flex items-center gap-3">
-                        <MapPin className="w-5 h-5 text-cyan-400 flex-shrink-0" />
+                      <address className="not-italic bg-white rounded-xl px-5 py-3 shadow-lg flex items-center gap-3">
+                        <MapPin
+                          className="w-5 h-5 text-cyan-400 flex-shrink-0"
+                          aria-hidden="true"
+                        />
                         <span className="text-gray-900 font-semibold text-sm">
-                          Jr. Juan Luis Hague 3545, San Martin de Porres
+                          {CHURCH_INFO.address}
                         </span>
-                      </div>
+                      </address>
                     </div>
                   </div>
                 </div>
@@ -210,52 +424,46 @@ export default function ContactoSection() {
                 <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                      <Clock className="w-6 h-6 text-purple-600" />
+                      <Clock
+                        className="w-6 h-6 text-purple-600"
+                        aria-hidden="true"
+                      />
                     </div>
                     <h3 className="text-xl font-bold text-gray-900">
                       Horarios de Reunión
                     </h3>
                   </div>
 
-                  <div className="space-y-4">
-                    {/* Servicio Dominical */}
-                    <div className="border-b border-gray-100 pb-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <p className="font-bold text-gray-900 text-base mb-1">
-                            Servicio Dominical
-                          </p>
-                          <p className="text-cyan-500 text-sm">
-                            Todos los domingos
-                          </p>
+                  <ul className="space-y-4">
+                    {CHURCH_INFO.schedules.map((schedule, index) => (
+                      <li
+                        key={index}
+                        className={
+                          index < CHURCH_INFO.schedules.length - 1
+                            ? 'border-b border-gray-100 pb-4'
+                            : 'pt-2'
+                        }
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="font-bold text-gray-900 text-base mb-1">
+                              {schedule.name}
+                            </p>
+                            <p className="text-cyan-500 text-sm">
+                              {schedule.day}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <time className="font-bold text-gray-900 text-lg">
+                              {schedule.time}
+                            </time>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="font-bold text-gray-900 text-lg">
-                            11:00 AM
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Reunión de Jóvenes */}
-                    <div className="pt-2">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <p className="font-bold text-gray-900 text-base mb-1">
-                            Reunión de Adolescentes
-                          </p>
-                          <p className="text-cyan-500 text-sm">Cada sábado</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold text-gray-900 text-lg">
-                            5:00 PM
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
+              </aside>
             </div>
           </div>
         </div>

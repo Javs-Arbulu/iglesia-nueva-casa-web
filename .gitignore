@@ -27,15 +27,17 @@ build/
 *.tsbuildinfo
 
 # shadcn/ui
-components.json
+# components.json  (re-enabled: should be tracked)
 
 # Supabase (local dev)
 .supabase/
 
 # Vercel
 .vercel/
+.vercel
 
-# Editor directories and files
+# Lock files (only yarn.lock is the source of truth, npm lockfile excluded)
+package-lock.json
 .vscode/*
 !.vscode/extensions.json
 .idea/
@@ -45,5 +47,4 @@ components.json
 *.njsproj
 *.sln
 *.sw?
-yarn.lock
-.vercel
+# Editor directories and files

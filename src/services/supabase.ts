@@ -33,7 +33,12 @@ const validateUrl = (url: string): void => {
   }
 }
 
-const initializeSupabase = (): SupabaseClient => {
+// Lazy singleton — only initialized when first used, never crashes on import
+let _client: SupabaseClient | null = null
+
+export const getSupabase = (): SupabaseClient => {
+  if (_client) return _client
+
   try {
     const supabaseUrl = validateEnvVariable(
       import.meta.env.VITE_SUPABASE_URL,
@@ -47,7 +52,8 @@ const initializeSupabase = (): SupabaseClient => {
 
     validateUrl(supabaseUrl)
 
-    return createClient(supabaseUrl, supabaseAnonKey)
+    _client = createClient(supabaseUrl, supabaseAnonKey)
+    return _client
   } catch (error) {
     if (error instanceof SupabaseConfigError) {
       console.error('❌ Error de configuración de Supabase:', error.message)
@@ -57,5 +63,3 @@ const initializeSupabase = (): SupabaseClient => {
     throw error
   }
 }
-
-export const supabase = initializeSupabase()
