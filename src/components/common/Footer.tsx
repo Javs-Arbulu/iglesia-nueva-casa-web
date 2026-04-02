@@ -1,35 +1,28 @@
 import { MapPin, Clock, Instagram, Youtube, Facebook } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { EXPLORE_LINKS, SOCIAL_HREFS, CHURCH_INFO } from '@/lib/constants'
+import type { SocialLink } from '@/types'
+
+const socialLinks: SocialLink[] = [
+  {
+    icon: <Instagram className="w-5 h-5" aria-hidden="true" />,
+    href: SOCIAL_HREFS.instagram,
+    label: 'Instagram',
+  },
+  {
+    icon: <Youtube className="w-5 h-5" aria-hidden="true" />,
+    href: SOCIAL_HREFS.youtube,
+    label: 'YouTube',
+  },
+  {
+    icon: <Facebook className="w-5 h-5" aria-hidden="true" />,
+    href: SOCIAL_HREFS.facebook,
+    label: 'Facebook',
+  },
+]
 
 const Footer = () => {
-  const exploreLinks = [
-    { name: 'Inicio', href: '/' },
-    { name: 'Nosotros', href: '/nosotros' },
-    { name: 'Ministerios', href: '/ministerios' },
-    { name: 'Contacto', href: '/contacto' },
-    {
-      name: 'YouTube en Vivo',
-      href: 'https://www.youtube.com/@iglesianuevacasa/streams',
-      external: true,
-    },
-  ]
-
-  const socialLinks = [
-    {
-      icon: <Instagram className="w-5 h-5" />,
-      href: 'https://www.instagram.com/iglesianuevacasa/',
-      label: 'Instagram',
-    },
-    {
-      icon: <Youtube className="w-5 h-5" />,
-      href: 'https://www.youtube.com/@iglesianuevacasa',
-      label: 'YouTube',
-    },
-    {
-      icon: <Facebook className="w-5 h-5" />,
-      href: 'https://www.facebook.com/IglesiaNuevaCasa',
-      label: 'Facebook',
-    },
-  ]
+  const currentYear = new Date().getFullYear()
 
   return (
     <footer className="bg-gray-50 border-t border-gray-200">
@@ -39,37 +32,42 @@ const Footer = () => {
           {/* Info */}
           <div>
             <div className="flex items-center space-x-3 mb-6">
-              <div className="text-2xl font-bold">
+              <p className="text-2xl font-bold">
                 <span className="text-gray-900">NUEVA</span>{' '}
                 <span className="text-cyan-400">CASA</span>
-              </div>
+              </p>
             </div>
 
-            {/* Location */}
+            {/* Location & Schedule */}
             <div className="mb-6">
               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
-                Ubicación & Horarios
+                Ubicación &amp; Horarios
               </h3>
+
               <div className="flex items-start space-x-3 mb-4">
-                <MapPin className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-1" />
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-1">
+                <MapPin
+                  className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-1"
+                  aria-hidden="true"
+                />
+                <address className="not-italic">
+                  <p className="font-semibold text-gray-900 mb-1">
                     Nuestra Casa
-                  </h4>
-                  <p className="text-gray-600 text-sm">
-                    Jr. Juan Luis Hague 3545, San Martin de Porres
-                    <br />
-                    Lima, Perú
                   </p>
-                </div>
+                  <p className="text-gray-600 text-sm">
+                    {CHURCH_INFO.address}
+                    <br />
+                    {CHURCH_INFO.city}
+                  </p>
+                </address>
               </div>
 
               <div className="flex items-start space-x-3">
-                <Clock className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-1" />
+                <Clock
+                  className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-1"
+                  aria-hidden="true"
+                />
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-1">
-                    Reuniones
-                  </h4>
+                  <p className="font-semibold text-gray-900 mb-1">Reuniones</p>
                   <p className="text-gray-600 text-sm">
                     Domingos
                     <br />
@@ -86,8 +84,8 @@ const Footer = () => {
               Explorar
             </h3>
             <ul className="space-y-3">
-              {exploreLinks.map((link, index) => (
-                <li key={index}>
+              {EXPLORE_LINKS.map((link) => (
+                <li key={link.name}>
                   {link.external ? (
                     <a
                       href={link.href}
@@ -98,12 +96,12 @@ const Footer = () => {
                       {link.name}
                     </a>
                   ) : (
-                    <a
-                      href={link.href}
+                    <Link
+                      to={link.href}
                       className="text-gray-700 hover:text-cyan-400 transition-colors duration-200 inline-block"
                     >
                       {link.name}
-                    </a>
+                    </Link>
                   )}
                 </li>
               ))}
@@ -115,11 +113,13 @@ const Footer = () => {
                 Síguenos
               </h3>
               <div className="flex space-x-3">
-                {socialLinks.map((social, index) => (
+                {socialLinks.map((social) => (
                   <a
-                    key={index}
+                    key={social.label}
                     href={social.href}
-                    aria-label={social.label}
+                    aria-label={`Síguenos en ${social.label}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-10 h-10 rounded-lg bg-gray-200 hover:bg-cyan-400 flex items-center justify-center text-gray-700 hover:text-white transition-all duration-300"
                   >
                     {social.icon}
@@ -131,28 +131,26 @@ const Footer = () => {
 
           {/* Map */}
           <div>
-            <div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 h-[300px] relative group">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 h-[300px]">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3902.2845906339053!2d-77.08588162493928!3d-12.02391808821105!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105cf0013e3b017%3A0xd8bf89dbf07c73a3!2sIglesia%20Nueva%20Casa!5e0!3m2!1ses!2spe!4v1767561626307!5m2!1ses!2spe"
+                src={CHURCH_INFO.mapsEmbed}
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="Ubicación Nueva Casa"
-              ></iframe>
+                title="Ubicación de Iglesia Nueva Casa en Google Maps"
+              />
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-gray-200">
-          <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 text-sm">
-            <p className="text-gray-500">
-              © 2026 Nueva Casa. Todos los derechos reservados.
-            </p>
-          </div>
+        <div className="pt-8 border-t border-gray-200 text-center">
+          <p className="text-gray-500 text-sm">
+            &copy; {currentYear} Nueva Casa. Todos los derechos reservados.
+          </p>
         </div>
       </div>
     </footer>
