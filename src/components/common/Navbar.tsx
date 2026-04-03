@@ -21,10 +21,8 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [handleScroll])
 
-  // Close mobile menu on route change
-  useEffect(() => {
-    setIsMobileMenuOpen(false)
-  }, [location.pathname])
+  // Close mobile menu when the user navigates to a new route.
+  // Handled via onClick on each Link — no effect needed.
 
   const isTransparent = isHome && !isScrolled && !isMobileMenuOpen
 
@@ -116,6 +114,7 @@ const Navbar = () => {
               <Link
                 key={link.name}
                 to={link.href}
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="block text-white/90 hover:text-cyan-400 transition-colors duration-200 font-medium text-base uppercase tracking-wider py-2"
                 aria-current={
                   location.pathname === link.href ? 'page' : undefined
@@ -128,7 +127,9 @@ const Navbar = () => {
               asChild
               className="w-full bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-full py-6 transition-all duration-300 shadow-lg shadow-cyan-400/30 mt-4"
             >
-              <Link to="/contacto">Ingresar</Link>
+              <Link to="/contacto" onClick={() => setIsMobileMenuOpen(false)}>
+                Ingresar
+              </Link>
             </Button>
           </nav>
         </div>

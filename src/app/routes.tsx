@@ -9,8 +9,10 @@ const Ministerios = lazy(() => import('@/pages/Ministerios'))
 const Contacto = lazy(() => import('@/pages/Contacto'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
-// Minimal fallback shown during page-level code-splitting loads
-const PageFallback = () => (
+// Minimal spinner shown during page-level code-splitting loads.
+// Defined as JSX element (not a component) so this file only exports non-components,
+// keeping react-refresh/only-export-components happy.
+const pageFallback = (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
     <div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
   </div>
@@ -23,7 +25,7 @@ export const router = createBrowserRouter([
       {
         path: '/',
         element: (
-          <Suspense fallback={<PageFallback />}>
+          <Suspense fallback={pageFallback}>
             <Home />
           </Suspense>
         ),
@@ -31,7 +33,7 @@ export const router = createBrowserRouter([
       {
         path: '/nosotros',
         element: (
-          <Suspense fallback={<PageFallback />}>
+          <Suspense fallback={pageFallback}>
             <Nosotros />
           </Suspense>
         ),
@@ -39,7 +41,7 @@ export const router = createBrowserRouter([
       {
         path: '/ministerios',
         element: (
-          <Suspense fallback={<PageFallback />}>
+          <Suspense fallback={pageFallback}>
             <Ministerios />
           </Suspense>
         ),
@@ -47,7 +49,7 @@ export const router = createBrowserRouter([
       {
         path: '/contacto',
         element: (
-          <Suspense fallback={<PageFallback />}>
+          <Suspense fallback={pageFallback}>
             <Contacto />
           </Suspense>
         ),
@@ -55,7 +57,7 @@ export const router = createBrowserRouter([
       {
         path: '*',
         element: (
-          <Suspense fallback={<PageFallback />}>
+          <Suspense fallback={pageFallback}>
             <NotFound />
           </Suspense>
         ),
