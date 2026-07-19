@@ -86,7 +86,7 @@ export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
       onClick={toggle}
       aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
       title={isDark ? 'Modo claro' : 'Modo oscuro'}
-      className={`relative w-9 h-9 flex items-center justify-center rounded-full text-white/90 hover:text-cyan-400 hover:bg-white/10 transition-colors ${className}`}
+      className={`relative w-9 h-9 flex items-center justify-center rounded-full transition-colors ${className}`}
     >
       <Sun
         className={`w-5 h-5 transition-all duration-300 ${
