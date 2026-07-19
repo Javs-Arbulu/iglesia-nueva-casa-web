@@ -18,6 +18,11 @@ que permita:
 - Un módulo de **finanzas** (sensible, aislado).
 - Que **miembros** de la congregación inicien sesión para **descargar material**.
 
+> **⭐ Requisito transversal — Mobile-first:** el usuario principal operará el
+> portal **desde el teléfono**. Todo se diseña primero para móvil (ver la sección
+> dedicada más abajo). No es opcional: es una restricción de diseño central que
+> afecta navegación, formularios, tablas, subida de fotos y finanzas.
+
 ## 2. Las tres zonas
 
 | Zona | Ruta | Quién entra | Para qué |
@@ -28,6 +33,36 @@ que permita:
 
 Login compartido en `/login`; tras autenticarse, se redirige según el rol
 (un miembro va a `/portal`, un admin/editor/finanzas va a `/admin`).
+
+## ⭐ Mobile-first (requisito transversal)
+
+El **usuario principal usará el portal desde el teléfono**, así que todo se diseña
+**mobile-first**: primero la pantalla del teléfono, luego se escala a desktop. La
+experiencia en móvil es la prioritaria, no un "responsive" agregado al final.
+
+Implicaciones concretas (afectan cada módulo):
+
+- **Navegación**: en móvil, **barra inferior** (bottom tab bar) con las secciones
+  clave, operable con el pulgar; en desktop, menú lateral/superior.
+- **Áreas táctiles**: controles ≥ 44px, bien espaciados. Nada de clicks diminutos.
+- **Tablas → tarjetas**: las listas (usuarios, mensajes, movimientos, eventos) se
+  muestran como **tarjetas apiladas** en móvil, no tablas con scroll horizontal.
+- **Formularios**: campos grandes, teclado correcto por tipo (email, número,
+  fecha), validación clara, y el botón de guardar **fijo y al alcance del pulgar**.
+- **Fotos**: subir **directo desde la cámara/galería** del teléfono, con recorte y
+  compresión en el dispositivo antes de subir.
+- **Finanzas**: registrar un movimiento en **pocos toques**; resúmenes legibles en
+  pantalla pequeña (montos grandes, gráficos simples).
+- **Descargas**: abrir/guardar archivos de forma nativa en el teléfono.
+- **Rendimiento**: cargar poco (rutas lazy, imágenes optimizadas) — pesa aún más
+  en datos móviles.
+- **PWA (instalable)**: para el **portal** sí tiene sentido evaluar "agregar a
+  pantalla de inicio" (que se sienta como app). *(En el sitio público la
+  descartamos; en el portal de uso diario desde el teléfono cambia el cálculo.)*
+- **Modo oscuro** ya disponible → cómodo de noche en el teléfono.
+
+> Regla práctica: cada pantalla se diseña y **se prueba primero en un teléfono**;
+> si funciona bien con el pulgar, luego se adapta a desktop.
 
 ## 3. Roles y permisos (RBAC)
 
@@ -248,7 +283,8 @@ datos** para las partes editables.
 
 ## 12. Roadmap por fases
 
-Cada fase queda funcional antes de pasar a la siguiente.
+Cada fase queda funcional antes de pasar a la siguiente, y se **entrega
+mobile-first** (diseñada y probada en teléfono).
 
 | Fase | Entrega |
 |------|---------|
@@ -270,6 +306,8 @@ Cada fase queda funcional antes de pasar a la siguiente.
 5. **Eventos:** ¿inscripción/RSVP de miembros, o solo informativo?
 6. **Directorio de miembros:** ¿los miembros tienen perfil visible entre ellos, o
    solo acceso a descargas?
+7. **PWA del portal:** ¿lo hacemos instalable ("agregar a pantalla de inicio")
+   desde el inicio, o lo dejamos para una fase posterior?
 
 ---
 
