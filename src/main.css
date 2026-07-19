@@ -118,17 +118,51 @@
   }
 }
 
-/* ─── Modo oscuro: revelado circular (View Transitions API) ─────────────────── */
-/* Desactiva el cross-fade por defecto para que se vea limpio el clip-path que
-   anima ThemeToggle. El tema nuevo se dibuja encima del anterior. */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
+/* ─── Modo oscuro: barrido circular desde el botón ──────────────────────────── */
+/* La animación vive en CSS (no en JS): así la View Transition espera de forma
+   nativa toda su duración y el barrido NO se corta a medias (adiós "latigazo").
+   El tema anterior queda fijo debajo y el nuevo se revela encima con un círculo
+   que nace en el centro del botón (--vt-x/--vt-y, que fija ThemeToggle) y crece
+   hasta cubrir toda la pantalla. */
 ::view-transition-old(root) {
+  animation: none;
   z-index: 1;
 }
 ::view-transition-new(root) {
   z-index: 9999;
+  mix-blend-mode: normal;
+  /* Easing tipo raíz cuadrada: el ÁREA del círculo crece de forma lineal (no el
+     radio), así el barrido avanza a velocidad pareja y sin golpe al final.
+     (área ∝ r² → r ∝ √t) */
+  animation: theme-sweep 520ms
+    linear(
+      0,
+      0.316 10%,
+      0.447 20%,
+      0.548 30%,
+      0.632 40%,
+      0.707 50%,
+      0.775 60%,
+      0.837 70%,
+      0.894 80%,
+      0.949 90%,
+      1
+    ) both;
+}
+@keyframes theme-sweep {
+  from {
+    clip-path: circle(0% at var(--vt-x, 100%) var(--vt-y, 0%));
+  }
+  to {
+    /* 150% > diagonal (141.4%) para cubrir de sobra la esquina más lejana. */
+    clip-path: circle(150% at var(--vt-x, 100%) var(--vt-y, 0%));
+  }
+}
+
+/* Respeta a quien pide menos movimiento: cambio instantáneo, sin barrido. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
 }

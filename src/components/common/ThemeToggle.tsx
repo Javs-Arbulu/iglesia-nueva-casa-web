@@ -45,37 +45,21 @@ export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
         '(prefers-reduced-motion: reduce)'
       ).matches
 
+      // El barrido vive en CSS (ver `main.css`, `@keyframes theme-sweep`) para
+      // que la View Transition espere la animación completa. Aquí solo fijamos
+      // el origen del círculo (centro del botón) vía variables CSS y disparamos.
       if (!doc.startViewTransition || prefersReducedMotion) {
         switchTheme()
         return
       }
 
-      // Centro del botón como origen del círculo.
       const { top, left, width, height } =
         event.currentTarget.getBoundingClientRect()
-      const x = left + width / 2
-      const y = top + height / 2
-      const endRadius = Math.hypot(
-        Math.max(x, window.innerWidth - x),
-        Math.max(y, window.innerHeight - y)
-      )
+      const root = document.documentElement
+      root.style.setProperty('--vt-x', `${left + width / 2}px`)
+      root.style.setProperty('--vt-y', `${top + height / 2}px`)
 
-      const transition = doc.startViewTransition(switchTheme)
-      transition.ready.then(() => {
-        document.documentElement.animate(
-          {
-            clipPath: [
-              `circle(0px at ${x}px ${y}px)`,
-              `circle(${endRadius}px at ${x}px ${y}px)`,
-            ],
-          },
-          {
-            duration: 500,
-            easing: 'ease-in-out',
-            pseudoElement: '::view-transition-new(root)',
-          }
-        )
-      })
+      doc.startViewTransition(switchTheme)
     },
     [isDark]
   )
