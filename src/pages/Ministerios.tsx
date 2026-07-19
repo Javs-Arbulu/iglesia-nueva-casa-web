@@ -85,7 +85,7 @@ export default function Ministerios() {
       : ministerios.filter((m) => m.category === activeTab.toUpperCase())
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-32 pb-16">
+    <main className="min-h-screen bg-gray-50 dark:bg-slate-950 pt-32 pb-16">
       <SEO
         title="Ministerios | Iglesia Nueva Casa"
         description="Explora los ministerios de la Iglesia Nueva Casa: Jóvenes, Niños, Alabanza, Grupos Pequeños y Servicio Social. Encuentra tu lugar en la familia."
@@ -97,10 +97,10 @@ export default function Ministerios() {
           <div className="inline-block bg-cyan-100 text-cyan-600 px-4 py-2 rounded-full text-sm font-semibold mb-4 uppercase tracking-wide">
             Nuestra Comunidad
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Descubre tu lugar en la familia
           </h1>
-          <p className="text-gray-600 text-lg max-w-3xl mx-auto">
+          <p className="text-gray-600 dark:text-slate-300 text-lg max-w-3xl mx-auto">
             Hay un espacio para ti. Ya sea que busques crecer espiritualmente,
             servir a otros o conectar con personas de tu edad.
           </p>
@@ -119,7 +119,7 @@ export default function Ministerios() {
               className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
                 activeTab === tab
                   ? 'bg-cyan-500 text-white shadow-lg scale-105'
-                  : 'bg-white text-gray-600 hover:bg-gray-100'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800'
               }`}
             >
               {tab}
@@ -140,7 +140,7 @@ export default function Ministerios() {
           {filteredMinisterios.map((ministerio) => (
             <li
               key={ministerio.title}
-              className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group"
+              className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group"
             >
               {/* Image */}
               <div className="relative h-56 overflow-hidden">
@@ -170,16 +170,16 @@ export default function Ministerios() {
                   <span className="text-3xl" aria-hidden="true">
                     {ministerio.icon}
                   </span>
-                  <h2 className="text-2xl font-bold text-gray-900">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                     {ministerio.title}
                   </h2>
                 </div>
-                <p className="text-gray-600 mb-6 leading-relaxed">
+                <p className="text-gray-600 dark:text-slate-300 mb-6 leading-relaxed">
                   {ministerio.description}
                 </p>
 
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <div className="flex items-center gap-2 text-gray-500 text-sm">
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-slate-800">
+                  <div className="flex items-center gap-2 text-gray-500 dark:text-slate-400 text-sm">
                     <Calendar className="w-4 h-4" aria-hidden="true" />
                     <time>{ministerio.schedule}</time>
                   </div>
@@ -226,11 +226,11 @@ export default function Ministerios() {
         aria-label="Únete a la comunidad"
         className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-20"
       >
-        <div className="bg-white rounded-3xl p-12 text-center shadow-xl">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-12 text-center shadow-xl">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             No esperes más para conectar
           </h2>
-          <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-gray-600 dark:text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
             Cada semana cientos de jóvenes se reúnen para compartir su fe.
             ¡Estamos listos para recibirte!
           </p>
@@ -244,7 +244,7 @@ export default function Ministerios() {
             </Link>
             <Link
               to="/contacto"
-              className="bg-gray-100 text-gray-700 px-8 py-3 rounded-full hover:bg-gray-200 transition-colors font-semibold"
+              className="bg-gray-100 text-gray-700 px-8 py-3 rounded-full hover:bg-gray-200 transition-colors font-semibold dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
             >
               Contacto directo
             </Link>

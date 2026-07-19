@@ -137,7 +137,7 @@ export default function Contacto() {
   )
 
   const inputBase =
-    'w-full px-5 py-4 rounded-xl bg-gray-50 border border-transparent text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-white transition-all'
+    'w-full px-5 py-4 rounded-xl bg-gray-50 border border-transparent text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-white dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 dark:border-slate-700 dark:focus:bg-slate-800 transition-all'
 
   const inputError = 'border-red-400 bg-red-50 focus:ring-red-400'
 
@@ -201,7 +201,7 @@ export default function Contacto() {
       <section
         id="info"
         aria-label="Formulario de contacto e información"
-        className="py-20 bg-gray-50 relative overflow-hidden -mt-px"
+        className="py-20 bg-gray-50 dark:bg-slate-950 relative overflow-hidden -mt-px"
       >
         <div
           className="absolute top-20 right-20 w-72 h-72 bg-cyan-200/30 rounded-full blur-3xl"
@@ -217,8 +217,8 @@ export default function Contacto() {
             <div className="grid lg:grid-cols-5 gap-8">
               {/* ── Contact Form (3/5 cols) ───────────────────────────────── */}
               <div className="lg:col-span-3">
-                <div className="bg-white rounded-3xl p-8 lg:p-10 shadow-lg border border-gray-100">
-                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+                <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 lg:p-10 shadow-lg border border-gray-100 dark:border-slate-800">
+                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-8">
                     Envíanos un mensaje
                   </h2>
 
@@ -227,7 +227,7 @@ export default function Contacto() {
                     <div
                       role="status"
                       aria-live="polite"
-                      className="mb-6 bg-green-50 border border-green-200 text-green-700 rounded-xl px-6 py-4 font-medium"
+                      className="mb-6 bg-green-50 dark:bg-green-500/10 border border-green-200 text-green-700 dark:text-green-300 rounded-xl px-6 py-4 font-medium"
                     >
                       ¡Mensaje enviado! Nos pondremos en contacto pronto.
                     </div>
@@ -238,7 +238,7 @@ export default function Contacto() {
                     <div
                       role="alert"
                       aria-live="assertive"
-                      className="mb-6 bg-red-50 border border-red-200 text-red-700 rounded-xl px-6 py-4 font-medium"
+                      className="mb-6 bg-red-50 dark:bg-red-500/10 border border-red-200 text-red-700 dark:text-red-300 rounded-xl px-6 py-4 font-medium"
                     >
                       {submitError}
                     </div>
@@ -255,7 +255,7 @@ export default function Contacto() {
                         <div>
                           <label
                             htmlFor="nombre"
-                            className="block text-gray-900 font-semibold mb-3 text-base"
+                            className="block text-gray-900 dark:text-white font-semibold mb-3 text-base"
                           >
                             Nombre Completo{' '}
                             <span aria-hidden="true" className="text-red-500">
@@ -286,7 +286,7 @@ export default function Contacto() {
                         <div>
                           <label
                             htmlFor="email"
-                            className="block text-gray-900 font-semibold mb-3 text-base"
+                            className="block text-gray-900 dark:text-white font-semibold mb-3 text-base"
                           >
                             Correo Electrónico{' '}
                             <span aria-hidden="true" className="text-red-500">
@@ -316,7 +316,7 @@ export default function Contacto() {
                       <div>
                         <label
                           htmlFor="asunto"
-                          className="block text-gray-900 font-semibold mb-3 text-base"
+                          className="block text-gray-900 dark:text-white font-semibold mb-3 text-base"
                         >
                           Asunto{' '}
                           <span aria-hidden="true" className="text-red-500">
@@ -344,7 +344,7 @@ export default function Contacto() {
                       <div>
                         <label
                           htmlFor="mensaje"
-                          className="block text-gray-900 font-semibold mb-3 text-base"
+                          className="block text-gray-900 dark:text-white font-semibold mb-3 text-base"
                         >
                           Mensaje{' '}
                           <span aria-hidden="true" className="text-red-500">
@@ -420,7 +420,7 @@ export default function Contacto() {
                 aria-label="Información de contacto"
               >
                 {/* Location Card */}
-                <div className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300">
+                <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-lg border border-gray-100 dark:border-slate-800 hover:shadow-2xl transition-all duration-300">
                   <div className="p-6 pb-4">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center">
@@ -429,7 +429,7 @@ export default function Contacto() {
                           aria-hidden="true"
                         />
                       </div>
-                      <h3 className="text-xl font-bold text-gray-900">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                         Nuestra Ubicación
                       </h3>
                     </div>
@@ -445,12 +445,12 @@ export default function Contacto() {
                       allowFullScreen
                     />
                     <div className="absolute bottom-4 left-4 right-4 pointer-events-none">
-                      <address className="not-italic bg-white rounded-xl px-5 py-3 shadow-lg flex items-center gap-3">
+                      <address className="not-italic bg-white dark:bg-slate-900 rounded-xl px-5 py-3 shadow-lg flex items-center gap-3">
                         <MapPin
                           className="w-5 h-5 text-cyan-400 flex-shrink-0"
                           aria-hidden="true"
                         />
-                        <span className="text-gray-900 font-semibold text-sm">
+                        <span className="text-gray-900 dark:text-white font-semibold text-sm">
                           {CHURCH_INFO.address}
                         </span>
                       </address>
@@ -459,7 +459,7 @@ export default function Contacto() {
                 </div>
 
                 {/* Schedule Card */}
-                <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300">
+                <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-lg border border-gray-100 dark:border-slate-800 hover:shadow-2xl transition-all duration-300">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
                       <Clock
@@ -467,7 +467,7 @@ export default function Contacto() {
                         aria-hidden="true"
                       />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                       Horarios de Reunión
                     </h3>
                   </div>
@@ -478,13 +478,13 @@ export default function Contacto() {
                         key={index}
                         className={
                           index < CHURCH_INFO.schedules.length - 1
-                            ? 'border-b border-gray-100 pb-4'
+                            ? 'border-b border-gray-100 dark:border-slate-800 pb-4'
                             : 'pt-2'
                         }
                       >
                         <div className="flex items-start justify-between">
                           <div>
-                            <p className="font-bold text-gray-900 text-base mb-1">
+                            <p className="font-bold text-gray-900 dark:text-white text-base mb-1">
                               {schedule.name}
                             </p>
                             <p className="text-cyan-500 text-sm">
@@ -492,7 +492,7 @@ export default function Contacto() {
                             </p>
                           </div>
                           <div className="text-right">
-                            <time className="font-bold text-gray-900 text-lg">
+                            <time className="font-bold text-gray-900 dark:text-white text-lg">
                               {schedule.time}
                             </time>
                           </div>

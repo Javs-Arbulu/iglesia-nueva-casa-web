@@ -13,10 +13,10 @@ export default function PredicaCard({ predica }: PredicaCardProps) {
       href={predica.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group block bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+      className="group block bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
       aria-label={`Ver prédica en YouTube: ${predica.title}`}
     >
-      <div className="relative aspect-video overflow-hidden bg-gray-100">
+      <div className="relative aspect-video overflow-hidden bg-gray-100 dark:bg-slate-800">
         <img
           src={predica.thumbnail}
           alt=""
@@ -34,13 +34,13 @@ export default function PredicaCard({ predica }: PredicaCardProps) {
       </div>
 
       <div className="p-5">
-        <h3 className="font-bold text-gray-900 text-lg leading-snug line-clamp-2 group-hover:text-cyan-600 transition-colors">
+        <h3 className="font-bold text-gray-900 dark:text-white text-lg leading-snug line-clamp-2 group-hover:text-cyan-600 transition-colors">
           {predica.title}
         </h3>
         {predica.published && (
           <time
             dateTime={predica.published}
-            className="mt-2 block text-sm text-gray-500 first-letter:uppercase"
+            className="mt-2 block text-sm text-gray-500 dark:text-slate-400 first-letter:uppercase"
           >
             {formatPredicaDate(predica.published)}
           </time>

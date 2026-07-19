@@ -120,7 +120,7 @@ export default function Nosotros() {
       {/* ── Vision Section ─────────────────────────────────────────────────── */}
       <section
         aria-label="Nuestra visión"
-        className="pt-20 pb-20 bg-white relative overflow-hidden -mt-px"
+        className="pt-20 pb-20 bg-white dark:bg-slate-900 relative overflow-hidden -mt-px"
       >
         <div
           className="absolute top-20 right-20 w-72 h-72 bg-cyan-200/30 rounded-full blur-3xl"
@@ -133,10 +133,10 @@ export default function Nosotros() {
 
         <div className="container mx-auto px-4 relative z-10">
           <header className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
               Nuestra Visión
             </h2>
-            <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+            <p className="text-gray-600 dark:text-slate-300 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
               Más que reuniones, construimos una comunidad viva y apasionada
               donde cada persona encuentra su propósito.
             </p>
@@ -149,7 +149,7 @@ export default function Nosotros() {
             {visionItems.map((item) => (
               <li
                 key={item.title}
-                className="relative bg-white rounded-3xl p-6 lg:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group border border-gray-100"
+                className="relative bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group border border-gray-100 dark:border-slate-800"
               >
                 {/* Gradient overlay */}
                 <div
@@ -172,10 +172,10 @@ export default function Nosotros() {
                   </div>
                 </div>
 
-                <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white mb-3">
                   {item.title}
                 </h3>
-                <p className="text-gray-600 text-sm lg:text-base leading-relaxed">
+                <p className="text-gray-600 dark:text-slate-300 text-sm lg:text-base leading-relaxed">
                   {item.description}
                 </p>
 
@@ -192,7 +192,7 @@ export default function Nosotros() {
       {/* ── CTA Section ────────────────────────────────────────────────────── */}
       <section
         aria-label="Llámado a la acción"
-        className="py-20 bg-gray-50 relative overflow-hidden"
+        className="py-20 bg-gray-50 dark:bg-slate-950 relative overflow-hidden"
       >
         <div
           className="absolute top-0 left-0 w-96 h-96 bg-cyan-100 rounded-full blur-3xl opacity-20 -translate-x-1/2 -translate-y-1/2"

@@ -4,6 +4,7 @@ import logoUrl from '@/assets/images/logo-claro-navbar.png'
 import logoWebP from '@/assets/images/logo-claro-navbar.webp'
 import { Link, useLocation } from 'react-router-dom'
 import { Button } from '../ui/button'
+import ThemeToggle from './ThemeToggle'
 import { NAV_LINKS } from '@/lib/constants'
 
 const Navbar = () => {
@@ -73,8 +74,9 @@ const Navbar = () => {
             ))}
           </ul>
 
-          {/* CTA Button Desktop */}
-          <div className="hidden md:block">
+          {/* CTA + tema (desktop) */}
+          <div className="hidden md:flex items-center gap-2">
+            <ThemeToggle />
             <Button
               asChild
               className="bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-full px-6 transition-all duration-300 hover:scale-105 shadow-lg shadow-cyan-400/30"
@@ -83,20 +85,23 @@ const Navbar = () => {
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-            className="md:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
-            aria-label={isMobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
-            aria-expanded={isMobileMenuOpen}
-            aria-controls="mobile-menu"
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6" aria-hidden="true" />
-            ) : (
-              <Menu className="w-6 h-6" aria-hidden="true" />
-            )}
-          </button>
+          {/* Tema + menú (móvil) */}
+          <div className="flex items-center gap-1 md:hidden">
+            <ThemeToggle />
+            <button
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+              className="text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+              aria-label={isMobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-menu"
+            >
+              {isMobileMenuOpen ? (
+                <X className="w-6 h-6" aria-hidden="true" />
+              ) : (
+                <Menu className="w-6 h-6" aria-hidden="true" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 

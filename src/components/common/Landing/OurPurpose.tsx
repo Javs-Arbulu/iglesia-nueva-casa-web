@@ -44,7 +44,7 @@ const OurPurpose = () => {
   return (
     <section
       aria-label="Nuestro propósito"
-      className="pt-20 pb-20 bg-white relative overflow-hidden -mt-px"
+      className="pt-20 pb-20 bg-white dark:bg-slate-900 relative overflow-hidden -mt-px"
     >
       {/* Decorative Background Elements */}
       <div
@@ -59,10 +59,10 @@ const OurPurpose = () => {
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <header className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
             Nuestro Propósito
           </h2>
-          <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+          <p className="text-gray-600 dark:text-slate-300 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
             Existimos para conectar a las personas con la vida que Jesús ofrece.
             <br />
             Un camino simple de cuatro pasos para crecer.
@@ -77,7 +77,7 @@ const OurPurpose = () => {
           {purposes.map((purpose) => (
             <li
               key={purpose.title}
-              className="relative bg-white rounded-3xl p-6 lg:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group border border-gray-100"
+              className="relative bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group border border-gray-100 dark:border-slate-800"
             >
               {/* Gradient Border Effect */}
               <div
@@ -103,10 +103,10 @@ const OurPurpose = () => {
               </div>
 
               {/* Content */}
-              <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-gray-900 group-hover:to-gray-600 transition-all duration-300">
+              <h3 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-gray-900 group-hover:to-gray-600 transition-all duration-300">
                 {purpose.title}
               </h3>
-              <p className="text-gray-600 text-sm lg:text-base leading-relaxed">
+              <p className="text-gray-600 dark:text-slate-300 text-sm lg:text-base leading-relaxed">
                 {purpose.description}
               </p>
 

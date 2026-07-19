@@ -27,7 +27,7 @@ export default function PredicasRecientes() {
   return (
     <section
       aria-label="Últimas prédicas"
-      className="py-20 bg-gray-50 relative overflow-hidden"
+      className="py-20 bg-gray-50 dark:bg-slate-950 relative overflow-hidden"
     >
       <div className="container mx-auto px-4 relative z-10">
         <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
@@ -35,7 +35,7 @@ export default function PredicasRecientes() {
             <div className="inline-block bg-cyan-100 text-cyan-600 px-4 py-2 rounded-full text-sm font-semibold mb-4 uppercase tracking-wide">
               Últimas prédicas
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
               Mensajes recientes
             </h2>
           </div>

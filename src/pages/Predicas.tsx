@@ -33,7 +33,7 @@ export default function Predicas() {
   }, [])
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-32 pb-16">
+    <main className="min-h-screen bg-gray-50 dark:bg-slate-950 pt-32 pb-16">
       <SEO
         title="Prédicas | Iglesia Nueva Casa"
         description="Mira las prédicas y servicios de la Iglesia Nueva Casa en Lima. Mensajes de esperanza y fe cada semana desde nuestro canal de YouTube."
@@ -46,10 +46,10 @@ export default function Predicas() {
           <div className="inline-block bg-cyan-100 text-cyan-600 px-4 py-2 rounded-full text-sm font-semibold mb-4 uppercase tracking-wide">
             Palabra que transforma
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Prédicas y Servicios
           </h1>
-          <p className="text-gray-600 text-lg max-w-3xl mx-auto">
+          <p className="text-gray-600 dark:text-slate-300 text-lg max-w-3xl mx-auto">
             Revive nuestros mensajes y servicios. Un espacio para crecer en fe
             desde donde estés.
           </p>
@@ -63,22 +63,22 @@ export default function Predicas() {
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
       >
         {status === 'loading' && (
-          <div className="flex flex-col items-center justify-center py-24 text-gray-500">
+          <div className="flex flex-col items-center justify-center py-24 text-gray-500 dark:text-slate-400">
             <Loader2 className="w-10 h-10 animate-spin text-cyan-400 mb-4" />
             <p>Cargando prédicas...</p>
           </div>
         )}
 
         {status === 'error' && (
-          <div className="max-w-lg mx-auto text-center bg-white rounded-3xl p-10 shadow-md">
+          <div className="max-w-lg mx-auto text-center bg-white dark:bg-slate-900 rounded-3xl p-10 shadow-md">
             <AlertCircle
               className="w-12 h-12 text-red-400 mx-auto mb-4"
               aria-hidden="true"
             />
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
               No pudimos cargar las prédicas
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-slate-300 mb-6">
               Puedes verlas directamente en nuestro canal de YouTube.
             </p>
             <a
@@ -94,7 +94,7 @@ export default function Predicas() {
         )}
 
         {status === 'success' && predicas.length === 0 && (
-          <p className="text-center text-gray-500 py-24">
+          <p className="text-center text-gray-500 dark:text-slate-400 py-24">
             Aún no hay prédicas publicadas.
           </p>
         )}
