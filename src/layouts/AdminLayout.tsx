@@ -6,6 +6,7 @@ import {
   CalendarDays,
   Image as ImageIcon,
   FileText,
+  Wallet,
   LogOut,
 } from 'lucide-react'
 import type { AppRole } from '@/types'
@@ -45,6 +46,12 @@ const NAV: NavItem[] = [
     label: 'Contenido',
     icon: FileText,
     roles: ['admin', 'editor'],
+  },
+  {
+    to: '/admin/finanzas',
+    label: 'Finanzas',
+    icon: Wallet,
+    roles: ['admin', 'finanzas'],
   },
   { to: '/admin/mensajes', label: 'Mensajes', icon: MessageSquare, roles: ['admin'] },
   { to: '/admin/usuarios', label: 'Usuarios', icon: Users, roles: ['admin'] },

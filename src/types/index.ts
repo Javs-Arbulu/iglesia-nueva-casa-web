@@ -117,6 +117,21 @@ export interface ContactFormErrors {
   mensaje?: string
 }
 
+// ─── Finanzas ────────────────────────────────────────────────────────────────────
+
+export type TransactionType = 'ingreso' | 'egreso'
+
+export interface FinanceTransaction {
+  id: string
+  type: TransactionType
+  amount: number
+  currency: string
+  category: string | null
+  description: string | null
+  occurred_on: string
+  created_at: string
+}
+
 // ─── Media / galería ─────────────────────────────────────────────────────────────
 
 export interface MediaItem {
