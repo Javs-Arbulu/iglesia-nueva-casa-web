@@ -5,6 +5,29 @@
 export const YOUTUBE_CHANNEL_ID = 'UC9WB9NIaV1_FPLXLUEa1dnw'
 const FEED_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${YOUTUBE_CHANNEL_ID}`
 
+const UA = 'Mozilla/5.0 (compatible; NuevaCasaBot/1.0)'
+
+/**
+ * fetch con reintentos. El feed RSS/live de YouTube a veces responde 404/500 de
+ * forma intermitente; reintentamos para que un fallo puntual no rompa la carga.
+ */
+async function fetchWithRetry(url, options = {}, retries = 3) {
+  let lastError
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, { headers: { 'user-agent': UA }, ...options })
+      if (res.ok) return res
+      lastError = new Error(`respondió ${res.status}`)
+    } catch (err) {
+      lastError = err
+    }
+    if (attempt < retries) {
+      await new Promise((r) => setTimeout(r, 400 * (attempt + 1)))
+    }
+  }
+  throw lastError
+}
+
 const decodeEntities = (s) =>
   s
     .replace(/&amp;/g, '&')
@@ -39,12 +62,9 @@ export function parseFeed(xml, limit = 12) {
     .slice(0, limit)
 }
 
-/** Descarga y parsea el feed. Lanza si la respuesta no es OK. */
+/** Descarga y parsea el feed (con reintentos). Lanza si todos fallan. */
 export async function getPredicas(limit = 12) {
-  const res = await fetch(FEED_URL, {
-    headers: { 'user-agent': 'Mozilla/5.0 (compatible; NuevaCasaBot/1.0)' },
-  })
-  if (!res.ok) throw new Error(`Feed RSS respondió ${res.status}`)
+  const res = await fetchWithRetry(FEED_URL)
   return parseFeed(await res.text(), limit)
 }
 
@@ -57,11 +77,7 @@ const LIVE_URL = `https://www.youtube.com/channel/${YOUTUBE_CHANNEL_ID}/live`
  */
 export async function getLiveStatus() {
   try {
-    const res = await fetch(LIVE_URL, {
-      headers: { 'user-agent': 'Mozilla/5.0 (compatible; NuevaCasaBot/1.0)' },
-      redirect: 'follow',
-    })
-    if (!res.ok) return { live: false }
+    const res = await fetchWithRetry(LIVE_URL, { redirect: 'follow' })
     const html = await res.text()
     const match = html.match(
       /<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})"/
