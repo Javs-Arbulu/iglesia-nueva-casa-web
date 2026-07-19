@@ -4,6 +4,10 @@ export default {
     content: ["./index.html", "./src/**/*.{ts,tsx}"],
   theme: {
   	extend: {
+  		fontFamily: {
+  			sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+  			hand: ['"Caveat Variable"', 'Caveat', 'cursive'],
+  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',

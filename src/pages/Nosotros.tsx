@@ -71,7 +71,9 @@ export default function Nosotros() {
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                 No solo una iglesia,{' '}
-                <span className="text-cyan-200">una familia.</span>
+                <span className="font-hand font-bold text-cyan-200 text-5xl md:text-6xl lg:text-7xl">
+                  una familia.
+                </span>
               </h1>
               <p className="text-white/90 text-base md:text-lg mb-8 leading-relaxed">
                 Bienvenido a un lugar donde puedes ser tú mismo. Creemos y

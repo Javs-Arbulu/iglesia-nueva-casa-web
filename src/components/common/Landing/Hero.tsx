@@ -75,7 +75,10 @@ const HeroSection = () => {
         <h1 className="mb-6 text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight">
           Aquí no vienes a un lugar,
           <br />
-          llegas a una familia.
+          llegas a{' '}
+          <span className="font-hand font-bold text-cyan-300 text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
+            una familia.
+          </span>
         </h1>
 
         <p className="text-white/90 text-base md:text-lg lg:text-xl max-w-3xl mx-auto mb-10 px-4 leading-relaxed">
