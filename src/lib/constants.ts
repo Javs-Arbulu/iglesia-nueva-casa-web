@@ -7,6 +7,7 @@ export const NAV_LINKS: NavLink[] = [
   { name: 'Nosotros', href: '/nosotros' },
   { name: 'Ministerios', href: '/ministerios' },
   { name: 'Prédicas', href: '/predicas' },
+  { name: 'Galería', href: '/galeria' },
   { name: 'Contacto', href: '/contacto' },
 ]
 
@@ -15,6 +16,7 @@ export const EXPLORE_LINKS: NavLink[] = [
   { name: 'Nosotros', href: '/nosotros' },
   { name: 'Ministerios', href: '/ministerios' },
   { name: 'Prédicas', href: '/predicas' },
+  { name: 'Galería', href: '/galeria' },
   { name: 'Contacto', href: '/contacto' },
   {
     name: 'YouTube en Vivo',

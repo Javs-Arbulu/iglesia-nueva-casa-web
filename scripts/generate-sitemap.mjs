@@ -19,11 +19,18 @@ const META = {
 }
 const FALLBACK = { changefreq: 'monthly', priority: '0.6' }
 
-// Extrae las rutas de routes.tsx (path: '...'), descartando el comodín 404.
+// Rutas privadas/de portal que NO van en el sitemap público.
+const EXCLUDE_PREFIXES = ['/login', '/registro', '/portal', '/admin']
+
+// Extrae las rutas de routes.tsx (path: '...') y deja solo las PÚBLICAS:
+// - absolutas (empiezan con '/') → descarta rutas hijas relativas (ej. 'mensajes')
+// - no el comodín 404
+// - no las del portal/admin/login
 const routesSrc = readFileSync(resolve(root, 'src/app/routes.tsx'), 'utf8')
 const paths = [...routesSrc.matchAll(/path:\s*'([^']+)'/g)]
   .map((m) => m[1])
-  .filter((p) => p !== '*')
+  .filter((p) => p.startsWith('/') && p !== '*')
+  .filter((p) => !EXCLUDE_PREFIXES.some((e) => p === e || p.startsWith(`${e}/`)))
 
 // Ordena: home primero, luego alfabético; sin duplicados.
 const unique = [...new Set(paths)].sort((a, b) =>

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { MapPin, Clock, Send, Loader2 } from 'lucide-react'
 import { useScrollToHash } from '@/hooks/useScroll'
 import { CHURCH_INFO } from '@/lib/constants'
+import { useSiteContent } from '@/hooks/useSiteContent'
 import { getSupabase } from '@/services/supabase'
 import type { ContactFormData, ContactFormErrors } from '@/types'
 import SEO from '@/components/common/SEO'
@@ -60,6 +61,7 @@ const FieldError = ({ message, id }: FieldErrorProps) =>
 export default function Contacto() {
   // Scroll to #info when navigated with that hash
   useScrollToHash()
+  const { contact } = useSiteContent()
 
   const [formData, setFormData] = useState<ContactFormData>(INITIAL_FORM)
   const [errors, setErrors] = useState<ContactFormErrors>({})
@@ -451,7 +453,7 @@ export default function Contacto() {
                           aria-hidden="true"
                         />
                         <span className="text-gray-900 dark:text-white font-semibold text-sm">
-                          {CHURCH_INFO.address}
+                          {contact.address}
                         </span>
                       </address>
                     </div>
@@ -473,11 +475,11 @@ export default function Contacto() {
                   </div>
 
                   <ul className="space-y-4">
-                    {CHURCH_INFO.schedules.map((schedule, index) => (
+                    {contact.schedules.map((schedule, index) => (
                       <li
                         key={index}
                         className={
-                          index < CHURCH_INFO.schedules.length - 1
+                          index < contact.schedules.length - 1
                             ? 'border-b border-gray-100 dark:border-slate-800 pb-4'
                             : 'pt-2'
                         }

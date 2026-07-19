@@ -116,3 +116,72 @@ export interface ContactFormErrors {
   asunto?: string
   mensaje?: string
 }
+
+// ─── Finanzas ────────────────────────────────────────────────────────────────────
+
+export type TransactionType = 'ingreso' | 'egreso'
+
+export interface FinanceTransaction {
+  id: string
+  type: TransactionType
+  amount: number
+  currency: string
+  category: string | null
+  description: string | null
+  occurred_on: string
+  created_at: string
+}
+
+// ─── Media / galería ─────────────────────────────────────────────────────────────
+
+export interface MediaItem {
+  id: string
+  path: string
+  alt: string | null
+  category: string
+  published: boolean
+  created_at: string
+}
+
+// ─── Eventos ───────────────────────────────────────────────────────────────────
+
+export interface Evento {
+  id: string
+  title: string
+  description: string | null
+  location: string | null
+  starts_at: string
+  image_url: string | null
+  published: boolean
+  created_at: string
+}
+
+// ─── Portal / Auth ───────────────────────────────────────────────────────────────
+
+export type AppRole = 'admin' | 'editor' | 'finanzas' | 'miembro'
+
+export interface Profile {
+  id: string
+  first_name: string | null
+  last_name: string | null
+  full_name: string | null
+  email: string | null
+  phone: string | null
+  avatar_url: string | null
+  status: 'active' | 'pending'
+  created_at: string
+}
+
+/** Perfil + sus roles, para la gestión de usuarios en el admin. */
+export interface UserWithRoles extends Profile {
+  roles: AppRole[]
+}
+
+export interface ContactSubmission {
+  id: string
+  nombre: string
+  email: string
+  asunto: string
+  mensaje: string
+  created_at: string
+}
