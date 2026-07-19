@@ -20,7 +20,7 @@ const META = {
 const FALLBACK = { changefreq: 'monthly', priority: '0.6' }
 
 // Rutas privadas/de portal que NO van en el sitemap público.
-const EXCLUDE_PREFIXES = ['/login', '/portal', '/admin']
+const EXCLUDE_PREFIXES = ['/login', '/registro', '/portal', '/admin']
 
 // Extrae las rutas de routes.tsx (path: '...') y deja solo las PÚBLICAS:
 // - absolutas (empiezan con '/') → descarta rutas hijas relativas (ej. 'mensajes')

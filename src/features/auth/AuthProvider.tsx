@@ -90,6 +90,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  const signUp = useCallback(
+    async (email: string, password: string, fullName: string) => {
+      try {
+        const { error } = await getSupabase().auth.signUp({
+          email,
+          password,
+          options: { data: { full_name: fullName } },
+        })
+        return { error: error?.message ?? null }
+      } catch {
+        return { error: 'Supabase no está configurado.' }
+      }
+    },
+    []
+  )
+
   const signOut = useCallback(async () => {
     try {
       await getSupabase().auth.signOut()
@@ -111,6 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading,
     configured,
     signIn,
+    signUp,
     signOut,
     hasRole,
   }

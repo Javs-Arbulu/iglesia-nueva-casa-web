@@ -13,6 +13,7 @@ const NotFound = lazy(() => import('@/pages/NotFound'))
 
 // Portal (auth, admin, área de miembros) — cargado aparte del sitio público
 const Login = lazy(() => import('@/pages/Login'))
+const Registro = lazy(() => import('@/pages/Registro'))
 const Portal = lazy(() => import('@/pages/Portal'))
 const AdminLayout = lazy(() => import('@/layouts/AdminLayout'))
 const AdminDashboard = lazy(() => import('@/pages/admin/Dashboard'))
@@ -89,6 +90,14 @@ export const router = createBrowserRouter([
     element: (
       <Suspense fallback={pageFallback}>
         <Login />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/registro',
+    element: (
+      <Suspense fallback={pageFallback}>
+        <Registro />
       </Suspense>
     ),
   },

@@ -295,6 +295,15 @@ mobile-first** (diseñada y probada en teléfono).
 | **5 — Miembros** | Área de miembros + descargas (bucket privado). |
 | **6 — Finanzas** | Módulo de finanzas con roles estrictos + auditoría. |
 
+## Estado de implementación
+
+- **Fase 0** ✅ hecha (auth, roles, RLS, login, shell `/admin`, mensajes de contacto).
+- **Fase 1** 🔶 en curso:
+  - ✅ Listar usuarios, asignar/quitar roles, aprobar miembros (no auto-quitarse admin).
+  - ✅ Registro abierto (`/registro` → `pending` → aprobación del admin).
+  - ⏳ **Invitaciones (crear cuenta + correo)** — **PENDIENTE: se hará al final de todo** (requiere Resend + service-role).
+  - ⏳ Rechazar/eliminar usuarios — pendiente (borrar cuenta requiere service-role).
+
 ## 13. Decisiones tomadas
 
 1. **Registro de miembros:** dos vías que conviven → **invitación** (admin) **y

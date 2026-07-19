@@ -116,6 +116,16 @@ export default function Login() {
               'Entrar'
             )}
           </button>
+
+          <p className="text-center text-sm text-gray-500 dark:text-slate-400">
+            ¿No tienes cuenta?{' '}
+            <Link
+              to="/registro"
+              className="text-cyan-600 dark:text-cyan-400 font-semibold"
+            >
+              Regístrate
+            </Link>
+          </p>
         </form>
       </div>
     </main>

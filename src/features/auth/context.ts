@@ -11,6 +11,11 @@ export interface AuthContextValue {
   /** true si hay credenciales de Supabase configuradas */
   configured: boolean
   signIn: (email: string, password: string) => Promise<{ error: string | null }>
+  signUp: (
+    email: string,
+    password: string,
+    fullName: string
+  ) => Promise<{ error: string | null }>
   signOut: () => Promise<void>
   hasRole: (...roles: AppRole[]) => boolean
 }
