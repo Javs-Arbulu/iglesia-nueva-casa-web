@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Loader2, Check, ShieldCheck } from 'lucide-react'
+import { Loader2, Check, Pencil } from 'lucide-react'
 import { getSupabase } from '@/services/supabase'
 import { useAuth } from '@/features/auth/context'
+import Modal from '@/components/common/Modal'
 import type { AppRole, Profile, UserWithRoles } from '@/types'
 
 type Status = 'loading' | 'success' | 'error'
@@ -17,10 +18,15 @@ export default function Usuarios() {
   const { user } = useAuth()
   const [users, setUsers] = useState<UserWithRoles[]>([])
   const [status, setStatus] = useState<Status>('loading')
-  const [busyId, setBusyId] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
 
-  // Devuelve los datos (sin setState) para poder usarlo tanto en el effect
-  // (patrón .then) como tras las mutaciones.
+  // Edición en modal
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
+
+  const editing = users.find((u) => u.id === editingId) ?? null
+
   const fetchUsers = useCallback(async (): Promise<UserWithRoles[]> => {
     const supabase = getSupabase()
     const [{ data: profiles, error: pErr }, { data: roleRows, error: rErr }] =
@@ -68,11 +74,28 @@ export default function Usuarios() {
     }
   }
 
+  const openEdit = (u: UserWithRoles) => {
+    setEditingId(u.id)
+    setName(u.full_name ?? '')
+    setPhone(u.phone ?? '')
+  }
+
+  const saveProfile = async () => {
+    if (!editing) return
+    setBusy(true)
+    const { error } = await getSupabase()
+      .from('profiles')
+      .update({ full_name: name.trim() || null, phone: phone.trim() || null })
+      .eq('id', editing.id)
+    if (error) console.error(error)
+    await refresh()
+    setBusy(false)
+  }
+
   const toggleRole = async (u: UserWithRoles, role: AppRole) => {
     // No permitir que te quites tu propio rol de admin (evita auto-bloqueo).
-    // Otro admin sí puede quitártelo.
     if (u.id === user?.id && role === 'admin' && u.roles.includes(role)) return
-    setBusyId(u.id)
+    setBusy(true)
     const supabase = getSupabase()
     const has = u.roles.includes(role)
     const { error } = has
@@ -84,19 +107,22 @@ export default function Usuarios() {
       : await supabase.from('user_roles').insert({ user_id: u.id, role })
     if (error) console.error(error)
     await refresh()
-    setBusyId(null)
+    setBusy(false)
   }
 
   const approve = async (u: UserWithRoles) => {
-    setBusyId(u.id)
+    setBusy(true)
     const supabase = getSupabase()
     await supabase.from('profiles').update({ status: 'active' }).eq('id', u.id)
     if (!u.roles.includes('miembro')) {
       await supabase.from('user_roles').insert({ user_id: u.id, role: 'miembro' })
     }
     await refresh()
-    setBusyId(null)
+    setBusy(false)
   }
+
+  const inputCls =
+    'w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400'
 
   return (
     <div>
@@ -114,87 +140,167 @@ export default function Usuarios() {
       )}
 
       {status === 'success' && (
-        <ul className="space-y-3">
-          {users.map((u) => {
-            const busy = busyId === u.id
-            return (
-              <li
-                key={u.id}
-                className="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-800"
-              >
-                <div className="flex items-start justify-between gap-3 mb-3">
-                  <div className="min-w-0">
-                    <p className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                      {u.full_name ?? u.email ?? 'Sin nombre'}
-                      {u.id === user?.id && (
-                        <span className="text-[10px] font-bold text-cyan-600 dark:text-cyan-400 uppercase">
-                          (tú)
-                        </span>
-                      )}
-                    </p>
-                    {u.email && (
-                      <p className="text-sm text-gray-500 dark:text-slate-400 break-all">
-                        {u.email}
-                      </p>
-                    )}
-                  </div>
-                  {u.status === 'pending' ? (
-                    <button
-                      onClick={() => approve(u)}
-                      disabled={busy}
-                      className="shrink-0 inline-flex items-center gap-1 text-xs font-semibold bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300 px-3 py-1.5 rounded-full disabled:opacity-60"
-                    >
-                      <Check className="w-3.5 h-3.5" aria-hidden="true" />
-                      Aprobar
-                    </button>
-                  ) : (
-                    <span className="shrink-0 inline-flex items-center gap-1 text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-300 px-3 py-1.5 rounded-full">
-                      <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
-                      Activo
+        <ul className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 divide-y divide-gray-100 dark:divide-slate-800 overflow-hidden">
+          {users.map((u) => (
+            <li key={u.id} className="flex items-center gap-3 p-3">
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-gray-900 dark:text-white truncate">
+                  {u.full_name ?? u.email ?? 'Sin nombre'}
+                  {u.id === user?.id && (
+                    <span className="ml-2 text-[10px] font-bold text-cyan-600 dark:text-cyan-400 uppercase">
+                      (tú)
                     </span>
                   )}
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  {ALL_ROLES.map(({ role, label }) => {
-                    const active = u.roles.includes(role)
-                    const lockedSelfAdmin =
-                      u.id === user?.id && role === 'admin' && active
-                    return (
-                      <button
-                        key={role}
-                        onClick={() => toggleRole(u, role)}
-                        disabled={busy || lockedSelfAdmin}
-                        aria-pressed={active}
-                        title={
-                          lockedSelfAdmin
-                            ? 'No puedes quitarte tu propio rol de admin'
-                            : undefined
-                        }
-                        className={`text-xs font-medium px-3 py-1.5 rounded-full border transition-colors disabled:opacity-60 ${
-                          lockedSelfAdmin ? 'cursor-not-allowed' : ''
-                        } ${
-                          active
-                            ? 'bg-cyan-500 text-white border-cyan-500'
-                            : 'bg-transparent text-gray-500 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:border-cyan-400'
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    )
-                  })}
-                  {busy && (
-                    <Loader2
-                      className="w-4 h-4 animate-spin text-cyan-500 self-center"
-                      aria-label="Guardando"
-                    />
+                </p>
+                <p className="text-sm text-gray-500 dark:text-slate-400 truncate">
+                  {u.email}
+                  {u.roles.length > 0 && (
+                    <span className="text-gray-400 dark:text-slate-500">
+                      {' · '}
+                      {u.roles.join(', ')}
+                    </span>
                   )}
-                </div>
-              </li>
-            )
-          })}
+                </p>
+              </div>
+
+              {u.status === 'pending' && (
+                <span className="shrink-0 text-[11px] font-semibold bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300 px-2.5 py-1 rounded-full">
+                  Pendiente
+                </span>
+              )}
+
+              <button
+                onClick={() => openEdit(u)}
+                aria-label={`Editar ${u.full_name ?? u.email ?? 'usuario'}`}
+                className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800"
+              >
+                <Pencil className="w-4 h-4" aria-hidden="true" />
+              </button>
+            </li>
+          ))}
         </ul>
       )}
+
+      {/* Modal de edición */}
+      <Modal
+        open={!!editing}
+        onClose={() => setEditingId(null)}
+        title="Editar usuario"
+      >
+        {editing && (
+          <div className="space-y-5">
+            <div>
+              <p className="text-sm text-gray-500 dark:text-slate-400 break-all">
+                {editing.email}
+              </p>
+              <span
+                className={`inline-block mt-1 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
+                  editing.status === 'pending'
+                    ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300'
+                    : 'bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-300'
+                }`}
+              >
+                {editing.status === 'pending' ? 'Pendiente' : 'Activo'}
+              </span>
+            </div>
+
+            {editing.status === 'pending' && (
+              <button
+                onClick={() => approve(editing)}
+                disabled={busy}
+                className="w-full inline-flex items-center justify-center gap-2 bg-cyan-400 hover:bg-cyan-500 text-black font-semibold py-2.5 rounded-full transition-colors disabled:opacity-60"
+              >
+                <Check className="w-4 h-4" aria-hidden="true" />
+                Aprobar (activar + rol miembro)
+              </button>
+            )}
+
+            {/* Datos */}
+            <div className="space-y-3">
+              <div>
+                <label
+                  htmlFor="edit-name"
+                  className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1"
+                >
+                  Nombre
+                </label>
+                <input
+                  id="edit-name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="edit-phone"
+                  className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1"
+                >
+                  Teléfono
+                </label>
+                <input
+                  id="edit-phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className={inputCls}
+                />
+              </div>
+              <button
+                onClick={saveProfile}
+                disabled={busy}
+                className="text-sm font-semibold text-cyan-600 dark:text-cyan-400 disabled:opacity-60"
+              >
+                Guardar datos
+              </button>
+            </div>
+
+            {/* Roles */}
+            <div>
+              <p className="text-sm font-semibold text-gray-700 dark:text-slate-200 mb-2">
+                Roles
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {ALL_ROLES.map(({ role, label }) => {
+                  const active = editing.roles.includes(role)
+                  const lockedSelfAdmin =
+                    editing.id === user?.id && role === 'admin' && active
+                  return (
+                    <button
+                      key={role}
+                      onClick={() => toggleRole(editing, role)}
+                      disabled={busy || lockedSelfAdmin}
+                      aria-pressed={active}
+                      title={
+                        lockedSelfAdmin
+                          ? 'No puedes quitarte tu propio rol de admin'
+                          : undefined
+                      }
+                      className={`text-sm font-medium px-3 py-1.5 rounded-full border transition-colors disabled:opacity-60 ${
+                        lockedSelfAdmin ? 'cursor-not-allowed' : ''
+                      } ${
+                        active
+                          ? 'bg-cyan-500 text-white border-cyan-500'
+                          : 'bg-transparent text-gray-500 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:border-cyan-400'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {busy && (
+              <p className="flex items-center gap-2 text-sm text-gray-500 dark:text-slate-400">
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                Guardando…
+              </p>
+            )}
+          </div>
+        )}
+      </Modal>
     </div>
   )
 }
