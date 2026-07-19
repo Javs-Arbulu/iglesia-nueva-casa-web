@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, House } from 'lucide-react'
 import logoUrl from '@/assets/images/logo-claro-navbar.png'
 import logoWebP from '@/assets/images/logo-claro-navbar.webp'
 import logoDarkUrl from '@/assets/images/logo.png'
 import logoDarkWebP from '@/assets/images/logo.webp'
 import { Link, useLocation } from 'react-router-dom'
-import { Button } from '../ui/button'
 import ThemeToggle from './ThemeToggle'
 import { NAV_LINKS } from '@/lib/constants'
 
@@ -102,20 +101,31 @@ const Navbar = () => {
             ))}
           </ul>
 
-          {/* CTA + tema (desktop) */}
+          {/* Portal admin + tema (desktop) */}
           <div className="hidden md:flex items-center gap-2">
             <ThemeToggle className={controlColor} />
-            <Button
-              asChild
-              className="bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-full px-6 transition-all duration-300 hover:scale-105 shadow-lg shadow-cyan-400/30"
+            <Link
+              to="/admin"
+              aria-label="Portal administrativo"
+              title="Portal administrativo"
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-400 hover:bg-cyan-500 text-black transition-all duration-300 hover:scale-105 shadow-lg shadow-cyan-400/30"
             >
-              <Link to="/contacto">Ingresar</Link>
-            </Button>
+              <House className="w-5 h-5" aria-hidden="true" />
+            </Link>
           </div>
 
-          {/* Tema + menú (móvil) */}
+          {/* Portal admin + tema + menú (móvil) */}
           <div className="flex items-center gap-1 md:hidden">
             <ThemeToggle className={controlColor} />
+            <Link
+              to="/admin"
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-label="Portal administrativo"
+              title="Portal administrativo"
+              className="flex items-center justify-center w-9 h-9 rounded-full bg-cyan-400 hover:bg-cyan-500 text-black transition-colors"
+            >
+              <House className="w-5 h-5" aria-hidden="true" />
+            </Link>
             <button
               onClick={() => setIsMobileMenuOpen((prev) => !prev)}
               className={`${controlColor} p-2 rounded-lg transition-colors`}
@@ -156,14 +166,6 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            <Button
-              asChild
-              className="w-full bg-cyan-400 hover:bg-cyan-500 text-black font-semibold rounded-full py-6 transition-all duration-300 shadow-lg shadow-cyan-400/30 mt-4"
-            >
-              <Link to="/contacto" onClick={() => setIsMobileMenuOpen(false)}>
-                Ingresar
-              </Link>
-            </Button>
           </nav>
         </div>
       </div>
