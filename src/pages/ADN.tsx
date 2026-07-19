@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import type { ADNValor } from '@/types'
 
 const valores: ADNValor[] = [
@@ -85,17 +85,33 @@ const getEllipsePosition = (
 export default function ADNSection() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [rotation, setRotation] = useState(0)
+  const [isVisible, setIsVisible] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
 
-  // Rotate continuously only when nothing is selected
+  // Solo animar cuando la sección está en pantalla (ahorra CPU/batería).
   useEffect(() => {
-    if (selectedId) return
+    const el = sectionRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  // Rotación continua: solo si está visible, nada seleccionado y el usuario no
+  // pidió menos movimiento.
+  useEffect(() => {
+    if (selectedId || !isVisible) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     const interval = setInterval(() => {
-      setRotation((prev) => (prev + 0.3) % 360)
-    }, 30)
+      setRotation((prev) => (prev + 0.4) % 360)
+    }, 40)
 
     return () => clearInterval(interval)
-  }, [selectedId])
+  }, [selectedId, isVisible])
 
   const handleSelect = useCallback((id: string) => {
     setSelectedId(id)
@@ -110,6 +126,7 @@ export default function ADNSection() {
 
   return (
     <section
+      ref={sectionRef}
       id="adn"
       aria-label="Nuestro ADN — valores de la iglesia"
       className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 py-20 lg:py-24 relative overflow-hidden"
