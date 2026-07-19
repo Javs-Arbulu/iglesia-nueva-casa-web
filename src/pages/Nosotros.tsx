@@ -83,7 +83,7 @@ export default function Nosotros() {
                 size="lg"
                 variant="outline"
                 asChild
-                className="border-2 border-white text-white hover:bg-white/10 font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 backdrop-blur-sm"
+                className="border-2 border-white bg-transparent text-white hover:bg-white/10 font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 backdrop-blur-sm"
               >
                 <Link to="/contacto#info">Ver Horarios</Link>
               </Button>

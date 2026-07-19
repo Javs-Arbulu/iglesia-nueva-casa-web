@@ -78,6 +78,7 @@ export interface Ministerio {
   title: string
   icon: string
   image: string
+  imageWebp?: string
   description: string
   schedule: string
   bgColor: string

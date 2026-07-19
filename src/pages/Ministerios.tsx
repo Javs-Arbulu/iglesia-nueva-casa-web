@@ -5,14 +5,24 @@ import { useScrollTop } from '@/hooks/useScroll'
 import { MINISTERIO_TABS } from '@/lib/constants'
 import type { Ministerio, MinisterioTab } from '@/types'
 import SEO from '@/components/common/SEO'
+import jovenesWebp from '@/assets/images/ministerios/jovenes.webp'
+import jovenesJpg from '@/assets/images/ministerios/jovenes.jpg'
+import ninosWebp from '@/assets/images/ministerios/ninos.webp'
+import ninosJpg from '@/assets/images/ministerios/ninos.jpg'
+import alabanzaWebp from '@/assets/images/ministerios/alabanza.webp'
+import alabanzaJpg from '@/assets/images/ministerios/alabanza.jpg'
+import gruposWebp from '@/assets/images/ministerios/grupos.webp'
+import gruposJpg from '@/assets/images/ministerios/grupos.jpg'
+import servicioWebp from '@/assets/images/ministerios/servicio.webp'
+import servicioJpg from '@/assets/images/ministerios/servicio.jpg'
 
 const ministerios: Ministerio[] = [
   {
     category: 'GENERACIONES',
     title: 'Jóvenes',
     icon: '👥',
-    image:
-      'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=400&fit=crop',
+    image: jovenesJpg,
+    imageWebp: jovenesWebp,
     description:
       'Una comunidad vibrante para la siguiente generación. No caminamos solos, crecemos juntos.',
     schedule: 'Sábados 6:00 PM',
@@ -22,8 +32,8 @@ const ministerios: Ministerio[] = [
     category: 'GENERACIONES',
     title: 'Niños',
     icon: '😊',
-    image:
-      'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&h=400&fit=crop',
+    image: ninosJpg,
+    imageWebp: ninosWebp,
     description:
       'Formando corazones desde la infancia con historias bíblicas, juegos y mucha diversión.',
     schedule: 'Domingos 10:00 AM',
@@ -33,8 +43,8 @@ const ministerios: Ministerio[] = [
     category: 'SERVICIO',
     title: 'Alabanza',
     icon: '🎵',
-    image:
-      'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600&h=400&fit=crop',
+    image: alabanzaJpg,
+    imageWebp: alabanzaWebp,
     description:
       'Exaltando a Dios a través del arte y la música. Si tocas un instrumento o cantas, este es tu lugar.',
     schedule: 'Jueves 7:00 PM',
@@ -44,8 +54,8 @@ const ministerios: Ministerio[] = [
     category: 'COMUNIDAD',
     title: 'Grupos Pequeños',
     icon: '🏠',
-    image:
-      'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&h=400&fit=crop',
+    image: gruposJpg,
+    imageWebp: gruposWebp,
     description:
       'Vida en comunidad fuera de las cuatro paredes del templo. Comparte, ríe y crece en casas.',
     schedule: 'Diferentes horarios',
@@ -55,8 +65,8 @@ const ministerios: Ministerio[] = [
     category: 'SERVICIO',
     title: 'Servicio Social',
     icon: '🤝',
-    image:
-      'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=600&h=400&fit=crop',
+    image: servicioJpg,
+    imageWebp: servicioWebp,
     description:
       'Siendo las manos y pies de Jesús en la ciudad a través de ayuda humanitaria y brigadas.',
     schedule: 'Sábados 9:00 AM',
@@ -134,12 +144,19 @@ export default function Ministerios() {
             >
               {/* Image */}
               <div className="relative h-56 overflow-hidden">
-                <img
-                  src={ministerio.image}
-                  alt={`Ministerio ${ministerio.title}`}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  loading="lazy"
-                />
+                <picture>
+                  {ministerio.imageWebp && (
+                    <source srcSet={ministerio.imageWebp} type="image/webp" />
+                  )}
+                  <img
+                    src={ministerio.image}
+                    alt={`Ministerio ${ministerio.title}`}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    loading="lazy"
+                    width={800}
+                    height={600}
+                  />
+                </picture>
                 <div className="absolute top-4 right-4">
                   <span className="bg-cyan-400 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
                     {ministerio.category}
