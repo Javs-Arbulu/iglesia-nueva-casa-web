@@ -69,6 +69,9 @@ export default function Usuarios() {
   }
 
   const toggleRole = async (u: UserWithRoles, role: AppRole) => {
+    // No permitir que te quites tu propio rol de admin (evita auto-bloqueo).
+    // Otro admin sí puede quitártelo.
+    if (u.id === user?.id && role === 'admin' && u.roles.includes(role)) return
     setBusyId(u.id)
     const supabase = getSupabase()
     const has = u.roles.includes(role)
@@ -155,13 +158,22 @@ export default function Usuarios() {
                 <div className="flex flex-wrap gap-2">
                   {ALL_ROLES.map(({ role, label }) => {
                     const active = u.roles.includes(role)
+                    const lockedSelfAdmin =
+                      u.id === user?.id && role === 'admin' && active
                     return (
                       <button
                         key={role}
                         onClick={() => toggleRole(u, role)}
-                        disabled={busy}
+                        disabled={busy || lockedSelfAdmin}
                         aria-pressed={active}
+                        title={
+                          lockedSelfAdmin
+                            ? 'No puedes quitarte tu propio rol de admin'
+                            : undefined
+                        }
                         className={`text-xs font-medium px-3 py-1.5 rounded-full border transition-colors disabled:opacity-60 ${
+                          lockedSelfAdmin ? 'cursor-not-allowed' : ''
+                        } ${
                           active
                             ? 'bg-cyan-500 text-white border-cyan-500'
                             : 'bg-transparent text-gray-500 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:border-cyan-400'

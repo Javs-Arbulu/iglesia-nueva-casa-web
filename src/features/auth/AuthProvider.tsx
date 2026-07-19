@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, type ReactNode } from 'react'
+import { useEffect, useState, useCallback, useRef, type ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { getSupabase } from '@/services/supabase'
 import type { AppRole, Profile } from '@/types'
@@ -20,6 +20,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Si Supabase no está configurado, no hay nada que cargar → loading arranca false.
   const [loading, setLoading] = useState(isConfigured)
   const [configured] = useState(isConfigured)
+  // Usuario cuyo perfil/roles ya cargamos (evita recargar en cada token refresh).
+  const loadedUid = useRef<string | null>(null)
 
   const loadProfileAndRoles = useCallback(async (uid: string) => {
     try {
@@ -54,12 +56,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // setTimeout para que las consultas puedan tomar el lock.
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s)
-      if (s) {
-        setTimeout(() => loadProfileAndRoles(s.user.id), 0)
-      } else {
+      if (!s) {
+        loadedUid.current = null
         setProfile(null)
         setRoles([])
         setLoading(false)
+        return
+      }
+      // Solo (re)cargamos perfil/roles cuando cambia el usuario (login/sesión
+      // inicial), no en cada refresh de token. Marcamos loading hasta tenerlos,
+      // para que el redirect post-login espere a conocer los roles.
+      if (s.user.id !== loadedUid.current) {
+        loadedUid.current = s.user.id
+        setLoading(true)
+        setTimeout(() => loadProfileAndRoles(s.user.id), 0)
       }
     })
 
