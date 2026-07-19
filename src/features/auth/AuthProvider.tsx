@@ -34,6 +34,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('No se pudieron cargar perfil/roles:', err)
       setProfile(null)
       setRoles([])
+    } finally {
+      setLoading(false)
     }
   }, [])
 
@@ -45,25 +47,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return
     }
 
-    let active = true
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (!active) return
-      setSession(data.session)
-      if (data.session) await loadProfileAndRoles(data.session.user.id)
-      setLoading(false)
-    })
-
-    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, s) => {
+    // onAuthStateChange emite INITIAL_SESSION al suscribirse, así que cubre la
+    // sesión actual sin necesidad de getSession().
+    // IMPORTANTE: el callback corre dentro del lock de auth de Supabase; NO se
+    // debe await-ear otra llamada a Supabase aquí (deadlock). Lo diferimos con
+    // setTimeout para que las consultas puedan tomar el lock.
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s)
-      if (s) await loadProfileAndRoles(s.user.id)
-      else {
+      if (s) {
+        setTimeout(() => loadProfileAndRoles(s.user.id), 0)
+      } else {
         setProfile(null)
         setRoles([])
+        setLoading(false)
       }
     })
 
     return () => {
-      active = false
       sub.subscription.unsubscribe()
     }
   }, [loadProfileAndRoles])
