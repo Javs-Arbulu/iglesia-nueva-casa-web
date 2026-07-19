@@ -1,5 +1,3 @@
-import { Helmet } from 'react-helmet-async'
-
 const SITE_URL = 'https://nuevacasa.pe'
 const SITE_NAME = 'Iglesia Nueva Casa'
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`
@@ -19,8 +17,9 @@ const SEO = ({
   url = SITE_URL,
   type = 'website',
 }: SEOProps) => {
+  // React 19 eleva <title>/<meta>/<link> al <head> automáticamente.
   return (
-    <Helmet>
+    <>
       {/* Primary */}
       <title>{title}</title>
       <meta name="description" content={description} />
@@ -40,7 +39,7 @@ const SEO = ({
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
-    </Helmet>
+    </>
   )
 }
 
