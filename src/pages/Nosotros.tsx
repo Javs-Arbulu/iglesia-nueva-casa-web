@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Users, Zap, TrendingUp } from 'lucide-react'
 import ADNSection from './ADN'
+import comunidadWebp from '@/assets/images/Carrusel2.webp'
+import comunidadJpg from '@/assets/images/Carrusel2.jpg'
 import { Link } from 'react-router-dom'
 import { useScrollToHash } from '@/hooks/useScroll'
 import type { VisionItem } from '@/types'
@@ -89,12 +91,17 @@ export default function Nosotros() {
 
             <div className="relative">
               <div className="rounded-3xl overflow-hidden shadow-2xl ring-8 ring-white/20">
-                <img
-                  src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=600&fit=crop"
-                  alt="Comunidad joven de Iglesia Nueva Casa"
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
+                <picture>
+                  <source srcSet={comunidadWebp} type="image/webp" />
+                  <img
+                    src={comunidadJpg}
+                    alt="Bautismo en la Iglesia Nueva Casa"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    width={800}
+                    height={600}
+                  />
+                </picture>
                 <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-xl">
                   <p className="text-gray-900 font-semibold">Comunidad Joven</p>
                   <p className="text-cyan-600 text-sm font-medium">

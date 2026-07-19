@@ -400,13 +400,15 @@ export default function Contacto() {
                   </div>
 
                   <div className="relative">
-                    <img
-                      src="https://images.unsplash.com/photo-1597931752949-98c74b5b159f?w=800&h=400&fit=crop"
-                      alt="Iglesia Nueva Casa"
-                      className="w-full h-56 object-cover"
+                    <iframe
+                      src={CHURCH_INFO.mapsEmbed}
+                      title="Ubicación de la Iglesia Nueva Casa en Google Maps"
+                      className="w-full h-56 border-0"
                       loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      allowFullScreen
                     />
-                    <div className="absolute bottom-4 left-4 right-4">
+                    <div className="absolute bottom-4 left-4 right-4 pointer-events-none">
                       <address className="not-italic bg-white rounded-xl px-5 py-3 shadow-lg flex items-center gap-3">
                         <MapPin
                           className="w-5 h-5 text-cyan-400 flex-shrink-0"
