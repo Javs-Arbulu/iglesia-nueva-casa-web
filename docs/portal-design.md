@@ -1,8 +1,8 @@
 # Diseño del Portal — Iglesia Nueva Casa
 
 > Documento de arquitectura del portal (panel administrativo + área de miembros).
-> Estado: **borrador para revisión**. Es la fuente de verdad del diseño; se
-> actualiza a medida que decidimos. No es código todavía.
+> Estado: **aprobado — decisiones cerradas** (ver §13). Es la fuente de verdad del
+> diseño; se actualiza si algo cambia. Aún no es código: el siguiente paso es la Fase 0.
 
 ---
 
@@ -12,7 +12,7 @@ Construir un **portal con roles** sobre el sitio actual (React + Vite + Supabase
 que permita:
 
 - Gestionar **fotos** que se van agregando (galería del sitio).
-- Editar un **conjunto curado de textos** del sitio.
+- Editar un **conjunto curado de textos** (horarios/datos de contacto + un bloque de anuncios).
 - Gestionar **eventos** (se publican en el sitio público).
 - **CRUD de usuarios** con roles y permisos.
 - Un módulo de **finanzas** (sensible, aislado).
@@ -56,9 +56,10 @@ Implicaciones concretas (afectan cada módulo):
 - **Descargas**: abrir/guardar archivos de forma nativa en el teléfono.
 - **Rendimiento**: cargar poco (rutas lazy, imágenes optimizadas) — pesa aún más
   en datos móviles.
-- **PWA (instalable)**: para el **portal** sí tiene sentido evaluar "agregar a
-  pantalla de inicio" (que se sienta como app). *(En el sitio público la
-  descartamos; en el portal de uso diario desde el teléfono cambia el cálculo.)*
+- **PWA (instalable) — decidido: sí**: el portal será **instalable** ("agregar a
+  pantalla de inicio") para que se sienta como app (ícono, pantalla completa).
+  *(En el sitio público la descartamos; en el portal de uso diario desde el
+  teléfono, sí.)*
 - **Modo oscuro** ya disponible → cómodo de noche en el teléfono.
 
 > Regla práctica: cada pantalla se diseña y **se prueba primero en un teléfono**;
@@ -97,12 +98,10 @@ Cuatro roles. Un usuario puede tener **más de uno** (ej. un pastor puede ser
 - **Supabase Auth** (email + contraseña; opcional: enlace mágico o Google más adelante).
 - **Cuentas de staff** (admin/editor/finanzas): las crea/invita un Administrador.
   No hay registro público para staff.
-- **Cuentas de miembros:** hay dos opciones (⇒ **decisión abierta**, ver §11):
-  1. **Registro abierto con aprobación**: cualquiera se registra y queda
-     `pending`; un admin lo aprueba y le da rol `miembro`.
-  2. **Solo por invitación**: el admin invita por correo.
-  Recomendación inicial: **registro con aprobación** (la iglesia controla quién
-  es miembro, pero sin trabajo manual de crear cada cuenta).
+- **Cuentas de miembros (decidido):** se soportan **dos vías** que conviven:
+  1. **Invitación**: un admin invita por correo (Resend) → el invitado crea su clave.
+  2. **Registro abierto con aprobación**: cualquiera se registra y queda `pending`;
+     un admin lo aprueba y le asigna el rol `miembro`.
 - **Roles en el token (JWT):** usar un *custom access token hook* de Supabase para
   incrustar los roles en el JWT → RLS más eficiente. Alternativa pragmática:
   una función `has_role(uid, rol)` `security definer` usada dentro de las políticas.
@@ -269,7 +268,7 @@ datos** para las partes editables.
 | UI (tablas, diálogos) | shadcn/ui (ya está) + componentes nuevos |
 | Textos editables | Markdown / texto plano al inicio (editor enriquecido después) |
 | Operaciones con privilegios | Funciones serverless con **service-role key** (crear usuarios, invitaciones, URLs firmadas) — nunca en el cliente |
-| Correos (invitaciones/avisos) | Resend vía serverless (a definir) |
+| Correos (invitaciones/avisos) | **Resend** vía serverless (decidido) |
 
 ## 11. Seguridad — puntos críticos
 
@@ -296,21 +295,23 @@ mobile-first** (diseñada y probada en teléfono).
 | **5 — Miembros** | Área de miembros + descargas (bucket privado). |
 | **6 — Finanzas** | Módulo de finanzas con roles estrictos + auditoría. |
 
-## 13. Decisiones abiertas (a cerrar)
+## 13. Decisiones tomadas
 
-1. **Registro de miembros:** ¿abierto con aprobación, o solo por invitación?
-2. **Textos editables:** ¿qué textos exactos? (hay que listar los campos: horarios,
-   anuncios, descripciones de ministerios, hero, etc.)
-3. **Finanzas:** ¿registro completo de ingresos/egresos, o solo ver resúmenes/reportes?
-4. **Correos:** ¿integramos envío de correos (invitaciones, avisos)? ¿con qué proveedor?
-5. **Eventos:** ¿inscripción/RSVP de miembros, o solo informativo?
-6. **Directorio de miembros:** ¿los miembros tienen perfil visible entre ellos, o
-   solo acceso a descargas?
-7. **PWA del portal:** ¿lo hacemos instalable ("agregar a pantalla de inicio")
-   desde el inicio, o lo dejamos para una fase posterior?
+1. **Registro de miembros:** dos vías que conviven → **invitación** (admin) **y
+   registro abierto con aprobación** (self-service → `pending` → aprobado).
+2. **Textos editables:** se empieza con **horarios/datos de contacto** y un
+   **bloque de anuncios/banner de novedades**. El resto queda en código por ahora.
+3. **Finanzas:** **registro de ingresos/egresos** (tipo, monto, categoría, fecha)
+   + **resumen mensual**. Comprobantes adjuntos → fase posterior.
+4. **Correos:** **Resend** vía serverless (invitaciones, aprobaciones, avisos).
+5. **Eventos:** **solo informativos** (título, fecha, lugar, imagen). Sin RSVP por ahora.
+6. **Directorio de miembros:** **no**. Los miembros solo acceden a descargas y
+   eventos; sin perfiles visibles entre ellos → `profiles` se mantiene mínimo.
+7. **PWA del portal:** **sí, desde el inicio** (instalable, alineado con mobile-first).
 
 ---
 
 ## Próximo paso propuesto
-Revisar y ajustar este documento. Cuando esté aprobado, arrancamos por la **Fase 0**
-(la base de auth + roles), que es el cimiento de todo lo demás.
+Diseño **aprobado y cerrado**. Arrancamos por la **Fase 0** (auth + roles + RLS +
+login + shell `/admin` mobile-first + ver mensajes de contacto), que es el cimiento
+de todo lo demás.
