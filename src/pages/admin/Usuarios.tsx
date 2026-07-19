@@ -22,7 +22,8 @@ export default function Usuarios() {
 
   // Edición en modal
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [name, setName] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [phone, setPhone] = useState('')
 
   const editing = users.find((u) => u.id === editingId) ?? null
@@ -76,16 +77,25 @@ export default function Usuarios() {
 
   const openEdit = (u: UserWithRoles) => {
     setEditingId(u.id)
-    setName(u.full_name ?? '')
+    setFirstName(u.first_name ?? '')
+    setLastName(u.last_name ?? '')
     setPhone(u.phone ?? '')
   }
 
   const saveProfile = async () => {
     if (!editing) return
     setBusy(true)
+    const fn = firstName.trim()
+    const ln = lastName.trim()
+    const fullName = [fn, ln].filter(Boolean).join(' ')
     const { error } = await getSupabase()
       .from('profiles')
-      .update({ full_name: name.trim() || null, phone: phone.trim() || null })
+      .update({
+        first_name: fn || null,
+        last_name: ln || null,
+        full_name: fullName || null,
+        phone: phone.trim() || null,
+      })
       .eq('id', editing.id)
     if (error) console.error(error)
     await refresh()
@@ -217,20 +227,37 @@ export default function Usuarios() {
 
             {/* Datos */}
             <div className="space-y-3">
-              <div>
-                <label
-                  htmlFor="edit-name"
-                  className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1"
-                >
-                  Nombre
-                </label>
-                <input
-                  id="edit-name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className={inputCls}
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label
+                    htmlFor="edit-first"
+                    className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1"
+                  >
+                    Nombre
+                  </label>
+                  <input
+                    id="edit-first"
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className={inputCls}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="edit-last"
+                    className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1"
+                  >
+                    Apellido
+                  </label>
+                  <input
+                    id="edit-last"
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className={inputCls}
+                  />
+                </div>
               </div>
               <div>
                 <label

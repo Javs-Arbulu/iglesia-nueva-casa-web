@@ -91,12 +91,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signUp = useCallback(
-    async (email: string, password: string, fullName: string) => {
+    async (
+      email: string,
+      password: string,
+      firstName: string,
+      lastName: string
+    ) => {
       try {
         const { error } = await getSupabase().auth.signUp({
           email,
           password,
-          options: { data: { full_name: fullName } },
+          options: { data: { first_name: firstName, last_name: lastName } },
         })
         return { error: error?.message ?? null }
       } catch {

@@ -9,7 +9,8 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 export default function Registro() {
   const { signUp } = useAuth()
 
-  const [fullName, setFullName] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -28,7 +29,8 @@ export default function Registro() {
       setDone(true) // bot: fingimos éxito, no creamos nada
       return
     }
-    if (!fullName.trim()) return setError('Ingresa tu nombre.')
+    if (!firstName.trim()) return setError('Ingresa tu nombre.')
+    if (!lastName.trim()) return setError('Ingresa tu apellido.')
     if (!EMAIL_REGEX.test(email)) return setError('Ingresa un correo válido.')
     if (password.length < 8) {
       return setError('La contraseña debe tener al menos 8 caracteres.')
@@ -39,7 +41,8 @@ export default function Registro() {
     const { error: err } = await signUp(
       email.trim().toLowerCase(),
       password,
-      fullName.trim()
+      firstName.trim(),
+      lastName.trim()
     )
     setSubmitting(false)
     if (err) {
@@ -107,22 +110,41 @@ export default function Registro() {
               </p>
             )}
 
-            <div>
-              <label
-                htmlFor="fullName"
-                className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1"
-              >
-                Nombre completo
-              </label>
-              <input
-                id="fullName"
-                type="text"
-                autoComplete="name"
-                required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className={inputCls}
-              />
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  htmlFor="firstName"
+                  className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1"
+                >
+                  Nombre
+                </label>
+                <input
+                  id="firstName"
+                  type="text"
+                  autoComplete="given-name"
+                  required
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1"
+                >
+                  Apellido
+                </label>
+                <input
+                  id="lastName"
+                  type="text"
+                  autoComplete="family-name"
+                  required
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className={inputCls}
+                />
+              </div>
             </div>
 
             <div>
