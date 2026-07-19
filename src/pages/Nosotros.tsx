@@ -52,7 +52,7 @@ export default function Nosotros() {
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
       <section
         aria-label="Sobre nosotros"
-        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700 dark:from-cyan-900 dark:via-blue-900 dark:to-indigo-950"
       >
         {/* Decorative blobs */}
         <div className="absolute inset-0 opacity-20" aria-hidden="true">

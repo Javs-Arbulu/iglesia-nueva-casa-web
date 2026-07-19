@@ -151,7 +151,7 @@ export default function Contacto() {
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
       <section
         aria-label="Contacto — cabecera"
-        className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700"
+        className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700 dark:from-cyan-900 dark:via-blue-900 dark:to-indigo-950"
       >
         {/* Decorative blobs */}
         <div className="absolute inset-0 opacity-20" aria-hidden="true">
@@ -191,7 +191,7 @@ export default function Contacto() {
           >
             <path
               d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"
-              fill="#f9fafb"
+              className="fill-gray-50 dark:fill-slate-950"
             />
           </svg>
         </div>

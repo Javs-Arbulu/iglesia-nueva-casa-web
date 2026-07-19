@@ -112,7 +112,7 @@ export default function ADNSection() {
     <section
       id="adn"
       aria-label="Nuestro ADN — valores de la iglesia"
-      className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-16 relative overflow-hidden"
+      className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 py-16 relative overflow-hidden"
     >
       {/* Dot grid pattern */}
       <div className="absolute inset-0 opacity-5" aria-hidden="true">
