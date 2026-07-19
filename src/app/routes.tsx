@@ -6,6 +6,7 @@ import PublicLayout from '@/layouts/PublicLayout'
 const Home = lazy(() => import('@/pages/Home'))
 const Nosotros = lazy(() => import('@/pages/Nosotros'))
 const Ministerios = lazy(() => import('@/pages/Ministerios'))
+const Predicas = lazy(() => import('@/pages/Predicas'))
 const Contacto = lazy(() => import('@/pages/Contacto'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
@@ -43,6 +44,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={pageFallback}>
             <Ministerios />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/predicas',
+        element: (
+          <Suspense fallback={pageFallback}>
+            <Predicas />
           </Suspense>
         ),
       },

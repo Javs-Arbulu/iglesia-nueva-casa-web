@@ -86,6 +86,21 @@ export interface Ministerio {
 
 export type MinisterioTab = 'Todos' | 'Generaciones' | 'Comunidad' | 'Servicio'
 
+// ─── Prédicas (YouTube) ──────────────────────────────────────────────────────────
+
+export interface Predica {
+  id: string
+  title: string
+  published: string
+  url: string
+  thumbnail: string
+}
+
+export interface LiveStatus {
+  live: boolean
+  videoId?: string
+}
+
 // ─── Contacto ──────────────────────────────────────────────────────────────────
 
 export interface ContactFormData {
