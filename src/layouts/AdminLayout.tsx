@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, MessageSquare, LogOut } from 'lucide-react'
+import { LayoutDashboard, MessageSquare, Users, LogOut } from 'lucide-react'
 import type { AppRole } from '@/types'
 import { useAuth } from '@/features/auth/context'
 import ThemeToggle from '@/components/common/ThemeToggle'
@@ -21,6 +21,7 @@ const NAV: NavItem[] = [
     roles: ['admin', 'editor', 'finanzas'],
   },
   { to: '/admin/mensajes', label: 'Mensajes', icon: MessageSquare, roles: ['admin'] },
+  { to: '/admin/usuarios', label: 'Usuarios', icon: Users, roles: ['admin'] },
 ]
 
 const controlCls =

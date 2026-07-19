@@ -124,10 +124,16 @@ export type AppRole = 'admin' | 'editor' | 'finanzas' | 'miembro'
 export interface Profile {
   id: string
   full_name: string | null
+  email: string | null
   phone: string | null
   avatar_url: string | null
   status: 'active' | 'pending'
   created_at: string
+}
+
+/** Perfil + sus roles, para la gestión de usuarios en el admin. */
+export interface UserWithRoles extends Profile {
+  roles: AppRole[]
 }
 
 export interface ContactSubmission {
