@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import PublicLayout from '@/layouts/PublicLayout'
+import { AuthGuard, RoleGuard } from '@/features/auth/guards'
 
 // Lazy-load pages to reduce initial bundle size
 const Home = lazy(() => import('@/pages/Home'))
@@ -9,6 +10,13 @@ const Ministerios = lazy(() => import('@/pages/Ministerios'))
 const Predicas = lazy(() => import('@/pages/Predicas'))
 const Contacto = lazy(() => import('@/pages/Contacto'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
+
+// Portal (auth, admin, área de miembros) — cargado aparte del sitio público
+const Login = lazy(() => import('@/pages/Login'))
+const Portal = lazy(() => import('@/pages/Portal'))
+const AdminLayout = lazy(() => import('@/layouts/AdminLayout'))
+const AdminDashboard = lazy(() => import('@/pages/admin/Dashboard'))
+const Mensajes = lazy(() => import('@/pages/admin/Mensajes'))
 
 // Minimal spinner shown during page-level code-splitting loads.
 // Defined as JSX element (not a component) so this file only exports non-components,
@@ -68,6 +76,58 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={pageFallback}>
             <NotFound />
+          </Suspense>
+        ),
+      },
+    ],
+  },
+
+  // ── Portal (fuera del PublicLayout: sin navbar/footer públicos) ──────────
+  {
+    path: '/login',
+    element: (
+      <Suspense fallback={pageFallback}>
+        <Login />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/portal',
+    element: (
+      <Suspense fallback={pageFallback}>
+        <AuthGuard>
+          <Portal />
+        </AuthGuard>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/admin',
+    element: (
+      <Suspense fallback={pageFallback}>
+        <AuthGuard>
+          <RoleGuard roles={['admin', 'editor', 'finanzas']}>
+            <AdminLayout />
+          </RoleGuard>
+        </AuthGuard>
+      </Suspense>
+    ),
+    children: [
+      {
+        index: true,
+        element: (
+          <Suspense fallback={pageFallback}>
+            <AdminDashboard />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'mensajes',
+        element: (
+          <Suspense fallback={pageFallback}>
+            <RoleGuard roles={['admin']}>
+              <Mensajes />
+            </RoleGuard>
           </Suspense>
         ),
       },

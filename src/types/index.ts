@@ -116,3 +116,25 @@ export interface ContactFormErrors {
   asunto?: string
   mensaje?: string
 }
+
+// ─── Portal / Auth ───────────────────────────────────────────────────────────────
+
+export type AppRole = 'admin' | 'editor' | 'finanzas' | 'miembro'
+
+export interface Profile {
+  id: string
+  full_name: string | null
+  phone: string | null
+  avatar_url: string | null
+  status: 'active' | 'pending'
+  created_at: string
+}
+
+export interface ContactSubmission {
+  id: string
+  nombre: string
+  email: string
+  asunto: string
+  mensaje: string
+  created_at: string
+}

@@ -6,9 +6,19 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://nuevacasa.pe/admin</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://nuevacasa.pe/contacto</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nuevacasa.pe/login</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://nuevacasa.pe/ministerios</loc>
@@ -21,8 +31,18 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://nuevacasa.pe/portal</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://nuevacasa.pe/predicas</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nuevacasa.pemensajes</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>
