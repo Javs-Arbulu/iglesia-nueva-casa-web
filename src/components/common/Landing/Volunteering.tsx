@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
-import VolunteeringImage from '@/assets/images/volunteering.png'
+import VolunteeringImage from '@/assets/images/volunteering.jpg'
 import VolunteeringImageWebP from '@/assets/images/volunteering.webp'
-import VolunteeringImageMobile from '@/assets/images/volunteering-mobile.png'
+import VolunteeringImageMobile from '@/assets/images/volunteering-mobile.jpg'
 import VolunteeringImageMobileWebP from '@/assets/images/volunteering-mobile.webp'
 import { Link } from 'react-router-dom'
 

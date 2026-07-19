@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { MapPin } from 'lucide-react'
-import HeroImage from '@/assets/images/Hero.png'
+import HeroImage from '@/assets/images/Hero.jpg'
 import HeroImageWebP from '@/assets/images/Hero.webp'
 import { CHURCH_INFO, SOCIAL_HREFS } from '@/lib/constants'
 import type { Star } from '@/types'
