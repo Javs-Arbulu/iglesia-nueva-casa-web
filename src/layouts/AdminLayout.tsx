@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -7,6 +8,8 @@ import {
   Image as ImageIcon,
   FileText,
   Wallet,
+  Menu,
+  X,
   LogOut,
 } from 'lucide-react'
 import type { AppRole } from '@/types'
@@ -29,30 +32,10 @@ const NAV: NavItem[] = [
     end: true,
     roles: ['admin', 'editor', 'finanzas'],
   },
-  {
-    to: '/admin/eventos',
-    label: 'Eventos',
-    icon: CalendarDays,
-    roles: ['admin', 'editor'],
-  },
-  {
-    to: '/admin/fotos',
-    label: 'Fotos',
-    icon: ImageIcon,
-    roles: ['admin', 'editor'],
-  },
-  {
-    to: '/admin/contenido',
-    label: 'Contenido',
-    icon: FileText,
-    roles: ['admin', 'editor'],
-  },
-  {
-    to: '/admin/finanzas',
-    label: 'Finanzas',
-    icon: Wallet,
-    roles: ['admin', 'finanzas'],
-  },
+  { to: '/admin/eventos', label: 'Eventos', icon: CalendarDays, roles: ['admin', 'editor'] },
+  { to: '/admin/fotos', label: 'Fotos', icon: ImageIcon, roles: ['admin', 'editor'] },
+  { to: '/admin/contenido', label: 'Contenido', icon: FileText, roles: ['admin', 'editor'] },
+  { to: '/admin/finanzas', label: 'Finanzas', icon: Wallet, roles: ['admin', 'finanzas'] },
   { to: '/admin/mensajes', label: 'Mensajes', icon: MessageSquare, roles: ['admin'] },
   { to: '/admin/usuarios', label: 'Usuarios', icon: Users, roles: ['admin'] },
 ]
@@ -63,6 +46,7 @@ const controlCls =
 export default function AdminLayout() {
   const { profile, hasRole, signOut } = useAuth()
   const navigate = useNavigate()
+  const [navOpen, setNavOpen] = useState(false)
   const items = NAV.filter((n) => hasRole(...n.roles))
 
   const handleSignOut = async () => {
@@ -70,11 +54,38 @@ export default function AdminLayout() {
     navigate('/login', { replace: true })
   }
 
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors ${
+      isActive
+        ? 'bg-cyan-500 text-white'
+        : 'text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800'
+    }`
+
+  const navList = (onClick?: () => void) => (
+    <nav className="space-y-1">
+      {items.map((n) => (
+        <NavLink key={n.to} to={n.to} end={n.end} onClick={onClick} className={linkClass}>
+          <n.icon className="w-5 h-5" aria-hidden="true" />
+          {n.label}
+        </NavLink>
+      ))}
+    </nav>
+  )
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-white">
       {/* Top bar */}
-      <header className="sticky top-0 z-40 h-14 flex items-center justify-between px-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-200 dark:border-slate-800">
-        <span className="font-bold">Panel · Nueva Casa</span>
+      <header className="sticky top-0 z-40 h-14 flex items-center justify-between px-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-200 dark:border-slate-800">
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setNavOpen(true)}
+            aria-label="Abrir menú"
+            className={`md:hidden w-9 h-9 flex items-center justify-center rounded-full transition-colors ${controlCls}`}
+          >
+            <Menu className="w-5 h-5" aria-hidden="true" />
+          </button>
+          <span className="font-bold">Panel · Nueva Casa</span>
+        </div>
         <div className="flex items-center gap-1">
           <ThemeToggle className={controlCls} />
           <button
@@ -91,29 +102,11 @@ export default function AdminLayout() {
       <div className="md:flex">
         {/* Sidebar (desktop) */}
         <aside className="hidden md:block w-56 shrink-0 border-r border-gray-200 dark:border-slate-800 min-h-[calc(100vh-3.5rem)] p-3">
-          <nav className="space-y-1">
-            {items.map((n) => (
-              <NavLink
-                key={n.to}
-                to={n.to}
-                end={n.end}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition-colors ${
-                    isActive
-                      ? 'bg-cyan-500 text-white'
-                      : 'text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800'
-                  }`
-                }
-              >
-                <n.icon className="w-5 h-5" aria-hidden="true" />
-                {n.label}
-              </NavLink>
-            ))}
-          </nav>
+          {navList()}
         </aside>
 
         {/* Content */}
-        <main className="flex-1 p-4 pb-24 md:pb-8 max-w-3xl w-full">
+        <main className="flex-1 p-4 md:p-6 max-w-3xl w-full">
           {profile && (
             <p className="text-sm text-gray-500 dark:text-slate-400 mb-4">
               Hola, {profile.full_name ?? 'staff'}
@@ -123,24 +116,29 @@ export default function AdminLayout() {
         </main>
       </div>
 
-      {/* Bottom nav (mobile) */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 h-16 flex bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-gray-200 dark:border-slate-800">
-        {items.map((n) => (
-          <NavLink
-            key={n.to}
-            to={n.to}
-            end={n.end}
-            className={({ isActive }) =>
-              `flex-1 flex flex-col items-center justify-center gap-0.5 text-xs font-medium ${
-                isActive ? 'text-cyan-500' : 'text-gray-500 dark:text-slate-400'
-              }`
-            }
-          >
-            <n.icon className="w-5 h-5" aria-hidden="true" />
-            {n.label}
-          </NavLink>
-        ))}
-      </nav>
+      {/* Drawer (mobile) */}
+      {navOpen && (
+        <div className="md:hidden fixed inset-0 z-50">
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setNavOpen(false)}
+            aria-hidden="true"
+          />
+          <aside className="absolute left-0 top-0 bottom-0 w-64 bg-white dark:bg-slate-900 shadow-2xl p-4 overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <span className="font-bold">Menú</span>
+              <button
+                onClick={() => setNavOpen(false)}
+                aria-label="Cerrar menú"
+                className={`w-9 h-9 flex items-center justify-center rounded-full transition-colors ${controlCls}`}
+              >
+                <X className="w-5 h-5" aria-hidden="true" />
+              </button>
+            </div>
+            {navList(() => setNavOpen(false))}
+          </aside>
+        </div>
+      )}
     </div>
   )
 }
