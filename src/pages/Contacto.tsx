@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { MapPin, Clock, Send, Loader2 } from 'lucide-react'
 import { useScrollToHash } from '@/hooks/useScroll'
@@ -67,6 +67,11 @@ export default function Contacto() {
   const [isLoading, setIsLoading] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
+  // Anti-spam: honeypot (campo oculto que solo los bots llenan) + tiempo mínimo
+  // de llenado. Ninguno se envía a Supabase.
+  const honeypotRef = useRef<HTMLInputElement>(null)
+  const formLoadedAt = useRef(Date.now())
+
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target
@@ -81,6 +86,21 @@ export default function Contacto() {
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
       setSubmitError(null)
+
+      // Honeypot: si el campo oculto trae valor, es un bot. Simulamos éxito
+      // para no darle pistas y no tocamos Supabase.
+      if (honeypotRef.current?.value) {
+        setSubmitted(true)
+        setFormData(INITIAL_FORM)
+        return
+      }
+
+      // Envío sospechosamente rápido (bots). Un humano tarda más en llenarlo.
+      if (Date.now() - formLoadedAt.current < 3000) {
+        setSubmitError('Por favor, tómate un momento y vuelve a intentarlo.')
+        return
+      }
+
       const validationErrors = validateForm(formData)
 
       if (Object.keys(validationErrors).length > 0) {
@@ -348,6 +368,22 @@ export default function Contacto() {
                         <FieldError
                           message={errors.mensaje}
                           id="mensaje-error"
+                        />
+                      </div>
+
+                      {/* Honeypot anti-spam — oculto para humanos, visible para bots */}
+                      <div
+                        aria-hidden="true"
+                        className="absolute left-[-9999px] top-[-9999px] h-0 w-0 overflow-hidden"
+                      >
+                        <label htmlFor="website">No llenar este campo</label>
+                        <input
+                          ref={honeypotRef}
+                          id="website"
+                          name="website"
+                          type="text"
+                          tabIndex={-1}
+                          autoComplete="off"
                         />
                       </div>
 
