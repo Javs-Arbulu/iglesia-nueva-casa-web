@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
-import VolunteeringImage from '@/assets/images/volunteering.png'
+import VolunteeringImage from '@/assets/images/volunteering.jpg'
 import VolunteeringImageWebP from '@/assets/images/volunteering.webp'
-import VolunteeringImageMobile from '@/assets/images/volunteering-mobile.png'
+import VolunteeringImageMobile from '@/assets/images/volunteering-mobile.jpg'
 import VolunteeringImageMobileWebP from '@/assets/images/volunteering-mobile.webp'
 import { Link } from 'react-router-dom'
 
@@ -40,7 +40,7 @@ const Volunteering = () => {
           />
         </picture>
         {/* Dark overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent dark:from-black/90 dark:via-black/65 dark:to-black/20" />
       </div>
 
       {/* Content */}

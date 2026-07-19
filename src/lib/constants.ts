@@ -6,6 +6,7 @@ export const NAV_LINKS: NavLink[] = [
   { name: 'Inicio', href: '/' },
   { name: 'Nosotros', href: '/nosotros' },
   { name: 'Ministerios', href: '/ministerios' },
+  { name: 'Prédicas', href: '/predicas' },
   { name: 'Contacto', href: '/contacto' },
 ]
 
@@ -13,6 +14,7 @@ export const EXPLORE_LINKS: NavLink[] = [
   { name: 'Inicio', href: '/' },
   { name: 'Nosotros', href: '/nosotros' },
   { name: 'Ministerios', href: '/ministerios' },
+  { name: 'Prédicas', href: '/predicas' },
   { name: 'Contacto', href: '/contacto' },
   {
     name: 'YouTube en Vivo',
@@ -44,6 +46,10 @@ export const CHURCH_INFO = {
     { name: 'Reunión de Adolescentes', day: 'Cada sábado', time: '5:00 PM' },
   ],
 } as const
+
+// ─── YouTube ───────────────────────────────────────────────────────────────────
+
+export const YOUTUBE_CHANNEL_ID = 'UC9WB9NIaV1_FPLXLUEa1dnw'
 
 // ─── Ministerios ───────────────────────────────────────────────────────────────
 

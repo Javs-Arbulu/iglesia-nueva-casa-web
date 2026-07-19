@@ -117,3 +117,18 @@
     transform: translate(-50%, -50%) scale(1);
   }
 }
+
+/* ─── Modo oscuro: revelado circular (View Transitions API) ─────────────────── */
+/* Desactiva el cross-fade por defecto para que se vea limpio el clip-path que
+   anima ThemeToggle. El tema nuevo se dibuja encima del anterior. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 9999;
+}

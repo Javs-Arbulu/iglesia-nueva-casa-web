@@ -13,9 +13,9 @@ const imagesDir = path.join(__dirname, '../src/assets/images')
 
 const CONVERSIONS = [
   // [input, output, quality]
-  ['volunteering.png', 'volunteering.webp', 80],
-  ['volunteering-mobile.png', 'volunteering-mobile.webp', 80],
-  ['Hero.png', 'Hero.webp', 82],
+  ['volunteering.jpg', 'volunteering.webp', 80],
+  ['volunteering-mobile.jpg', 'volunteering-mobile.webp', 80],
+  ['Hero.jpg', 'Hero.webp', 82],
   ['Carrusel1.jpg', 'Carrusel1.webp', 82],
   ['Carrusel2.jpg', 'Carrusel2.webp', 82],
   ['Carrusel3.jpg', 'Carrusel3.webp', 82],

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { MapPin, Clock, Send, Loader2 } from 'lucide-react'
 import { useScrollToHash } from '@/hooks/useScroll'
@@ -67,6 +67,11 @@ export default function Contacto() {
   const [isLoading, setIsLoading] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
+  // Anti-spam: honeypot (campo oculto que solo los bots llenan) + tiempo mínimo
+  // de llenado. Ninguno se envía a Supabase.
+  const honeypotRef = useRef<HTMLInputElement>(null)
+  const formLoadedAt = useRef(Date.now())
+
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target
@@ -81,6 +86,21 @@ export default function Contacto() {
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
       setSubmitError(null)
+
+      // Honeypot: si el campo oculto trae valor, es un bot. Simulamos éxito
+      // para no darle pistas y no tocamos Supabase.
+      if (honeypotRef.current?.value) {
+        setSubmitted(true)
+        setFormData(INITIAL_FORM)
+        return
+      }
+
+      // Envío sospechosamente rápido (bots). Un humano tarda más en llenarlo.
+      if (Date.now() - formLoadedAt.current < 3000) {
+        setSubmitError('Por favor, tómate un momento y vuelve a intentarlo.')
+        return
+      }
+
       const validationErrors = validateForm(formData)
 
       if (Object.keys(validationErrors).length > 0) {
@@ -117,7 +137,7 @@ export default function Contacto() {
   )
 
   const inputBase =
-    'w-full px-5 py-4 rounded-xl bg-gray-50 border border-transparent text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-white transition-all'
+    'w-full px-5 py-4 rounded-xl bg-gray-50 border border-transparent text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-white dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 dark:border-slate-700 dark:focus:bg-slate-800 transition-all'
 
   const inputError = 'border-red-400 bg-red-50 focus:ring-red-400'
 
@@ -131,7 +151,7 @@ export default function Contacto() {
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
       <section
         aria-label="Contacto — cabecera"
-        className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700"
+        className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700 dark:from-cyan-900 dark:via-blue-900 dark:to-indigo-950"
       >
         {/* Decorative blobs */}
         <div className="absolute inset-0 opacity-20" aria-hidden="true">
@@ -171,7 +191,7 @@ export default function Contacto() {
           >
             <path
               d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"
-              fill="#f9fafb"
+              className="fill-gray-50 dark:fill-slate-950"
             />
           </svg>
         </div>
@@ -181,7 +201,7 @@ export default function Contacto() {
       <section
         id="info"
         aria-label="Formulario de contacto e información"
-        className="py-20 bg-gray-50 relative overflow-hidden -mt-px"
+        className="py-20 bg-gray-50 dark:bg-slate-950 relative overflow-hidden -mt-px"
       >
         <div
           className="absolute top-20 right-20 w-72 h-72 bg-cyan-200/30 rounded-full blur-3xl"
@@ -197,8 +217,8 @@ export default function Contacto() {
             <div className="grid lg:grid-cols-5 gap-8">
               {/* ── Contact Form (3/5 cols) ───────────────────────────────── */}
               <div className="lg:col-span-3">
-                <div className="bg-white rounded-3xl p-8 lg:p-10 shadow-lg border border-gray-100">
-                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+                <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 lg:p-10 shadow-lg border border-gray-100 dark:border-slate-800">
+                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-8">
                     Envíanos un mensaje
                   </h2>
 
@@ -207,7 +227,7 @@ export default function Contacto() {
                     <div
                       role="status"
                       aria-live="polite"
-                      className="mb-6 bg-green-50 border border-green-200 text-green-700 rounded-xl px-6 py-4 font-medium"
+                      className="mb-6 bg-green-50 dark:bg-green-500/10 border border-green-200 text-green-700 dark:text-green-300 rounded-xl px-6 py-4 font-medium"
                     >
                       ¡Mensaje enviado! Nos pondremos en contacto pronto.
                     </div>
@@ -218,7 +238,7 @@ export default function Contacto() {
                     <div
                       role="alert"
                       aria-live="assertive"
-                      className="mb-6 bg-red-50 border border-red-200 text-red-700 rounded-xl px-6 py-4 font-medium"
+                      className="mb-6 bg-red-50 dark:bg-red-500/10 border border-red-200 text-red-700 dark:text-red-300 rounded-xl px-6 py-4 font-medium"
                     >
                       {submitError}
                     </div>
@@ -235,7 +255,7 @@ export default function Contacto() {
                         <div>
                           <label
                             htmlFor="nombre"
-                            className="block text-gray-900 font-semibold mb-3 text-base"
+                            className="block text-gray-900 dark:text-white font-semibold mb-3 text-base"
                           >
                             Nombre Completo{' '}
                             <span aria-hidden="true" className="text-red-500">
@@ -266,7 +286,7 @@ export default function Contacto() {
                         <div>
                           <label
                             htmlFor="email"
-                            className="block text-gray-900 font-semibold mb-3 text-base"
+                            className="block text-gray-900 dark:text-white font-semibold mb-3 text-base"
                           >
                             Correo Electrónico{' '}
                             <span aria-hidden="true" className="text-red-500">
@@ -296,7 +316,7 @@ export default function Contacto() {
                       <div>
                         <label
                           htmlFor="asunto"
-                          className="block text-gray-900 font-semibold mb-3 text-base"
+                          className="block text-gray-900 dark:text-white font-semibold mb-3 text-base"
                         >
                           Asunto{' '}
                           <span aria-hidden="true" className="text-red-500">
@@ -324,7 +344,7 @@ export default function Contacto() {
                       <div>
                         <label
                           htmlFor="mensaje"
-                          className="block text-gray-900 font-semibold mb-3 text-base"
+                          className="block text-gray-900 dark:text-white font-semibold mb-3 text-base"
                         >
                           Mensaje{' '}
                           <span aria-hidden="true" className="text-red-500">
@@ -348,6 +368,22 @@ export default function Contacto() {
                         <FieldError
                           message={errors.mensaje}
                           id="mensaje-error"
+                        />
+                      </div>
+
+                      {/* Honeypot anti-spam — oculto para humanos, visible para bots */}
+                      <div
+                        aria-hidden="true"
+                        className="absolute left-[-9999px] top-[-9999px] h-0 w-0 overflow-hidden"
+                      >
+                        <label htmlFor="website">No llenar este campo</label>
+                        <input
+                          ref={honeypotRef}
+                          id="website"
+                          name="website"
+                          type="text"
+                          tabIndex={-1}
+                          autoComplete="off"
                         />
                       </div>
 
@@ -384,7 +420,7 @@ export default function Contacto() {
                 aria-label="Información de contacto"
               >
                 {/* Location Card */}
-                <div className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300">
+                <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-lg border border-gray-100 dark:border-slate-800 hover:shadow-2xl transition-all duration-300">
                   <div className="p-6 pb-4">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center">
@@ -393,26 +429,28 @@ export default function Contacto() {
                           aria-hidden="true"
                         />
                       </div>
-                      <h3 className="text-xl font-bold text-gray-900">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                         Nuestra Ubicación
                       </h3>
                     </div>
                   </div>
 
                   <div className="relative">
-                    <img
-                      src="https://images.unsplash.com/photo-1597931752949-98c74b5b159f?w=800&h=400&fit=crop"
-                      alt="Iglesia Nueva Casa"
-                      className="w-full h-56 object-cover"
+                    <iframe
+                      src={CHURCH_INFO.mapsEmbed}
+                      title="Ubicación de la Iglesia Nueva Casa en Google Maps"
+                      className="w-full h-56 border-0"
                       loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      allowFullScreen
                     />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <address className="not-italic bg-white rounded-xl px-5 py-3 shadow-lg flex items-center gap-3">
+                    <div className="absolute bottom-4 left-4 right-4 pointer-events-none">
+                      <address className="not-italic bg-white dark:bg-slate-900 rounded-xl px-5 py-3 shadow-lg flex items-center gap-3">
                         <MapPin
                           className="w-5 h-5 text-cyan-400 flex-shrink-0"
                           aria-hidden="true"
                         />
-                        <span className="text-gray-900 font-semibold text-sm">
+                        <span className="text-gray-900 dark:text-white font-semibold text-sm">
                           {CHURCH_INFO.address}
                         </span>
                       </address>
@@ -421,7 +459,7 @@ export default function Contacto() {
                 </div>
 
                 {/* Schedule Card */}
-                <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300">
+                <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-lg border border-gray-100 dark:border-slate-800 hover:shadow-2xl transition-all duration-300">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
                       <Clock
@@ -429,7 +467,7 @@ export default function Contacto() {
                         aria-hidden="true"
                       />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                       Horarios de Reunión
                     </h3>
                   </div>
@@ -440,13 +478,13 @@ export default function Contacto() {
                         key={index}
                         className={
                           index < CHURCH_INFO.schedules.length - 1
-                            ? 'border-b border-gray-100 pb-4'
+                            ? 'border-b border-gray-100 dark:border-slate-800 pb-4'
                             : 'pt-2'
                         }
                       >
                         <div className="flex items-start justify-between">
                           <div>
-                            <p className="font-bold text-gray-900 text-base mb-1">
+                            <p className="font-bold text-gray-900 dark:text-white text-base mb-1">
                               {schedule.name}
                             </p>
                             <p className="text-cyan-500 text-sm">
@@ -454,7 +492,7 @@ export default function Contacto() {
                             </p>
                           </div>
                           <div className="text-right">
-                            <time className="font-bold text-gray-900 text-lg">
+                            <time className="font-bold text-gray-900 dark:text-white text-lg">
                               {schedule.time}
                             </time>
                           </div>

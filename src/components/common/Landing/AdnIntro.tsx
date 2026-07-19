@@ -54,7 +54,7 @@ const ADNIntro = () => {
   return (
     <section
       aria-label="Descubre quiénes somos"
-      className="py-20 bg-white relative overflow-hidden"
+      className="py-20 bg-white dark:bg-slate-900 relative overflow-hidden"
     >
       {/* Decorative glows */}
       <div
@@ -149,14 +149,14 @@ const ADNIntro = () => {
                 className="w-2 h-2 bg-cyan-400 rounded-full"
                 aria-hidden="true"
               />
-              <span className="text-gray-600 font-semibold text-sm uppercase tracking-wider">
+              <span className="text-gray-600 dark:text-slate-300 font-semibold text-sm uppercase tracking-wider">
                 Nuestra Esencia
               </span>
             </div>
 
             {/* Heading */}
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight lg:text-right">
-              <span className="block text-gray-900">Descubre</span>
+              <span className="block text-gray-900 dark:text-white">Descubre</span>
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
                 Quiénes
               </span>
@@ -166,7 +166,7 @@ const ADNIntro = () => {
             </h2>
 
             {/* Description */}
-            <p className="text-gray-600 text-lg md:text-xl leading-relaxed mb-8 max-w-xl lg:text-right">
+            <p className="text-gray-600 dark:text-slate-300 text-lg md:text-xl leading-relaxed mb-8 max-w-xl lg:text-right">
               Somos más que un edificio o una reunión de fin de semana. Somos
               una familia unida por un propósito. Explora los valores que
               definen el latido de nuestra cultura.

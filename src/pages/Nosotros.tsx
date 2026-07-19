@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Users, Zap, TrendingUp } from 'lucide-react'
 import ADNSection from './ADN'
+import comunidadWebp from '@/assets/images/Carrusel2.webp'
+import comunidadJpg from '@/assets/images/Carrusel2.jpg'
 import { Link } from 'react-router-dom'
 import { useScrollToHash } from '@/hooks/useScroll'
 import type { VisionItem } from '@/types'
@@ -50,7 +52,7 @@ export default function Nosotros() {
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
       <section
         aria-label="Sobre nosotros"
-        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700 dark:from-cyan-900 dark:via-blue-900 dark:to-indigo-950"
       >
         {/* Decorative blobs */}
         <div className="absolute inset-0 opacity-20" aria-hidden="true">
@@ -69,7 +71,9 @@ export default function Nosotros() {
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                 No solo una iglesia,{' '}
-                <span className="text-cyan-200">una familia.</span>
+                <span className="font-hand font-bold text-cyan-200 text-5xl md:text-6xl lg:text-7xl">
+                  una familia.
+                </span>
               </h1>
               <p className="text-white/90 text-base md:text-lg mb-8 leading-relaxed">
                 Bienvenido a un lugar donde puedes ser tú mismo. Creemos y
@@ -81,7 +85,7 @@ export default function Nosotros() {
                 size="lg"
                 variant="outline"
                 asChild
-                className="border-2 border-white text-white hover:bg-white/10 font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 backdrop-blur-sm"
+                className="border-2 border-white bg-transparent text-white hover:bg-white/10 font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 backdrop-blur-sm"
               >
                 <Link to="/contacto#info">Ver Horarios</Link>
               </Button>
@@ -89,12 +93,17 @@ export default function Nosotros() {
 
             <div className="relative">
               <div className="rounded-3xl overflow-hidden shadow-2xl ring-8 ring-white/20">
-                <img
-                  src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=600&fit=crop"
-                  alt="Comunidad joven de Iglesia Nueva Casa"
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
+                <picture>
+                  <source srcSet={comunidadWebp} type="image/webp" />
+                  <img
+                    src={comunidadJpg}
+                    alt="Bautismo en la Iglesia Nueva Casa"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    width={800}
+                    height={600}
+                  />
+                </picture>
                 <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-xl">
                   <p className="text-gray-900 font-semibold">Comunidad Joven</p>
                   <p className="text-cyan-600 text-sm font-medium">
@@ -113,7 +122,7 @@ export default function Nosotros() {
       {/* ── Vision Section ─────────────────────────────────────────────────── */}
       <section
         aria-label="Nuestra visión"
-        className="pt-20 pb-20 bg-white relative overflow-hidden -mt-px"
+        className="pt-20 pb-20 bg-white dark:bg-slate-900 relative overflow-hidden -mt-px"
       >
         <div
           className="absolute top-20 right-20 w-72 h-72 bg-cyan-200/30 rounded-full blur-3xl"
@@ -126,10 +135,10 @@ export default function Nosotros() {
 
         <div className="container mx-auto px-4 relative z-10">
           <header className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
               Nuestra Visión
             </h2>
-            <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+            <p className="text-gray-600 dark:text-slate-300 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
               Más que reuniones, construimos una comunidad viva y apasionada
               donde cada persona encuentra su propósito.
             </p>
@@ -142,7 +151,7 @@ export default function Nosotros() {
             {visionItems.map((item) => (
               <li
                 key={item.title}
-                className="relative bg-white rounded-3xl p-6 lg:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group border border-gray-100"
+                className="relative bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group border border-gray-100 dark:border-slate-800"
               >
                 {/* Gradient overlay */}
                 <div
@@ -165,10 +174,10 @@ export default function Nosotros() {
                   </div>
                 </div>
 
-                <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white mb-3">
                   {item.title}
                 </h3>
-                <p className="text-gray-600 text-sm lg:text-base leading-relaxed">
+                <p className="text-gray-600 dark:text-slate-300 text-sm lg:text-base leading-relaxed">
                   {item.description}
                 </p>
 
@@ -185,7 +194,7 @@ export default function Nosotros() {
       {/* ── CTA Section ────────────────────────────────────────────────────── */}
       <section
         aria-label="Llámado a la acción"
-        className="py-20 bg-gray-50 relative overflow-hidden"
+        className="py-20 bg-gray-50 dark:bg-slate-950 relative overflow-hidden"
       >
         <div
           className="absolute top-0 left-0 w-96 h-96 bg-cyan-100 rounded-full blur-3xl opacity-20 -translate-x-1/2 -translate-y-1/2"

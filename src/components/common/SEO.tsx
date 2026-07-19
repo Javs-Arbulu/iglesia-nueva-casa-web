@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async'
+import { useEffect } from 'react'
 
 const SITE_URL = 'https://nuevacasa.pe'
 const SITE_NAME = 'Iglesia Nueva Casa'
@@ -12,6 +12,34 @@ interface SEOProps {
   type?: 'website' | 'article'
 }
 
+/** Crea o actualiza <meta {attr}="{key}" content="..."> en el <head>. */
+function setMeta(attr: 'name' | 'property', key: string, content: string) {
+  let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`)
+  if (!el) {
+    el = document.createElement('meta')
+    el.setAttribute(attr, key)
+    document.head.appendChild(el)
+  }
+  el.setAttribute('content', content)
+}
+
+/** Crea o actualiza <link rel="canonical" href="..."> en el <head>. */
+function setCanonical(href: string) {
+  let el = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+  if (!el) {
+    el = document.createElement('link')
+    el.setAttribute('rel', 'canonical')
+    document.head.appendChild(el)
+  }
+  el.setAttribute('href', href)
+}
+
+/**
+ * Metadatos de SEO por página. Actualiza IN SITU las etiquetas que ya existen
+ * en index.html (título, description, Open Graph, Twitter) en lugar de crear
+ * nuevas, evitando duplicados. index.html trae los valores estáticos por
+ * defecto (para scrapers que no ejecutan JS); esto los sobrescribe por ruta.
+ */
 const SEO = ({
   title = `${SITE_NAME} | Iglesia en Lima, Perú`,
   description = 'Iglesia Nueva Casa es una comunidad cristiana en San Martín de Porres, Lima. Únete a nosotros cada domingo y descubre un lugar donde perteneces.',
@@ -19,29 +47,26 @@ const SEO = ({
   url = SITE_URL,
   type = 'website',
 }: SEOProps) => {
-  return (
-    <Helmet>
-      {/* Primary */}
-      <title>{title}</title>
-      <meta name="description" content={description} />
-      <link rel="canonical" href={url} />
+  useEffect(() => {
+    document.title = title
+    setMeta('name', 'description', description)
+    setCanonical(url)
 
-      {/* Open Graph */}
-      <meta property="og:type" content={type} />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={image} />
-      <meta property="og:url" content={url} />
-      <meta property="og:site_name" content={SITE_NAME} />
-      <meta property="og:locale" content="es_PE" />
+    setMeta('property', 'og:type', type)
+    setMeta('property', 'og:title', title)
+    setMeta('property', 'og:description', description)
+    setMeta('property', 'og:image', image)
+    setMeta('property', 'og:url', url)
+    setMeta('property', 'og:site_name', SITE_NAME)
+    setMeta('property', 'og:locale', 'es_PE')
 
-      {/* Twitter Cards */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={image} />
-    </Helmet>
-  )
+    setMeta('name', 'twitter:card', 'summary_large_image')
+    setMeta('name', 'twitter:title', title)
+    setMeta('name', 'twitter:description', description)
+    setMeta('name', 'twitter:image', image)
+  }, [title, description, image, url, type])
+
+  return null
 }
 
 export default SEO

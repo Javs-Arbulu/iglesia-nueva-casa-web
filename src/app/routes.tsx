@@ -6,6 +6,7 @@ import PublicLayout from '@/layouts/PublicLayout'
 const Home = lazy(() => import('@/pages/Home'))
 const Nosotros = lazy(() => import('@/pages/Nosotros'))
 const Ministerios = lazy(() => import('@/pages/Ministerios'))
+const Predicas = lazy(() => import('@/pages/Predicas'))
 const Contacto = lazy(() => import('@/pages/Contacto'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
@@ -13,7 +14,7 @@ const NotFound = lazy(() => import('@/pages/NotFound'))
 // Defined as JSX element (not a component) so this file only exports non-components,
 // keeping react-refresh/only-export-components happy.
 const pageFallback = (
-  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+  <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950">
     <div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
   </div>
 )
@@ -43,6 +44,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={pageFallback}>
             <Ministerios />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/predicas',
+        element: (
+          <Suspense fallback={pageFallback}>
+            <Predicas />
           </Suspense>
         ),
       },

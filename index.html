@@ -5,9 +5,49 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Iglesia Nueva Casa | Lima, Perú</title>
+    <meta
+      name="description"
+      content="Iglesia Nueva Casa es una comunidad cristiana en San Martín de Porres, Lima. Únete a nosotros cada domingo y descubre un lugar donde perteneces."
+    />
+
+    <!-- Open Graph / Twitter estáticos: los scrapers de enlaces (WhatsApp,
+         Facebook, etc.) no ejecutan JS, así que las vistas previas se basan en
+         estas etiquetas del index.html. React actualiza el título por página. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Iglesia Nueva Casa" />
+    <meta property="og:title" content="Iglesia Nueva Casa | Lima, Perú" />
+    <meta
+      property="og:description"
+      content="Comunidad cristiana en San Martín de Porres, Lima. Nos reunimos cada domingo para adorar, crecer y servir juntos."
+    />
+    <meta property="og:url" content="https://nuevacasa.pe/" />
+    <meta property="og:image" content="https://nuevacasa.pe/og-image.jpg" />
+    <meta property="og:locale" content="es_PE" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Iglesia Nueva Casa | Lima, Perú" />
+    <meta
+      name="twitter:description"
+      content="Comunidad cristiana en San Martín de Porres, Lima. Nos reunimos cada domingo para adorar, crecer y servir juntos."
+    />
+    <meta name="twitter:image" content="https://nuevacasa.pe/og-image.jpg" />
+
+    <!-- Modo oscuro: aplica el tema antes de pintar para evitar el "flash" -->
+    <script>
+      ;(function () {
+        try {
+          var t = localStorage.getItem('theme')
+          if (
+            t === 'dark' ||
+            (!t &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches)
+          ) {
+            document.documentElement.classList.add('dark')
+          }
+        } catch (e) {}
+      })()
+    </script>
 
     <!-- Preconnect para recursos externos -->
-    <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="preconnect" href="https://maps.googleapis.com" />
     <link
       rel="preconnect"

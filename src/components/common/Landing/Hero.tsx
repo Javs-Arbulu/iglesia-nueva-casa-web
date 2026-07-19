@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { MapPin } from 'lucide-react'
-import HeroImage from '@/assets/images/Hero.png'
+import HeroImage from '@/assets/images/Hero.jpg'
 import HeroImageWebP from '@/assets/images/Hero.webp'
 import { CHURCH_INFO, SOCIAL_HREFS } from '@/lib/constants'
 import type { Star } from '@/types'
@@ -39,7 +39,7 @@ const HeroSection = () => {
             fetchPriority="high"
           />
         </picture>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/30 dark:from-black/55 dark:via-black/70 dark:to-black/60" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-900/30 via-transparent to-transparent" />
       </div>
 
@@ -75,7 +75,10 @@ const HeroSection = () => {
         <h1 className="mb-6 text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight">
           Aquí no vienes a un lugar,
           <br />
-          llegas a una familia.
+          llegas a{' '}
+          <span className="font-hand font-bold text-cyan-300 text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
+            una familia.
+          </span>
         </h1>
 
         <p className="text-white/90 text-base md:text-lg lg:text-xl max-w-3xl mx-auto mb-10 px-4 leading-relaxed">
@@ -130,7 +133,7 @@ const HeroSection = () => {
         >
           <path
             d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"
-            fill="white"
+            className="fill-white dark:fill-slate-900"
           />
         </svg>
       </div>

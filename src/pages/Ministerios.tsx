@@ -5,14 +5,24 @@ import { useScrollTop } from '@/hooks/useScroll'
 import { MINISTERIO_TABS } from '@/lib/constants'
 import type { Ministerio, MinisterioTab } from '@/types'
 import SEO from '@/components/common/SEO'
+import jovenesWebp from '@/assets/images/ministerios/jovenes.webp'
+import jovenesJpg from '@/assets/images/ministerios/jovenes.jpg'
+import ninosWebp from '@/assets/images/ministerios/ninos.webp'
+import ninosJpg from '@/assets/images/ministerios/ninos.jpg'
+import alabanzaWebp from '@/assets/images/ministerios/alabanza.webp'
+import alabanzaJpg from '@/assets/images/ministerios/alabanza.jpg'
+import gruposWebp from '@/assets/images/ministerios/grupos.webp'
+import gruposJpg from '@/assets/images/ministerios/grupos.jpg'
+import servicioWebp from '@/assets/images/ministerios/servicio.webp'
+import servicioJpg from '@/assets/images/ministerios/servicio.jpg'
 
 const ministerios: Ministerio[] = [
   {
     category: 'GENERACIONES',
     title: 'Jóvenes',
     icon: '👥',
-    image:
-      'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=400&fit=crop',
+    image: jovenesJpg,
+    imageWebp: jovenesWebp,
     description:
       'Una comunidad vibrante para la siguiente generación. No caminamos solos, crecemos juntos.',
     schedule: 'Sábados 6:00 PM',
@@ -22,8 +32,8 @@ const ministerios: Ministerio[] = [
     category: 'GENERACIONES',
     title: 'Niños',
     icon: '😊',
-    image:
-      'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&h=400&fit=crop',
+    image: ninosJpg,
+    imageWebp: ninosWebp,
     description:
       'Formando corazones desde la infancia con historias bíblicas, juegos y mucha diversión.',
     schedule: 'Domingos 10:00 AM',
@@ -33,8 +43,8 @@ const ministerios: Ministerio[] = [
     category: 'SERVICIO',
     title: 'Alabanza',
     icon: '🎵',
-    image:
-      'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600&h=400&fit=crop',
+    image: alabanzaJpg,
+    imageWebp: alabanzaWebp,
     description:
       'Exaltando a Dios a través del arte y la música. Si tocas un instrumento o cantas, este es tu lugar.',
     schedule: 'Jueves 7:00 PM',
@@ -44,8 +54,8 @@ const ministerios: Ministerio[] = [
     category: 'COMUNIDAD',
     title: 'Grupos Pequeños',
     icon: '🏠',
-    image:
-      'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&h=400&fit=crop',
+    image: gruposJpg,
+    imageWebp: gruposWebp,
     description:
       'Vida en comunidad fuera de las cuatro paredes del templo. Comparte, ríe y crece en casas.',
     schedule: 'Diferentes horarios',
@@ -55,8 +65,8 @@ const ministerios: Ministerio[] = [
     category: 'SERVICIO',
     title: 'Servicio Social',
     icon: '🤝',
-    image:
-      'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=600&h=400&fit=crop',
+    image: servicioJpg,
+    imageWebp: servicioWebp,
     description:
       'Siendo las manos y pies de Jesús en la ciudad a través de ayuda humanitaria y brigadas.',
     schedule: 'Sábados 9:00 AM',
@@ -75,7 +85,7 @@ export default function Ministerios() {
       : ministerios.filter((m) => m.category === activeTab.toUpperCase())
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-32 pb-16">
+    <main className="min-h-screen bg-gray-50 dark:bg-slate-950 pt-32 pb-16">
       <SEO
         title="Ministerios | Iglesia Nueva Casa"
         description="Explora los ministerios de la Iglesia Nueva Casa: Jóvenes, Niños, Alabanza, Grupos Pequeños y Servicio Social. Encuentra tu lugar en la familia."
@@ -87,10 +97,10 @@ export default function Ministerios() {
           <div className="inline-block bg-cyan-100 text-cyan-600 px-4 py-2 rounded-full text-sm font-semibold mb-4 uppercase tracking-wide">
             Nuestra Comunidad
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Descubre tu lugar en la familia
           </h1>
-          <p className="text-gray-600 text-lg max-w-3xl mx-auto">
+          <p className="text-gray-600 dark:text-slate-300 text-lg max-w-3xl mx-auto">
             Hay un espacio para ti. Ya sea que busques crecer espiritualmente,
             servir a otros o conectar con personas de tu edad.
           </p>
@@ -109,7 +119,7 @@ export default function Ministerios() {
               className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
                 activeTab === tab
                   ? 'bg-cyan-500 text-white shadow-lg scale-105'
-                  : 'bg-white text-gray-600 hover:bg-gray-100'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800'
               }`}
             >
               {tab}
@@ -130,16 +140,23 @@ export default function Ministerios() {
           {filteredMinisterios.map((ministerio) => (
             <li
               key={ministerio.title}
-              className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group"
+              className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group"
             >
               {/* Image */}
               <div className="relative h-56 overflow-hidden">
-                <img
-                  src={ministerio.image}
-                  alt={`Ministerio ${ministerio.title}`}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  loading="lazy"
-                />
+                <picture>
+                  {ministerio.imageWebp && (
+                    <source srcSet={ministerio.imageWebp} type="image/webp" />
+                  )}
+                  <img
+                    src={ministerio.image}
+                    alt={`Ministerio ${ministerio.title}`}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    loading="lazy"
+                    width={800}
+                    height={600}
+                  />
+                </picture>
                 <div className="absolute top-4 right-4">
                   <span className="bg-cyan-400 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
                     {ministerio.category}
@@ -153,16 +170,16 @@ export default function Ministerios() {
                   <span className="text-3xl" aria-hidden="true">
                     {ministerio.icon}
                   </span>
-                  <h2 className="text-2xl font-bold text-gray-900">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                     {ministerio.title}
                   </h2>
                 </div>
-                <p className="text-gray-600 mb-6 leading-relaxed">
+                <p className="text-gray-600 dark:text-slate-300 mb-6 leading-relaxed">
                   {ministerio.description}
                 </p>
 
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <div className="flex items-center gap-2 text-gray-500 text-sm">
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-slate-800">
+                  <div className="flex items-center gap-2 text-gray-500 dark:text-slate-400 text-sm">
                     <Calendar className="w-4 h-4" aria-hidden="true" />
                     <time>{ministerio.schedule}</time>
                   </div>
@@ -209,11 +226,11 @@ export default function Ministerios() {
         aria-label="Únete a la comunidad"
         className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-20"
       >
-        <div className="bg-white rounded-3xl p-12 text-center shadow-xl">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-12 text-center shadow-xl">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             No esperes más para conectar
           </h2>
-          <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-gray-600 dark:text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
             Cada semana cientos de jóvenes se reúnen para compartir su fe.
             ¡Estamos listos para recibirte!
           </p>
@@ -227,7 +244,7 @@ export default function Ministerios() {
             </Link>
             <Link
               to="/contacto"
-              className="bg-gray-100 text-gray-700 px-8 py-3 rounded-full hover:bg-gray-200 transition-colors font-semibold"
+              className="bg-gray-100 text-gray-700 px-8 py-3 rounded-full hover:bg-gray-200 transition-colors font-semibold dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
             >
               Contacto directo
             </Link>
