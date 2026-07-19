@@ -117,6 +117,17 @@ export interface ContactFormErrors {
   mensaje?: string
 }
 
+// ─── Media / galería ─────────────────────────────────────────────────────────────
+
+export interface MediaItem {
+  id: string
+  path: string
+  alt: string | null
+  category: string
+  published: boolean
+  created_at: string
+}
+
 // ─── Eventos ───────────────────────────────────────────────────────────────────
 
 export interface Evento {
