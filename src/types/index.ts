@@ -117,6 +117,19 @@ export interface ContactFormErrors {
   mensaje?: string
 }
 
+// ─── Eventos ───────────────────────────────────────────────────────────────────
+
+export interface Evento {
+  id: string
+  title: string
+  description: string | null
+  location: string | null
+  starts_at: string
+  image_url: string | null
+  published: boolean
+  created_at: string
+}
+
 // ─── Portal / Auth ───────────────────────────────────────────────────────────────
 
 export type AppRole = 'admin' | 'editor' | 'finanzas' | 'miembro'

@@ -19,6 +19,7 @@ const AdminLayout = lazy(() => import('@/layouts/AdminLayout'))
 const AdminDashboard = lazy(() => import('@/pages/admin/Dashboard'))
 const Mensajes = lazy(() => import('@/pages/admin/Mensajes'))
 const Usuarios = lazy(() => import('@/pages/admin/Usuarios'))
+const Eventos = lazy(() => import('@/pages/admin/Eventos'))
 
 // Minimal spinner shown during page-level code-splitting loads.
 // Defined as JSX element (not a component) so this file only exports non-components,
@@ -128,6 +129,16 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={pageFallback}>
             <AdminDashboard />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'eventos',
+        element: (
+          <Suspense fallback={pageFallback}>
+            <RoleGuard roles={['admin', 'editor']}>
+              <Eventos />
+            </RoleGuard>
           </Suspense>
         ),
       },
