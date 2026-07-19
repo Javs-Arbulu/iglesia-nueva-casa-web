@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Loader2, Check, Pencil } from 'lucide-react'
+import { Loader2, Check, Pencil, Save } from 'lucide-react'
 import { getSupabase } from '@/services/supabase'
 import { useAuth } from '@/features/auth/context'
 import Modal from '@/components/common/Modal'
@@ -247,13 +247,16 @@ export default function Usuarios() {
                   className={inputCls}
                 />
               </div>
-              <button
-                onClick={saveProfile}
-                disabled={busy}
-                className="text-sm font-semibold text-cyan-600 dark:text-cyan-400 disabled:opacity-60"
-              >
-                Guardar datos
-              </button>
+              <div className="flex justify-end">
+                <button
+                  onClick={saveProfile}
+                  disabled={busy}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-slate-900 transition-colors disabled:opacity-60"
+                >
+                  <Save className="w-4 h-4" aria-hidden="true" />
+                  Guardar datos
+                </button>
+              </div>
             </div>
 
             {/* Roles */}
