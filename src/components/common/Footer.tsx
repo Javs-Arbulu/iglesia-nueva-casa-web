@@ -1,6 +1,7 @@
 import { MapPin, Clock, Instagram, Youtube, Facebook } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { EXPLORE_LINKS, SOCIAL_HREFS, CHURCH_INFO } from '@/lib/constants'
+import { useSiteContent } from '@/hooks/useSiteContent'
 import type { SocialLink } from '@/types'
 
 const socialLinks: SocialLink[] = [
@@ -23,6 +24,7 @@ const socialLinks: SocialLink[] = [
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
+  const { contact } = useSiteContent()
 
   return (
     <footer className="bg-gray-50 dark:bg-slate-950 border-t border-gray-200 dark:border-slate-800">
@@ -54,9 +56,9 @@ const Footer = () => {
                     Nuestra Casa
                   </p>
                   <p className="text-gray-600 dark:text-slate-300 text-sm">
-                    {CHURCH_INFO.address}
+                    {contact.address}
                     <br />
-                    {CHURCH_INFO.city}
+                    {contact.city}
                   </p>
                 </address>
               </div>

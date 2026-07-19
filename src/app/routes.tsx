@@ -22,6 +22,7 @@ const Mensajes = lazy(() => import('@/pages/admin/Mensajes'))
 const Usuarios = lazy(() => import('@/pages/admin/Usuarios'))
 const Eventos = lazy(() => import('@/pages/admin/Eventos'))
 const Fotos = lazy(() => import('@/pages/admin/Fotos'))
+const Contenido = lazy(() => import('@/pages/admin/Contenido'))
 
 // Minimal spinner shown during page-level code-splitting loads.
 // Defined as JSX element (not a component) so this file only exports non-components,
@@ -158,6 +159,16 @@ export const router = createBrowserRouter([
           <Suspense fallback={pageFallback}>
             <RoleGuard roles={['admin', 'editor']}>
               <Fotos />
+            </RoleGuard>
+          </Suspense>
+        ),
+      },
+      {
+        path: 'contenido',
+        element: (
+          <Suspense fallback={pageFallback}>
+            <RoleGuard roles={['admin', 'editor']}>
+              <Contenido />
             </RoleGuard>
           </Suspense>
         ),
