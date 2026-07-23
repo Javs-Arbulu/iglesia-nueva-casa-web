@@ -1,6 +1,8 @@
-// Genera los íconos PWA (192 y 512) para "agregar a pantalla de inicio":
+// Genera los íconos PWA para "agregar a pantalla de inicio":
 // logo blanco centrado sobre un degradado de marca. Full-bleed (sin bordes
 // redondeados) para que funcionen como "maskable" (el SO aplica su forma).
+//   - pwa-192x192.png / pwa-512x512.png  → Android / manifest
+//   - apple-touch-icon.png (180x180, sin alfa) → iPhone / iPad (Safari)
 //   node scripts/generate-pwa-icons.mjs
 import sharp from 'sharp'
 import { dirname, resolve } from 'node:path'
@@ -23,7 +25,9 @@ const background = (size) =>
   <rect width="${size}" height="${size}" fill="url(#g)"/>
 </svg>`)
 
-async function makeIcon(size) {
+// fileName: nombre de salida (por defecto `pwa-<size>x<size>.png`).
+// opaque: quita el canal alfa (iOS rellena de negro lo transparente).
+async function makeIcon(size, { fileName, opaque = false } = {}) {
   const logo = await sharp(logoPath)
     .resize({ width: Math.round(size * 0.55) })
     .png()
@@ -31,13 +35,14 @@ async function makeIcon(size) {
   const meta = await sharp(logo).metadata()
   const left = Math.round((size - (meta.width ?? 0)) / 2)
   const top = Math.round((size - (meta.height ?? 0)) / 2)
-  const out = resolve(outDir, `pwa-${size}x${size}.png`)
-  await sharp(background(size))
-    .composite([{ input: logo, left, top }])
-    .png()
-    .toFile(out)
-  console.log(`✓ pwa-${size}x${size}.png`)
+  const name = fileName ?? `pwa-${size}x${size}.png`
+  let pipeline = sharp(background(size)).composite([{ input: logo, left, top }])
+  if (opaque) pipeline = pipeline.removeAlpha()
+  await pipeline.png().toFile(resolve(outDir, name))
+  console.log(`✓ ${name}`)
 }
 
 await makeIcon(192)
 await makeIcon(512)
+// iOS: apple-touch-icon 180x180, sin transparencia.
+await makeIcon(180, { fileName: 'apple-touch-icon.png', opaque: true })
