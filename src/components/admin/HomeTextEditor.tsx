@@ -10,7 +10,7 @@ import { useToast } from '@/features/toast/context'
 import { primaryBtn } from '@/lib/adminUi'
 import { Field, GroupTitle } from '@/components/admin/contentUi'
 
-export default function HomeTextEditor() {
+export default function HomeTextEditor({ readOnly = false }: { readOnly?: boolean }) {
   const toast = useToast()
   const [t, setT] = useState<HomeText | null>(null)
   const [saving, setSaving] = useState(false)
@@ -111,6 +111,7 @@ export default function HomeTextEditor() {
       <Field label="Badge" value={t.events.badge} onChange={(v) => setEvents({ badge: v })} />
       <Field label="Título" value={t.events.title} onChange={(v) => setEvents({ title: v })} />
 
+      {!readOnly && (
       <div className="flex items-center justify-end gap-2 pt-2">
         <button
           onClick={() => setT(structuredClone(DEFAULT_HOME))}
@@ -128,6 +129,7 @@ export default function HomeTextEditor() {
           Guardar Inicio
         </button>
       </div>
+      )}
     </div>
   )
 }

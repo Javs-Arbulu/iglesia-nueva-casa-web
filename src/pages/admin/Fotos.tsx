@@ -12,6 +12,7 @@ import {
 } from '@/services/media'
 import { useAsyncData } from '@/hooks/useAsyncData'
 import { useToast } from '@/features/toast/context'
+import { useAuth } from '@/features/auth/context'
 import AsyncState from '@/components/admin/AsyncState'
 import PageHeader from '@/components/admin/PageHeader'
 import SiteMediaEditor from '@/components/admin/SiteMediaEditor'
@@ -83,6 +84,9 @@ function AlbumField({
 
 export default function Fotos() {
   const toast = useToast()
+  const { can } = useAuth()
+  const canEdit = can('fotos', 'edit')
+  const canDelete = can('fotos', 'delete')
   const { data: items, status, refresh } = useAsyncData(fetchMedia, [] as MediaItem[])
   const [tab, setTab] = useState<'galeria' | 'pagina'>('galeria')
   const [busyId, setBusyId] = useState<string | null>(null)
@@ -275,6 +279,7 @@ export default function Fotos() {
         </span>
       )}
       <div className="absolute bottom-2 right-2 flex gap-1">
+        {canEdit && (
         <button
           onClick={() => togglePublished(item)}
           disabled={busyId === item.id}
@@ -288,6 +293,8 @@ export default function Fotos() {
             <EyeOff className="w-4 h-4" aria-hidden="true" />
           )}
         </button>
+        )}
+        {canEdit && (
         <button
           onClick={() => openEdit(item)}
           disabled={busyId === item.id}
@@ -297,6 +304,8 @@ export default function Fotos() {
         >
           <Pencil className="w-4 h-4" aria-hidden="true" />
         </button>
+        )}
+        {canDelete && (
         <button
           onClick={() => remove(item)}
           disabled={busyId === item.id}
@@ -306,6 +315,7 @@ export default function Fotos() {
         >
           <Trash2 className="w-4 h-4" aria-hidden="true" />
         </button>
+        )}
       </div>
     </li>
   )
@@ -319,7 +329,7 @@ export default function Fotos() {
       <PageHeader
         title="Fotos"
         action={
-          tab === 'galeria' ? (
+          tab === 'galeria' && canEdit ? (
             <button onClick={() => openUpload()} className={primaryBtn}>
               <ImagePlus className="w-4 h-4" aria-hidden="true" />
               Subir fotos
@@ -328,24 +338,26 @@ export default function Fotos() {
         }
       />
 
-      {/* Pestañas */}
-      <div className="inline-flex rounded-full bg-gray-100 dark:bg-slate-800 p-1 mb-5">
-        {(['galeria', 'pagina'] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
-              tab === t
-                ? 'bg-white dark:bg-slate-700 shadow text-gray-900 dark:text-white'
-                : 'text-gray-500 dark:text-slate-400'
-            }`}
-          >
-            {t === 'galeria' ? 'Galería' : 'Página'}
-          </button>
-        ))}
-      </div>
+      {/* Pestañas (la de "Página" solo con permiso de edición) */}
+      {canEdit && (
+        <div className="inline-flex rounded-full bg-gray-100 dark:bg-slate-800 p-1 mb-5">
+          {(['galeria', 'pagina'] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+                tab === t
+                  ? 'bg-white dark:bg-slate-700 shadow text-gray-900 dark:text-white'
+                  : 'text-gray-500 dark:text-slate-400'
+              }`}
+            >
+              {t === 'galeria' ? 'Galería' : 'Página'}
+            </button>
+          ))}
+        </div>
+      )}
 
-      {tab === 'pagina' && <SiteMediaEditor />}
+      {tab === 'pagina' && canEdit && <SiteMediaEditor />}
 
       {tab === 'galeria' && (
         <>
@@ -397,6 +409,7 @@ export default function Fotos() {
                         · {al.count} foto{al.count > 1 ? 's' : ''}
                       </span>
                     </h2>
+                    {canEdit && (
                     <div className="flex items-center gap-1 shrink-0">
                       <button
                         onClick={() => toggleAlbumPublished(al.name, !albumPublished)}
@@ -435,6 +448,7 @@ export default function Fotos() {
                         Renombrar
                       </button>
                     </div>
+                    )}
                   </div>
                   <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                     {albumPhotos.map(renderTile)}

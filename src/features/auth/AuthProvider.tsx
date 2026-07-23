@@ -2,7 +2,11 @@ import { useEffect, useState, useCallback, useRef, type ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { getSupabase } from '@/services/supabase'
 import type { AppRole, Profile } from '@/types'
+import type { ModuleAction } from '@/lib/modules'
 import { AuthContext, type AuthContextValue } from './context'
+
+/** Permisos efectivos del usuario por módulo (unión de todos sus roles). */
+type PermMap = Record<string, { view: boolean; edit: boolean; delete: boolean }>
 
 const isConfigured = () =>
   Boolean(
@@ -17,6 +21,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [roles, setRoles] = useState<AppRole[]>([])
+  const [perms, setPerms] = useState<PermMap>({})
   // Si Supabase no está configurado, no hay nada que cargar → loading arranca false.
   const [loading, setLoading] = useState(isConfigured)
   const [configured] = useState(isConfigured)
@@ -26,16 +31,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadProfileAndRoles = useCallback(async (uid: string) => {
     try {
       const supabase = getSupabase()
-      const [{ data: prof }, { data: roleRows }] = await Promise.all([
-        supabase.from('profiles').select('*').eq('id', uid).maybeSingle(),
-        supabase.from('user_roles').select('role').eq('user_id', uid),
-      ])
+      const [{ data: prof }, { data: roleRows }, { data: customRows }] =
+        await Promise.all([
+          supabase.from('profiles').select('*').eq('id', uid).maybeSingle(),
+          supabase.from('user_roles').select('role').eq('user_id', uid),
+          supabase.from('user_custom_roles').select('role_key').eq('user_id', uid),
+        ])
+      const sysRoles = ((roleRows ?? []) as { role: AppRole }[]).map((r) => r.role)
+      const customKeys = ((customRows ?? []) as { role_key: string }[]).map((r) => r.role_key)
       setProfile((prof as Profile | null) ?? null)
-      setRoles(((roleRows ?? []) as { role: AppRole }[]).map((r) => r.role))
+      setRoles(sysRoles)
+
+      // Permisos efectivos = unión (OR) de la matriz de todos los roles del usuario.
+      const allKeys = [...new Set<string>([...sysRoles, ...customKeys])]
+      const map: PermMap = {}
+      if (allKeys.length > 0) {
+        const { data: permRows } = await supabase
+          .from('role_permissions')
+          .select('module_id, can_view, can_edit, can_delete')
+          .in('role_key', allKeys)
+        for (const p of (permRows ?? []) as {
+          module_id: string
+          can_view: boolean
+          can_edit: boolean
+          can_delete: boolean
+        }[]) {
+          const cur = map[p.module_id] ?? { view: false, edit: false, delete: false }
+          map[p.module_id] = {
+            view: cur.view || p.can_view,
+            edit: cur.edit || p.can_edit,
+            delete: cur.delete || p.can_delete,
+          }
+        }
+      }
+      setPerms(map)
     } catch (err) {
       console.error('No se pudieron cargar perfil/roles:', err)
       setProfile(null)
       setRoles([])
+      setPerms({})
     } finally {
       setLoading(false)
     }
@@ -60,6 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loadedUid.current = null
         setProfile(null)
         setRoles([])
+        setPerms({})
         setLoading(false)
         return
       }
@@ -124,6 +159,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [roles]
   )
 
+  // El admin siempre puede todo (espejo del backstop de la RLS). El resto,
+  // según la matriz de permisos.
+  const can = useCallback(
+    (moduleId: string, action: ModuleAction) =>
+      roles.includes('admin') ? true : (perms[moduleId]?.[action] ?? false),
+    [roles, perms]
+  )
+
   const value: AuthContextValue = {
     session,
     user: session?.user ?? null,
@@ -135,6 +178,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signUp,
     signOut,
     hasRole,
+    can,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

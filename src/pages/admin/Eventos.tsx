@@ -6,6 +6,7 @@ import { formatEventDate } from '@/services/events'
 import { uploadImageFile } from '@/services/media'
 import { useAsyncData } from '@/hooks/useAsyncData'
 import { useToast } from '@/features/toast/context'
+import { useAuth } from '@/features/auth/context'
 import AsyncState from '@/components/admin/AsyncState'
 import PageHeader from '@/components/admin/PageHeader'
 import Modal from '@/components/common/Modal'
@@ -39,6 +40,9 @@ async function fetchEvents(): Promise<Evento[]> {
 
 export default function Eventos() {
   const toast = useToast()
+  const { can } = useAuth()
+  const canEdit = can('eventos', 'edit')
+  const canDelete = can('eventos', 'delete')
   const { data: events, status, refresh } = useAsyncData(fetchEvents, [] as Evento[])
   const [busy, setBusy] = useState(false)
 
@@ -146,10 +150,12 @@ export default function Eventos() {
       <PageHeader
         title="Eventos"
         action={
-          <button onClick={openNew} className={primaryBtn}>
-            <Plus className="w-4 h-4" aria-hidden="true" />
-            Nuevo
-          </button>
+          canEdit ? (
+            <button onClick={openNew} className={primaryBtn}>
+              <Plus className="w-4 h-4" aria-hidden="true" />
+              Nuevo
+            </button>
+          ) : undefined
         }
       />
 
@@ -180,32 +186,44 @@ export default function Eventos() {
                 </p>
               </div>
               <button
-                onClick={() => togglePublish(ev)}
-                disabled={busy}
+                onClick={() => (canEdit ? togglePublish(ev) : undefined)}
+                disabled={busy || !canEdit}
                 className={`shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors disabled:opacity-60 ${
                   ev.published
                     ? 'bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-300'
                     : 'bg-gray-100 text-gray-500 dark:bg-slate-800 dark:text-slate-400'
-                }`}
-                title={ev.published ? 'Publicado (clic para ocultar)' : 'Borrador (clic para publicar)'}
+                } ${canEdit ? '' : 'cursor-default'}`}
+                title={
+                  canEdit
+                    ? ev.published
+                      ? 'Publicado (clic para ocultar)'
+                      : 'Borrador (clic para publicar)'
+                    : ev.published
+                      ? 'Publicado'
+                      : 'Borrador'
+                }
               >
                 {ev.published ? 'Publicado' : 'Borrador'}
               </button>
-              <button
-                onClick={() => openEdit(ev)}
-                aria-label={`Editar ${ev.title}`}
-                className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800"
-              >
-                <Pencil className="w-4 h-4" aria-hidden="true" />
-              </button>
-              <button
-                onClick={() => remove(ev)}
-                disabled={busy}
-                aria-label={`Eliminar ${ev.title}`}
-                className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-60"
-              >
-                <Trash2 className="w-4 h-4" aria-hidden="true" />
-              </button>
+              {canEdit && (
+                <button
+                  onClick={() => openEdit(ev)}
+                  aria-label={`Editar ${ev.title}`}
+                  className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800"
+                >
+                  <Pencil className="w-4 h-4" aria-hidden="true" />
+                </button>
+              )}
+              {canDelete && (
+                <button
+                  onClick={() => remove(ev)}
+                  disabled={busy}
+                  aria-label={`Eliminar ${ev.title}`}
+                  className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-60"
+                >
+                  <Trash2 className="w-4 h-4" aria-hidden="true" />
+                </button>
+              )}
             </li>
           ))}
         </ul>

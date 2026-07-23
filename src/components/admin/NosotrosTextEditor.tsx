@@ -10,7 +10,7 @@ import { useToast } from '@/features/toast/context'
 import { primaryBtn } from '@/lib/adminUi'
 import { Field, GroupTitle } from '@/components/admin/contentUi'
 
-export default function NosotrosTextEditor() {
+export default function NosotrosTextEditor({ readOnly = false }: { readOnly?: boolean }) {
   const toast = useToast()
   const [t, setT] = useState<NosotrosText | null>(null)
   const [saving, setSaving] = useState(false)
@@ -89,6 +89,7 @@ export default function NosotrosTextEditor() {
       <Field label="Párrafo" textarea value={t.cta.paragraph} onChange={(v) => setCta({ paragraph: v })} />
       <Field label="Botón" value={t.cta.button} onChange={(v) => setCta({ button: v })} />
 
+      {!readOnly && (
       <div className="flex items-center justify-end gap-2 pt-2">
         <button
           onClick={() => setT(structuredClone(DEFAULT_NOSOTROS))}
@@ -106,6 +107,7 @@ export default function NosotrosTextEditor() {
           Guardar Nosotros
         </button>
       </div>
+      )}
     </div>
   )
 }

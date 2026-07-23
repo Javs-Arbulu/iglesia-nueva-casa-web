@@ -10,6 +10,7 @@ import {
   type Schedule,
 } from '@/services/content'
 import { useToast } from '@/features/toast/context'
+import { useAuth } from '@/features/auth/context'
 import PageHeader from '@/components/admin/PageHeader'
 import HomeTextEditor from '@/components/admin/HomeTextEditor'
 import NosotrosTextEditor from '@/components/admin/NosotrosTextEditor'
@@ -28,6 +29,8 @@ const TABS: { id: Tab; label: string }[] = [
 export default function Contenido() {
   const [tab, setTab] = useState<Tab>('banner')
   const toast = useToast()
+  const { can } = useAuth()
+  const canEdit = can('contenido', 'edit')
   const [ann, setAnn] = useState<Announcement | null>(null)
   const [contact, setContact] = useState<ContactContent | null>(null)
   const [savingAnn, setSavingAnn] = useState(false)
@@ -170,16 +173,18 @@ export default function Contenido() {
                   Cuánto tarda el texto en dar una vuelta. Menor = más rápido (recomendado 15–30).
                 </p>
               </div>
-              <div className="flex justify-end">
-                <button onClick={saveAnn} disabled={savingAnn} className={primaryBtn}>
-                  {savingAnn ? (
-                    <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                  ) : (
-                    <Save className="w-4 h-4" aria-hidden="true" />
-                  )}
-                  Guardar anuncio
-                </button>
-              </div>
+              {canEdit && (
+                <div className="flex justify-end">
+                  <button onClick={saveAnn} disabled={savingAnn} className={primaryBtn}>
+                    {savingAnn ? (
+                      <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                    ) : (
+                      <Save className="w-4 h-4" aria-hidden="true" />
+                    )}
+                    Guardar anuncio
+                  </button>
+                </div>
+              )}
             </>
             )}
           </div>
@@ -267,16 +272,18 @@ export default function Contenido() {
                   Agregar horario
                 </button>
               </div>
-              <div className="flex justify-end">
-                <button onClick={saveContact} disabled={savingContact} className={primaryBtn}>
-                  {savingContact ? (
-                    <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                  ) : (
-                    <Save className="w-4 h-4" aria-hidden="true" />
-                  )}
-                  Guardar horarios
-                </button>
-              </div>
+              {canEdit && (
+                <div className="flex justify-end">
+                  <button onClick={saveContact} disabled={savingContact} className={primaryBtn}>
+                    {savingContact ? (
+                      <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                    ) : (
+                      <Save className="w-4 h-4" aria-hidden="true" />
+                    )}
+                    Guardar horarios
+                  </button>
+                </div>
+              )}
             </>
             )}
           </div>
@@ -285,17 +292,17 @@ export default function Contenido() {
         {/* Textos por pantalla */}
         {tab === 'inicio' && (
           <div className={cardCls}>
-            <HomeTextEditor />
+            <HomeTextEditor readOnly={!canEdit} />
           </div>
         )}
         {tab === 'nosotros' && (
           <div className={cardCls}>
-            <NosotrosTextEditor />
+            <NosotrosTextEditor readOnly={!canEdit} />
           </div>
         )}
         {tab === 'ministerios' && (
           <div className={cardCls}>
-            <MinisteriosTextEditor />
+            <MinisteriosTextEditor readOnly={!canEdit} />
           </div>
         )}
       </div>

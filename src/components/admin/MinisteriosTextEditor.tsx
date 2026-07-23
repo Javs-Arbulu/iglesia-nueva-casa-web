@@ -10,7 +10,7 @@ import { useToast } from '@/features/toast/context'
 import { primaryBtn } from '@/lib/adminUi'
 import { Field, GroupTitle } from '@/components/admin/contentUi'
 
-export default function MinisteriosTextEditor() {
+export default function MinisteriosTextEditor({ readOnly = false }: { readOnly?: boolean }) {
   const toast = useToast()
   const [t, setT] = useState<MinisteriosText | null>(null)
   const [saving, setSaving] = useState(false)
@@ -69,6 +69,7 @@ export default function MinisteriosTextEditor() {
         </div>
       ))}
 
+      {!readOnly && (
       <div className="flex items-center justify-end gap-2 pt-2">
         <button
           onClick={() => setT(structuredClone(DEFAULT_MINISTERIOS))}
@@ -86,6 +87,7 @@ export default function MinisteriosTextEditor() {
           Guardar Ministerios
         </button>
       </div>
+      )}
     </div>
   )
 }

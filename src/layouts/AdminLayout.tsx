@@ -1,45 +1,10 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'
-import {
-  LayoutDashboard,
-  MessageSquare,
-  Users,
-  CalendarDays,
-  Image as ImageIcon,
-  FileText,
-  Wallet,
-  MoreHorizontal,
-  X,
-  LogOut,
-} from 'lucide-react'
-import type { AppRole } from '@/types'
+import { MoreHorizontal, X, LogOut } from 'lucide-react'
 import { useAuth } from '@/features/auth/context'
 import { ToastProvider } from '@/features/toast/ToastProvider'
+import { MODULES } from '@/lib/modules'
 import ThemeToggle from '@/components/common/ThemeToggle'
-
-interface NavItem {
-  to: string
-  label: string
-  icon: typeof LayoutDashboard
-  end?: boolean
-  roles: AppRole[]
-}
-
-const NAV: NavItem[] = [
-  {
-    to: '/admin',
-    label: 'Inicio',
-    icon: LayoutDashboard,
-    end: true,
-    roles: ['admin', 'editor', 'finanzas'],
-  },
-  { to: '/admin/eventos', label: 'Eventos', icon: CalendarDays, roles: ['admin', 'editor'] },
-  { to: '/admin/fotos', label: 'Fotos', icon: ImageIcon, roles: ['admin', 'editor'] },
-  { to: '/admin/contenido', label: 'Contenido', icon: FileText, roles: ['admin', 'editor'] },
-  { to: '/admin/finanzas', label: 'Finanzas', icon: Wallet, roles: ['admin', 'finanzas'] },
-  { to: '/admin/mensajes', label: 'Mensajes', icon: MessageSquare, roles: ['admin'] },
-  { to: '/admin/usuarios', label: 'Usuarios', icon: Users, roles: ['admin'] },
-]
 
 const controlCls =
   'text-gray-700 hover:text-cyan-600 hover:bg-black/5 dark:text-white/90 dark:hover:text-cyan-400 dark:hover:bg-white/10'
@@ -48,11 +13,12 @@ const controlCls =
 const MAX_TABS = 5
 
 export default function AdminLayout() {
-  const { profile, hasRole, signOut } = useAuth()
+  const { profile, can, signOut } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const [moreOpen, setMoreOpen] = useState(false)
-  const items = NAV.filter((n) => hasRole(...n.roles))
+  // Inicio lo ve todo el staff; los demás módulos según permisos.
+  const items = MODULES.filter((m) => m.id === 'inicio' || can(m.id, 'view'))
 
   const overflowed = items.length > MAX_TABS
   const primary = overflowed ? items.slice(0, MAX_TABS - 1) : items

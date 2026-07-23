@@ -3,6 +3,7 @@ import { Mail, MailOpen, Trash2 } from 'lucide-react'
 import { fetchMessages, setMessageRead, deleteMessage } from '@/services/messages'
 import { useAsyncData } from '@/hooks/useAsyncData'
 import { useToast } from '@/features/toast/context'
+import { useAuth } from '@/features/auth/context'
 import AsyncState from '@/components/admin/AsyncState'
 import PageHeader from '@/components/admin/PageHeader'
 import type { ContactSubmission } from '@/types'
@@ -20,6 +21,9 @@ const formatDate = (iso: string) => {
 
 export default function Mensajes() {
   const toast = useToast()
+  const { can } = useAuth()
+  const canEdit = can('mensajes', 'edit')
+  const canDelete = can('mensajes', 'delete')
   const { data: items, status, setData, refresh } = useAsyncData(
     fetchMessages,
     [] as ContactSubmission[]
@@ -114,33 +118,39 @@ export default function Mensajes() {
                 {m.mensaje}
               </p>
 
-              <div className="flex items-center justify-end gap-1 mt-3 pt-3 border-t border-gray-100 dark:border-slate-800">
-                <button
-                  onClick={() => toggleRead(m)}
-                  disabled={busyId === m.id}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 px-2.5 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 disabled:opacity-60"
-                >
-                  {m.read ? (
-                    <>
-                      <Mail className="w-4 h-4" aria-hidden="true" />
-                      Marcar no leído
-                    </>
-                  ) : (
-                    <>
-                      <MailOpen className="w-4 h-4" aria-hidden="true" />
-                      Marcar leído
-                    </>
+              {(canEdit || canDelete) && (
+                <div className="flex items-center justify-end gap-1 mt-3 pt-3 border-t border-gray-100 dark:border-slate-800">
+                  {canEdit && (
+                    <button
+                      onClick={() => toggleRead(m)}
+                      disabled={busyId === m.id}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 px-2.5 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 disabled:opacity-60"
+                    >
+                      {m.read ? (
+                        <>
+                          <Mail className="w-4 h-4" aria-hidden="true" />
+                          Marcar no leído
+                        </>
+                      ) : (
+                        <>
+                          <MailOpen className="w-4 h-4" aria-hidden="true" />
+                          Marcar leído
+                        </>
+                      )}
+                    </button>
                   )}
-                </button>
-                <button
-                  onClick={() => remove(m)}
-                  disabled={busyId === m.id}
-                  aria-label={`Eliminar mensaje de ${m.nombre}`}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-60"
-                >
-                  <Trash2 className="w-4 h-4" aria-hidden="true" />
-                </button>
-              </div>
+                  {canDelete && (
+                    <button
+                      onClick={() => remove(m)}
+                      disabled={busyId === m.id}
+                      aria-label={`Eliminar mensaje de ${m.nombre}`}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-60"
+                    >
+                      <Trash2 className="w-4 h-4" aria-hidden="true" />
+                    </button>
+                  )}
+                </div>
+              )}
             </li>
           ))}
         </ul>

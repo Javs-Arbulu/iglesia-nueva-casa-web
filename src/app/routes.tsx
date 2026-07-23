@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import PublicLayout from '@/layouts/PublicLayout'
-import { AuthGuard, RoleGuard } from '@/features/auth/guards'
+import { AuthGuard, PermissionGuard, AdminAccessGuard } from '@/features/auth/guards'
 
 // Lazy-load pages to reduce initial bundle size
 const Home = lazy(() => import('@/pages/Home'))
@@ -24,6 +24,7 @@ const Eventos = lazy(() => import('@/pages/admin/Eventos'))
 const Fotos = lazy(() => import('@/pages/admin/Fotos'))
 const Contenido = lazy(() => import('@/pages/admin/Contenido'))
 const Finanzas = lazy(() => import('@/pages/admin/Finanzas'))
+const Roles = lazy(() => import('@/pages/admin/Roles'))
 
 // Minimal spinner shown during page-level code-splitting loads.
 // Defined as JSX element (not a component) so this file only exports non-components,
@@ -129,9 +130,9 @@ export const router = createBrowserRouter([
     element: (
       <Suspense fallback={pageFallback}>
         <AuthGuard>
-          <RoleGuard roles={['admin', 'editor', 'finanzas']}>
+          <AdminAccessGuard>
             <AdminLayout />
-          </RoleGuard>
+          </AdminAccessGuard>
         </AuthGuard>
       </Suspense>
     ),
@@ -148,9 +149,9 @@ export const router = createBrowserRouter([
         path: 'eventos',
         element: (
           <Suspense fallback={pageFallback}>
-            <RoleGuard roles={['admin', 'editor']}>
+            <PermissionGuard module="eventos">
               <Eventos />
-            </RoleGuard>
+            </PermissionGuard>
           </Suspense>
         ),
       },
@@ -158,9 +159,9 @@ export const router = createBrowserRouter([
         path: 'fotos',
         element: (
           <Suspense fallback={pageFallback}>
-            <RoleGuard roles={['admin', 'editor']}>
+            <PermissionGuard module="fotos">
               <Fotos />
-            </RoleGuard>
+            </PermissionGuard>
           </Suspense>
         ),
       },
@@ -168,9 +169,9 @@ export const router = createBrowserRouter([
         path: 'contenido',
         element: (
           <Suspense fallback={pageFallback}>
-            <RoleGuard roles={['admin', 'editor']}>
+            <PermissionGuard module="contenido">
               <Contenido />
-            </RoleGuard>
+            </PermissionGuard>
           </Suspense>
         ),
       },
@@ -178,9 +179,9 @@ export const router = createBrowserRouter([
         path: 'finanzas',
         element: (
           <Suspense fallback={pageFallback}>
-            <RoleGuard roles={['admin', 'finanzas']}>
+            <PermissionGuard module="finanzas">
               <Finanzas />
-            </RoleGuard>
+            </PermissionGuard>
           </Suspense>
         ),
       },
@@ -188,9 +189,9 @@ export const router = createBrowserRouter([
         path: 'mensajes',
         element: (
           <Suspense fallback={pageFallback}>
-            <RoleGuard roles={['admin']}>
+            <PermissionGuard module="mensajes">
               <Mensajes />
-            </RoleGuard>
+            </PermissionGuard>
           </Suspense>
         ),
       },
@@ -198,9 +199,19 @@ export const router = createBrowserRouter([
         path: 'usuarios',
         element: (
           <Suspense fallback={pageFallback}>
-            <RoleGuard roles={['admin']}>
+            <PermissionGuard module="usuarios">
               <Usuarios />
-            </RoleGuard>
+            </PermissionGuard>
+          </Suspense>
+        ),
+      },
+      {
+        path: 'roles',
+        element: (
+          <Suspense fallback={pageFallback}>
+            <PermissionGuard module="roles">
+              <Roles />
+            </PermissionGuard>
           </Suspense>
         ),
       },
