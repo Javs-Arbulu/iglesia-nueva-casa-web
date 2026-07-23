@@ -9,6 +9,25 @@ export function mediaUrl(path: string): string {
   return getSupabase().storage.from(BUCKET).getPublicUrl(path).data.publicUrl
 }
 
+/**
+ * Comprime y sube una imagen al bucket y devuelve su URL pública, SIN
+ * registrarla en la galería (`media`). Útil para portadas (ej. eventos).
+ */
+export async function uploadImageFile(
+  file: File,
+  folder = 'eventos'
+): Promise<string> {
+  const supabase = getSupabase()
+  const blob = await compressImage(file)
+  const safe = file.name.replace(/\.[^.]+$/, '').replace(/[^a-z0-9-]+/gi, '-')
+  const path = `${folder}/${Date.now()}-${safe || 'img'}.jpg`
+  const { error } = await supabase.storage
+    .from(BUCKET)
+    .upload(path, blob, { contentType: 'image/jpeg', upsert: false })
+  if (error) throw error
+  return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl
+}
+
 /** Comprime y sube una imagen, y registra su metadato. */
 export async function uploadImage(
   file: File,

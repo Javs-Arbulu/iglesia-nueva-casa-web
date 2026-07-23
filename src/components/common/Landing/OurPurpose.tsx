@@ -44,7 +44,7 @@ const OurPurpose = () => {
   return (
     <section
       aria-label="Nuestro propósito"
-      className="pt-20 pb-20 bg-white dark:bg-slate-900 relative overflow-hidden -mt-px"
+      className="pt-20 pb-12 bg-white dark:bg-slate-900 relative overflow-hidden -mt-px"
     >
       {/* Decorative Background Elements */}
       <div

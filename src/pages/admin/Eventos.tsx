@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Loader2, Plus, Pencil, Trash2, Calendar } from 'lucide-react'
+import { Loader2, Plus, Pencil, Trash2, Calendar, ImagePlus, X } from 'lucide-react'
 import { getSupabase } from '@/services/supabase'
 import { formatEventDate } from '@/services/events'
+import { uploadImageFile } from '@/services/media'
 import { useAsyncData } from '@/hooks/useAsyncData'
 import { useToast } from '@/features/toast/context'
 import AsyncState from '@/components/admin/AsyncState'
@@ -18,7 +19,14 @@ const toInput = (iso: string) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
-const EMPTY = { title: '', description: '', location: '', startsAt: '', published: false }
+const EMPTY = {
+  title: '',
+  description: '',
+  location: '',
+  startsAt: '',
+  published: false,
+  imageUrl: '',
+}
 
 async function fetchEvents(): Promise<Evento[]> {
   const { data, error } = await getSupabase()
@@ -40,6 +48,8 @@ export default function Eventos() {
     searchParams.get('nuevo') !== null ? 'new' : null
   )
   const [form, setForm] = useState(EMPTY)
+  const [uploading, setUploading] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
 
   const openNew = () => {
     setForm(EMPTY)
@@ -52,10 +62,27 @@ export default function Eventos() {
       location: ev.location ?? '',
       startsAt: toInput(ev.starts_at),
       published: ev.published,
+      imageUrl: ev.image_url ?? '',
     })
     setEditingId(ev.id)
   }
   const close = () => setEditingId(null)
+
+  const onPickImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (fileRef.current) fileRef.current.value = ''
+    if (!file) return
+    setUploading(true)
+    try {
+      const url = await uploadImageFile(file)
+      setForm((f) => ({ ...f, imageUrl: url }))
+      toast.success('Imagen lista.')
+    } catch (err) {
+      console.error(err)
+      toast.error('No se pudo subir la imagen.')
+    }
+    setUploading(false)
+  }
 
   const save = async () => {
     if (!form.title.trim() || !form.startsAt) return
@@ -66,6 +93,7 @@ export default function Eventos() {
       location: form.location.trim() || null,
       starts_at: new Date(form.startsAt).toISOString(),
       published: form.published,
+      image_url: form.imageUrl || null,
     }
     const supabase = getSupabase()
     const { error } =
@@ -134,6 +162,14 @@ export default function Eventos() {
         <ul className={listCardCls}>
           {events.map((ev) => (
             <li key={ev.id} className="flex items-center gap-3 p-3">
+              {ev.image_url && (
+                <img
+                  src={ev.image_url}
+                  alt=""
+                  loading="lazy"
+                  className="w-12 h-12 rounded-lg object-cover shrink-0 bg-gray-100 dark:bg-slate-800"
+                />
+              )}
               <div className="min-w-0 flex-1">
                 <p className="font-medium text-gray-900 dark:text-white truncate">
                   {ev.title}
@@ -215,6 +251,51 @@ export default function Eventos() {
               value={form.location}
               onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
               className={inputCls}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1">
+              Imagen (opcional)
+            </label>
+            {form.imageUrl ? (
+              <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-100 dark:bg-slate-800">
+                <img
+                  src={form.imageUrl}
+                  alt="Vista previa del evento"
+                  className="w-full h-full object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, imageUrl: '' }))}
+                  aria-label="Quitar imagen"
+                  className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80"
+                >
+                  <X className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                disabled={uploading}
+                className="w-full flex flex-col items-center justify-center gap-2 aspect-video rounded-xl border-2 border-dashed border-gray-200 dark:border-slate-700 text-gray-400 dark:text-slate-500 hover:border-cyan-400 hover:text-cyan-500 transition-colors disabled:opacity-60"
+              >
+                {uploading ? (
+                  <Loader2 className="w-6 h-6 animate-spin" aria-hidden="true" />
+                ) : (
+                  <>
+                    <ImagePlus className="w-6 h-6" aria-hidden="true" />
+                    <span className="text-sm font-medium">Subir imagen</span>
+                  </>
+                )}
+              </button>
+            )}
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              onChange={onPickImage}
+              className="hidden"
             />
           </div>
           <div>
