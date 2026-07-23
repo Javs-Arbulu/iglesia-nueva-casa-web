@@ -4,6 +4,7 @@ import { MapPin } from 'lucide-react'
 import HeroImage from '@/assets/images/Hero.jpg'
 import HeroImageWebP from '@/assets/images/Hero.webp'
 import { CHURCH_INFO, SOCIAL_HREFS } from '@/lib/constants'
+import { useSiteMedia } from '@/hooks/useSiteMedia'
 import type { Star } from '@/types'
 
 const generateStars = (): Star[] =>
@@ -22,6 +23,7 @@ const STARS = generateStars()
 const HeroSection = () => {
   // Keep stars stable even if the component re-mounts (e.g. HMR)
   const stars = useMemo(() => STARS, [])
+  const { hero } = useSiteMedia()
 
   return (
     <section
@@ -30,15 +32,24 @@ const HeroSection = () => {
     >
       {/* Background */}
       <div className="absolute inset-0 z-0" aria-hidden="true">
-        <picture>
-          <source srcSet={HeroImageWebP} type="image/webp" />
+        {hero ? (
           <img
-            src={HeroImage}
+            src={hero.url}
             alt=""
             className="absolute inset-0 w-full h-full object-cover object-center"
             fetchPriority="high"
           />
-        </picture>
+        ) : (
+          <picture>
+            <source srcSet={HeroImageWebP} type="image/webp" />
+            <img
+              src={HeroImage}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover object-center"
+              fetchPriority="high"
+            />
+          </picture>
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/30 dark:from-black/55 dark:via-black/70 dark:to-black/60" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-900/30 via-transparent to-transparent" />
       </div>

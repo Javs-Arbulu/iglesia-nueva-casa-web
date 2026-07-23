@@ -5,6 +5,7 @@ import comunidadWebp from '@/assets/images/Carrusel2.webp'
 import comunidadJpg from '@/assets/images/Carrusel2.jpg'
 import { Link } from 'react-router-dom'
 import { useScrollToHash } from '@/hooks/useScroll'
+import { useSiteMedia } from '@/hooks/useSiteMedia'
 import type { VisionItem } from '@/types'
 import SEO from '@/components/common/SEO'
 
@@ -41,6 +42,7 @@ const visionItems: VisionItem[] = [
 export default function Nosotros() {
   // Scroll to #adn anchor when navigated with that hash
   useScrollToHash()
+  const { nosotros } = useSiteMedia()
 
   return (
     <>
@@ -93,17 +95,28 @@ export default function Nosotros() {
 
             <div className="relative">
               <div className="rounded-3xl overflow-hidden shadow-2xl ring-8 ring-white/20">
-                <picture>
-                  <source srcSet={comunidadWebp} type="image/webp" />
+                {nosotros ? (
                   <img
-                    src={comunidadJpg}
-                    alt="Bautismo en la Iglesia Nueva Casa"
+                    src={nosotros.url}
+                    alt={nosotros.alt || 'Comunidad de la Iglesia Nueva Casa'}
                     className="w-full h-full object-cover"
                     loading="lazy"
                     width={800}
                     height={600}
                   />
-                </picture>
+                ) : (
+                  <picture>
+                    <source srcSet={comunidadWebp} type="image/webp" />
+                    <img
+                      src={comunidadJpg}
+                      alt="Bautismo en la Iglesia Nueva Casa"
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      width={800}
+                      height={600}
+                    />
+                  </picture>
+                )}
                 <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-xl">
                   <p className="text-gray-900 font-semibold">Comunidad Joven</p>
                   <p className="text-cyan-600 text-sm font-medium">

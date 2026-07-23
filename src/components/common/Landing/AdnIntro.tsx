@@ -12,9 +12,10 @@ import Carouse2 from '@/assets/images/Carrusel2.jpg'
 import Carouse2WebP from '@/assets/images/Carrusel2.webp'
 import Carouse3 from '@/assets/images/Carrusel3.jpg'
 import Carouse3WebP from '@/assets/images/Carrusel3.webp'
+import { useSiteMedia } from '@/hooks/useSiteMedia'
 import type { CarouselImage, ValueCard } from '@/types'
 
-const carouselImages: CarouselImage[] = [
+const defaultCarousel: CarouselImage[] = [
   { src: Carouse1, webp: Carouse1WebP, alt: 'Reunión de enseñanza' },
   { src: Carouse2, webp: Carouse2WebP, alt: 'Ceremonia de bautizo' },
   { src: Carouse3, webp: Carouse3WebP, alt: 'Equipo de servicio' },
@@ -51,6 +52,11 @@ const ValueCardItem = ({ value }: { value: ValueCard }) => (
 )
 
 const ADNIntro = () => {
+  const { carousel } = useSiteMedia()
+  const carouselImages: CarouselImage[] = carousel
+    ? carousel.map((c) => ({ src: c.url, alt: c.alt }))
+    : defaultCarousel
+
   return (
     <section
       aria-label="Descubre quiénes somos"

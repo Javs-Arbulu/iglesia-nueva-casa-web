@@ -93,11 +93,32 @@ export async function setMediaPublished(
   if (error) throw error
 }
 
-/** Actualiza el texto alternativo y/o la categoría de una imagen. */
+/** Actualiza el texto alternativo y/o la categoría (álbum) de una imagen. */
 export async function updateMedia(
   id: string,
   patch: { alt?: string | null; category?: string }
 ): Promise<void> {
   const { error } = await getSupabase().from('media').update(patch).eq('id', id)
+  if (error) throw error
+}
+
+/** Renombra un álbum: mueve todas las fotos de una categoría a otra. */
+export async function renameCategory(from: string, to: string): Promise<void> {
+  const { error } = await getSupabase()
+    .from('media')
+    .update({ category: to })
+    .eq('category', from)
+  if (error) throw error
+}
+
+/** Publica u oculta todas las fotos de un álbum (categoría) a la vez. */
+export async function setCategoryPublished(
+  category: string,
+  published: boolean
+): Promise<void> {
+  const { error } = await getSupabase()
+    .from('media')
+    .update({ published })
+    .eq('category', category)
   if (error) throw error
 }

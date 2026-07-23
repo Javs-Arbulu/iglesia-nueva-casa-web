@@ -4,6 +4,7 @@ import VolunteeringImageWebP from '@/assets/images/volunteering.webp'
 import VolunteeringImageMobile from '@/assets/images/volunteering-mobile.jpg'
 import VolunteeringImageMobileWebP from '@/assets/images/volunteering-mobile.webp'
 import { Link } from 'react-router-dom'
+import { useSiteMedia } from '@/hooks/useSiteMedia'
 
 /**
  * "Servolución" parallax-style banner section.
@@ -14,6 +15,8 @@ import { Link } from 'react-router-dom'
  * The <picture> element is kept as a hidden preload hint for the fallback PNG.
  */
 const Volunteering = () => {
+  const { volunteering } = useSiteMedia()
+
   return (
     <section
       aria-label="Sección Servolución — únete al equipo"
@@ -21,24 +24,35 @@ const Volunteering = () => {
     >
       {/* Background — parallax on desktop, static on mobile */}
       <div className="absolute inset-0 -z-10" aria-hidden="true">
-        {/* Desktop: parallax via background-attachment: fixed (WebP) */}
+        {/* Desktop: parallax via background-attachment: fixed */}
         <div
           className="hidden md:block absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url(${VolunteeringImageWebP}), url(${VolunteeringImage})`,
+            backgroundImage: volunteering
+              ? `url(${volunteering.url})`
+              : `url(${VolunteeringImageWebP}), url(${VolunteeringImage})`,
             backgroundAttachment: 'fixed',
           }}
         />
-        {/* Mobile: static cover image via <picture> (no fixed attachment — broken on iOS) */}
-        <picture className="md:hidden">
-          <source srcSet={VolunteeringImageMobileWebP} type="image/webp" />
+        {/* Mobile: static cover image (no fixed attachment — broken on iOS) */}
+        {volunteering ? (
           <img
-            src={VolunteeringImageMobile}
+            src={volunteering.url}
             alt=""
-            className="w-full h-full object-cover object-center"
+            className="md:hidden w-full h-full object-cover object-center"
             loading="lazy"
           />
-        </picture>
+        ) : (
+          <picture className="md:hidden">
+            <source srcSet={VolunteeringImageMobileWebP} type="image/webp" />
+            <img
+              src={VolunteeringImageMobile}
+              alt=""
+              className="w-full h-full object-cover object-center"
+              loading="lazy"
+            />
+          </picture>
+        )}
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent dark:from-black/90 dark:via-black/65 dark:to-black/20" />
       </div>
