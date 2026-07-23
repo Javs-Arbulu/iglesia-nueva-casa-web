@@ -183,5 +183,6 @@ export interface ContactSubmission {
   email: string
   asunto: string
   mensaje: string
+  read: boolean
   created_at: string
 }
