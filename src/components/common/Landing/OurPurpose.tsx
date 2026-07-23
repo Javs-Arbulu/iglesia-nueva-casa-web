@@ -1,39 +1,28 @@
 import { BookOpen, Lock, Compass, Globe } from 'lucide-react'
+import { useHomeText } from '@/hooks/useSiteText'
 import type { PurposeCard } from '@/types'
 
-const purposes: PurposeCard[] = [
+const purposeStyles: Pick<PurposeCard, 'icon' | 'gradient' | 'iconBg' | 'iconColor'>[] = [
   {
     icon: <BookOpen className="w-8 h-8" aria-hidden="true" />,
-    title: 'Conocer a Dios',
-    description:
-      'Más que una religión, es una relación personal y transformadora que cambia todo.',
     gradient: 'from-blue-500 to-cyan-400',
     iconBg: 'bg-blue-100',
     iconColor: 'text-blue-600',
   },
   {
     icon: <Lock className="w-8 h-8" aria-hidden="true" />,
-    title: 'Encontrar Libertad',
-    description:
-      'Vivir sin ataduras en un ambiente seguro, lleno de gracia y aceptación real.',
     gradient: 'from-purple-500 to-pink-400',
     iconBg: 'bg-purple-100',
     iconColor: 'text-purple-600',
   },
   {
     icon: <Compass className="w-8 h-8" aria-hidden="true" />,
-    title: 'Descubrir Propósito',
-    description:
-      'Entender tu diseño único y el plan extraordinario que Dios tiene para tu vida.',
     gradient: 'from-orange-500 to-yellow-400',
     iconBg: 'bg-orange-100',
     iconColor: 'text-orange-600',
   },
   {
     icon: <Globe className="w-8 h-8" aria-hidden="true" />,
-    title: 'Hacer la Diferencia',
-    description:
-      'Impactar la vida de otros y cambiar el mundo usando tus talentos y pasión.',
     gradient: 'from-green-500 to-emerald-400',
     iconBg: 'bg-green-100',
     iconColor: 'text-green-600',
@@ -41,10 +30,16 @@ const purposes: PurposeCard[] = [
 ]
 
 const OurPurpose = () => {
+  const t = useHomeText().purpose
+  const purposes = purposeStyles.map((s, i) => ({
+    ...s,
+    title: t.cards[i]?.title ?? '',
+    description: t.cards[i]?.description ?? '',
+  }))
   return (
     <section
       aria-label="Nuestro propósito"
-      className="pt-20 pb-20 bg-white dark:bg-slate-900 relative overflow-hidden -mt-px"
+      className="pt-20 pb-12 bg-white dark:bg-slate-900 relative overflow-hidden -mt-px"
     >
       {/* Decorative Background Elements */}
       <div
@@ -60,12 +55,10 @@ const OurPurpose = () => {
         {/* Header */}
         <header className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-            Nuestro Propósito
+            {t.title}
           </h2>
           <p className="text-gray-600 dark:text-slate-300 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-            Existimos para conectar a las personas con la vida que Jesús ofrece.
-            <br />
-            Un camino simple de cuatro pasos para crecer.
+            {t.subtitle}
           </p>
         </header>
 
@@ -74,9 +67,9 @@ const OurPurpose = () => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-12"
           role="list"
         >
-          {purposes.map((purpose) => (
+          {purposes.map((purpose, i) => (
             <li
-              key={purpose.title}
+              key={i}
               className="relative bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group border border-gray-100 dark:border-slate-800"
             >
               {/* Gradient Border Effect */}

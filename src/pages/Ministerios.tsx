@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Calendar, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useScrollTop } from '@/hooks/useScroll'
+import { useMinisteriosText } from '@/hooks/useSiteText'
 import { MINISTERIO_TABS } from '@/lib/constants'
 import type { Ministerio, MinisterioTab } from '@/types'
 import SEO from '@/components/common/SEO'
@@ -16,66 +17,26 @@ import gruposJpg from '@/assets/images/ministerios/grupos.jpg'
 import servicioWebp from '@/assets/images/ministerios/servicio.webp'
 import servicioJpg from '@/assets/images/ministerios/servicio.jpg'
 
-const ministerios: Ministerio[] = [
-  {
-    category: 'GENERACIONES',
-    title: 'Jóvenes',
-    icon: '👥',
-    image: jovenesJpg,
-    imageWebp: jovenesWebp,
-    description:
-      'Una comunidad vibrante para la siguiente generación. No caminamos solos, crecemos juntos.',
-    schedule: 'Sábados 6:00 PM',
-    bgColor: 'from-cyan-50 to-blue-50',
-  },
-  {
-    category: 'GENERACIONES',
-    title: 'Niños',
-    icon: '😊',
-    image: ninosJpg,
-    imageWebp: ninosWebp,
-    description:
-      'Formando corazones desde la infancia con historias bíblicas, juegos y mucha diversión.',
-    schedule: 'Domingos 10:00 AM',
-    bgColor: 'from-orange-50 to-yellow-50',
-  },
-  {
-    category: 'SERVICIO',
-    title: 'Alabanza',
-    icon: '🎵',
-    image: alabanzaJpg,
-    imageWebp: alabanzaWebp,
-    description:
-      'Exaltando a Dios a través del arte y la música. Si tocas un instrumento o cantas, este es tu lugar.',
-    schedule: 'Jueves 7:00 PM',
-    bgColor: 'from-purple-50 to-pink-50',
-  },
-  {
-    category: 'COMUNIDAD',
-    title: 'Grupos Pequeños',
-    icon: '🏠',
-    image: gruposJpg,
-    imageWebp: gruposWebp,
-    description:
-      'Vida en comunidad fuera de las cuatro paredes del templo. Comparte, ríe y crece en casas.',
-    schedule: 'Diferentes horarios',
-    bgColor: 'from-green-50 to-teal-50',
-  },
-  {
-    category: 'SERVICIO',
-    title: 'Servicio Social',
-    icon: '🤝',
-    image: servicioJpg,
-    imageWebp: servicioWebp,
-    description:
-      'Siendo las manos y pies de Jesús en la ciudad a través de ayuda humanitaria y brigadas.',
-    schedule: 'Sábados 9:00 AM',
-    bgColor: 'from-red-50 to-orange-50',
-  },
+const ministerioStyles: Pick<
+  Ministerio,
+  'category' | 'icon' | 'image' | 'imageWebp' | 'bgColor'
+>[] = [
+  { category: 'GENERACIONES', icon: '👥', image: jovenesJpg, imageWebp: jovenesWebp, bgColor: 'from-cyan-50 to-blue-50' },
+  { category: 'GENERACIONES', icon: '😊', image: ninosJpg, imageWebp: ninosWebp, bgColor: 'from-orange-50 to-yellow-50' },
+  { category: 'SERVICIO', icon: '🎵', image: alabanzaJpg, imageWebp: alabanzaWebp, bgColor: 'from-purple-50 to-pink-50' },
+  { category: 'COMUNIDAD', icon: '🏠', image: gruposJpg, imageWebp: gruposWebp, bgColor: 'from-green-50 to-teal-50' },
+  { category: 'SERVICIO', icon: '🤝', image: servicioJpg, imageWebp: servicioWebp, bgColor: 'from-red-50 to-orange-50' },
 ]
 
 export default function Ministerios() {
   useScrollTop()
+  const t = useMinisteriosText()
+  const ministerios: Ministerio[] = ministerioStyles.map((s, i) => ({
+    ...s,
+    title: t.items[i]?.title ?? '',
+    description: t.items[i]?.description ?? '',
+    schedule: t.items[i]?.schedule ?? '',
+  }))
 
   const [activeTab, setActiveTab] = useState<MinisterioTab>('Todos')
 
@@ -95,14 +56,13 @@ export default function Ministerios() {
       <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <div className="text-center">
           <div className="inline-block bg-cyan-100 text-cyan-600 px-4 py-2 rounded-full text-sm font-semibold mb-4 uppercase tracking-wide">
-            Nuestra Comunidad
+            {t.header.badge}
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            Descubre tu lugar en la familia
+            {t.header.title}
           </h1>
           <p className="text-gray-600 dark:text-slate-300 text-lg max-w-3xl mx-auto">
-            Hay un espacio para ti. Ya sea que busques crecer espiritualmente,
-            servir a otros o conectar con personas de tu edad.
+            {t.header.subtitle}
           </p>
         </div>
 

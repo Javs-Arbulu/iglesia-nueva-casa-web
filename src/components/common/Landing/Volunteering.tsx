@@ -4,6 +4,8 @@ import VolunteeringImageWebP from '@/assets/images/volunteering.webp'
 import VolunteeringImageMobile from '@/assets/images/volunteering-mobile.jpg'
 import VolunteeringImageMobileWebP from '@/assets/images/volunteering-mobile.webp'
 import { Link } from 'react-router-dom'
+import { useSiteMedia } from '@/hooks/useSiteMedia'
+import { useHomeText } from '@/hooks/useSiteText'
 
 /**
  * "Servolución" parallax-style banner section.
@@ -14,6 +16,9 @@ import { Link } from 'react-router-dom'
  * The <picture> element is kept as a hidden preload hint for the fallback PNG.
  */
 const Volunteering = () => {
+  const { volunteering } = useSiteMedia()
+  const t = useHomeText().volunteering
+
   return (
     <section
       aria-label="Sección Servolución — únete al equipo"
@@ -21,24 +26,35 @@ const Volunteering = () => {
     >
       {/* Background — parallax on desktop, static on mobile */}
       <div className="absolute inset-0 -z-10" aria-hidden="true">
-        {/* Desktop: parallax via background-attachment: fixed (WebP) */}
+        {/* Desktop: parallax via background-attachment: fixed */}
         <div
           className="hidden md:block absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url(${VolunteeringImageWebP}), url(${VolunteeringImage})`,
+            backgroundImage: volunteering
+              ? `url(${volunteering.url})`
+              : `url(${VolunteeringImageWebP}), url(${VolunteeringImage})`,
             backgroundAttachment: 'fixed',
           }}
         />
-        {/* Mobile: static cover image via <picture> (no fixed attachment — broken on iOS) */}
-        <picture className="md:hidden">
-          <source srcSet={VolunteeringImageMobileWebP} type="image/webp" />
+        {/* Mobile: static cover image (no fixed attachment — broken on iOS) */}
+        {volunteering ? (
           <img
-            src={VolunteeringImageMobile}
+            src={volunteering.url}
             alt=""
-            className="w-full h-full object-cover object-center"
+            className="md:hidden w-full h-full object-cover object-center"
             loading="lazy"
           />
-        </picture>
+        ) : (
+          <picture className="md:hidden">
+            <source srcSet={VolunteeringImageMobileWebP} type="image/webp" />
+            <img
+              src={VolunteeringImageMobile}
+              alt=""
+              className="w-full h-full object-cover object-center"
+              loading="lazy"
+            />
+          </picture>
+        )}
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent dark:from-black/90 dark:via-black/65 dark:to-black/20" />
       </div>
@@ -49,14 +65,12 @@ const Volunteering = () => {
           <div className="w-full max-w-3xl">
             <h2 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-tight mb-6">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-orange-500">
-                Servolución
+                {t.title}
               </span>
             </h2>
 
             <p className="text-white/90 text-lg md:text-xl lg:text-2xl leading-relaxed mb-8 max-w-2xl">
-              No es solo lo que hacemos, es quienes somos. Llevamos una fe
-              activa que sale de las cuatro paredes para impactar nuestra
-              ciudad.
+              {t.paragraph}
             </p>
 
             <Button
@@ -65,7 +79,7 @@ const Volunteering = () => {
               className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold px-8 py-6 rounded-full text-base transition-all duration-300 hover:scale-105 shadow-lg shadow-red-500/30"
             >
               <Link to="/ministerios">
-                Únete al Equipo
+                {t.button}
                 <span className="ml-2" aria-hidden="true">
                   →
                 </span>

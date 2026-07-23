@@ -14,6 +14,7 @@ import {
 } from '@/services/finance'
 import { useAsyncData } from '@/hooks/useAsyncData'
 import { useToast } from '@/features/toast/context'
+import { useAuth } from '@/features/auth/context'
 import AsyncState from '@/components/admin/AsyncState'
 import PageHeader from '@/components/admin/PageHeader'
 import Modal from '@/components/common/Modal'
@@ -42,6 +43,9 @@ const EMPTY = {
 
 export default function Finanzas() {
   const toast = useToast()
+  const { can } = useAuth()
+  const canEdit = can('finanzas', 'edit')
+  const canDelete = can('finanzas', 'delete')
   const fetcher = useCallback(() => fetchTransactions(), [])
   const { data: txs, status, refresh } = useAsyncData(fetcher, [] as FinanceTransaction[])
   const [busy, setBusy] = useState(false)
@@ -139,10 +143,12 @@ export default function Finanzas() {
       <PageHeader
         title="Finanzas"
         action={
+          canEdit ? (
           <button onClick={openNew} className={primaryBtn}>
             <Plus className="w-4 h-4" aria-hidden="true" />
             Nuevo
           </button>
+          ) : undefined
         }
       />
 
@@ -251,21 +257,25 @@ export default function Finanzas() {
                   {isIn ? '+' : '−'}
                   {formatPEN(Number(t.amount))}
                 </span>
-                <button
-                  onClick={() => openEdit(t)}
-                  aria-label="Editar"
-                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800"
-                >
-                  <Pencil className="w-4 h-4" aria-hidden="true" />
-                </button>
-                <button
-                  onClick={() => remove(t)}
-                  disabled={busy}
-                  aria-label="Eliminar"
-                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-60"
-                >
-                  <Trash2 className="w-4 h-4" aria-hidden="true" />
-                </button>
+                {canEdit && (
+                  <button
+                    onClick={() => openEdit(t)}
+                    aria-label="Editar"
+                    className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800"
+                  >
+                    <Pencil className="w-4 h-4" aria-hidden="true" />
+                  </button>
+                )}
+                {canDelete && (
+                  <button
+                    onClick={() => remove(t)}
+                    disabled={busy}
+                    aria-label="Eliminar"
+                    className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-60"
+                  >
+                    <Trash2 className="w-4 h-4" aria-hidden="true" />
+                  </button>
+                )}
               </li>
             )
           })}

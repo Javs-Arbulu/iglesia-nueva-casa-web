@@ -1,6 +1,6 @@
 import { getSupabase } from '@/services/supabase'
 import { fetchTransactions, monthSummary } from '@/services/finance'
-import type { AppRole, Evento } from '@/types'
+import type { Evento } from '@/types'
 
 export interface DashboardStats {
   messages?: number
@@ -10,19 +10,20 @@ export interface DashboardStats {
   finance?: { ingresos: number; egresos: number; balance: number }
 }
 
-type HasRole = (...roles: AppRole[]) => boolean
+/** ¿El usuario puede ver el módulo? (según la matriz de permisos). */
+type CanView = (moduleId: string) => boolean
 
 /**
- * Carga las métricas del panel según los permisos del usuario. Sólo se consulta
- * lo que su rol puede ver, así no se disparan consultas que RLS rechazaría.
- * Cada bloque falla de forma aislada (un error no tumba todo el dashboard).
+ * Carga las métricas del panel solo de los módulos que el usuario puede ver, así
+ * el Inicio muestra únicamente su información accesible (y no dispara consultas
+ * que RLS rechazaría). Cada bloque falla de forma aislada.
  */
-export async function loadDashboard(has: HasRole): Promise<DashboardStats> {
+export async function loadDashboard(canView: CanView): Promise<DashboardStats> {
   const supabase = getSupabase()
   const stats: DashboardStats = {}
   const tasks: Promise<void>[] = []
 
-  if (has('admin')) {
+  if (canView('mensajes')) {
     tasks.push(
       (async () => {
         const { count } = await supabase
@@ -32,6 +33,9 @@ export async function loadDashboard(has: HasRole): Promise<DashboardStats> {
         stats.messages = count ?? 0
       })()
     )
+  }
+
+  if (canView('usuarios')) {
     tasks.push(
       (async () => {
         const { count } = await supabase
@@ -43,7 +47,7 @@ export async function loadDashboard(has: HasRole): Promise<DashboardStats> {
     )
   }
 
-  if (has('admin', 'editor')) {
+  if (canView('eventos')) {
     tasks.push(
       (async () => {
         const { data } = await supabase
@@ -55,6 +59,9 @@ export async function loadDashboard(has: HasRole): Promise<DashboardStats> {
         stats.events = { upcoming: upcoming.length, next: upcoming[0] ?? null }
       })()
     )
+  }
+
+  if (canView('fotos')) {
     tasks.push(
       (async () => {
         const { data } = await supabase.from('media').select('published')
@@ -67,7 +74,7 @@ export async function loadDashboard(has: HasRole): Promise<DashboardStats> {
     )
   }
 
-  if (has('admin', 'finanzas')) {
+  if (canView('finanzas')) {
     tasks.push(
       (async () => {
         const txs = await fetchTransactions()

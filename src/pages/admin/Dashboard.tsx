@@ -16,7 +16,7 @@ import { useAsyncData } from '@/hooks/useAsyncData'
 import { loadDashboard, type DashboardStats } from '@/services/dashboard'
 import { formatPEN } from '@/services/finance'
 import { formatEventDate } from '@/services/events'
-import type { AppRole } from '@/types'
+import type { ModuleAction } from '@/lib/modules'
 import AsyncState from '@/components/admin/AsyncState'
 import StatCard from '@/components/admin/StatCard'
 
@@ -24,22 +24,23 @@ interface QuickAction {
   to: string
   label: string
   icon: LucideIcon
-  roles: AppRole[]
+  module: string
+  action: ModuleAction
 }
 
 const QUICK_ACTIONS: QuickAction[] = [
-  { to: '/admin/eventos?nuevo=1', label: 'Nuevo evento', icon: CalendarPlus, roles: ['admin', 'editor'] },
-  { to: '/admin/finanzas?nuevo=1', label: 'Nuevo movimiento', icon: Wallet, roles: ['admin', 'finanzas'] },
-  { to: '/admin/fotos', label: 'Subir fotos', icon: ImagePlus, roles: ['admin', 'editor'] },
-  { to: '/admin/contenido', label: 'Editar contenido', icon: FileText, roles: ['admin', 'editor'] },
+  { to: '/admin/eventos?nuevo=1', label: 'Nuevo evento', icon: CalendarPlus, module: 'eventos', action: 'edit' },
+  { to: '/admin/finanzas?nuevo=1', label: 'Nuevo movimiento', icon: Wallet, module: 'finanzas', action: 'edit' },
+  { to: '/admin/fotos', label: 'Subir fotos', icon: ImagePlus, module: 'fotos', action: 'edit' },
+  { to: '/admin/contenido', label: 'Editar contenido', icon: FileText, module: 'contenido', action: 'edit' },
 ]
 
 export default function Dashboard() {
-  const { hasRole } = useAuth()
-  const fetcher = useCallback(() => loadDashboard(hasRole), [hasRole])
+  const { can } = useAuth()
+  const fetcher = useCallback(() => loadDashboard((m) => can(m, 'view')), [can])
   const { data: stats, status } = useAsyncData(fetcher, {} as DashboardStats)
 
-  const actions = QUICK_ACTIONS.filter((a) => hasRole(...a.roles))
+  const actions = QUICK_ACTIONS.filter((a) => can(a.module, a.action))
 
   return (
     <div>

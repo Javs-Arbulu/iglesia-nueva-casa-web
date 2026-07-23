@@ -4,6 +4,8 @@ import { MapPin } from 'lucide-react'
 import HeroImage from '@/assets/images/Hero.jpg'
 import HeroImageWebP from '@/assets/images/Hero.webp'
 import { CHURCH_INFO, SOCIAL_HREFS } from '@/lib/constants'
+import { useSiteMedia } from '@/hooks/useSiteMedia'
+import { useHomeText } from '@/hooks/useSiteText'
 import type { Star } from '@/types'
 
 const generateStars = (): Star[] =>
@@ -22,6 +24,8 @@ const STARS = generateStars()
 const HeroSection = () => {
   // Keep stars stable even if the component re-mounts (e.g. HMR)
   const stars = useMemo(() => STARS, [])
+  const { hero } = useSiteMedia()
+  const t = useHomeText().hero
 
   return (
     <section
@@ -30,15 +34,24 @@ const HeroSection = () => {
     >
       {/* Background */}
       <div className="absolute inset-0 z-0" aria-hidden="true">
-        <picture>
-          <source srcSet={HeroImageWebP} type="image/webp" />
+        {hero ? (
           <img
-            src={HeroImage}
+            src={hero.url}
             alt=""
             className="absolute inset-0 w-full h-full object-cover object-center"
             fetchPriority="high"
           />
-        </picture>
+        ) : (
+          <picture>
+            <source srcSet={HeroImageWebP} type="image/webp" />
+            <img
+              src={HeroImage}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover object-center"
+              fetchPriority="high"
+            />
+          </picture>
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/30 dark:from-black/55 dark:via-black/70 dark:to-black/60" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-900/30 via-transparent to-transparent" />
       </div>
@@ -68,22 +81,19 @@ const HeroSection = () => {
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="inline-block mb-6">
           <span className="text-xs md:text-sm font-semibold text-cyan-400 tracking-[0.3em] uppercase">
-            # BIENVENIDO A CASA
+            {t.badge}
           </span>
         </div>
 
         <h1 className="mb-6 text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight">
-          Aquí no vienes a un lugar,
-          <br />
-          llegas a{' '}
+          {t.title}{' '}
           <span className="font-hand font-bold text-cyan-300 text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
-            una familia.
+            {t.accent}
           </span>
         </h1>
 
         <p className="text-white/90 text-base md:text-lg lg:text-xl max-w-3xl mx-auto mb-10 px-4 leading-relaxed">
-          Somos una comunidad apasionada por Jesús, caminando juntos para
-          transformar vidas en nuestra comunidad.
+          {t.subtitle}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -98,7 +108,7 @@ const HeroSection = () => {
               rel="noopener noreferrer"
             >
               <MapPin className="w-5 h-5 mr-2" aria-hidden="true" />
-              Ver Nuestra Ubicación
+              {t.btnLocation}
             </a>
           </Button>
 
@@ -113,7 +123,7 @@ const HeroSection = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Ver Servicios en Vivo
+              {t.btnLive}
             </a>
           </Button>
         </div>
