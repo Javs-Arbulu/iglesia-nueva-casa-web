@@ -5,6 +5,7 @@ import VolunteeringImageMobile from '@/assets/images/volunteering-mobile.jpg'
 import VolunteeringImageMobileWebP from '@/assets/images/volunteering-mobile.webp'
 import { Link } from 'react-router-dom'
 import { useSiteMedia } from '@/hooks/useSiteMedia'
+import { useHomeText } from '@/hooks/useSiteText'
 
 /**
  * "Servolución" parallax-style banner section.
@@ -16,6 +17,7 @@ import { useSiteMedia } from '@/hooks/useSiteMedia'
  */
 const Volunteering = () => {
   const { volunteering } = useSiteMedia()
+  const t = useHomeText().volunteering
 
   return (
     <section
@@ -63,14 +65,12 @@ const Volunteering = () => {
           <div className="w-full max-w-3xl">
             <h2 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-tight mb-6">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-orange-500">
-                Servolución
+                {t.title}
               </span>
             </h2>
 
             <p className="text-white/90 text-lg md:text-xl lg:text-2xl leading-relaxed mb-8 max-w-2xl">
-              No es solo lo que hacemos, es quienes somos. Llevamos una fe
-              activa que sale de las cuatro paredes para impactar nuestra
-              ciudad.
+              {t.paragraph}
             </p>
 
             <Button
@@ -79,7 +79,7 @@ const Volunteering = () => {
               className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold px-8 py-6 rounded-full text-base transition-all duration-300 hover:scale-105 shadow-lg shadow-red-500/30"
             >
               <Link to="/ministerios">
-                Únete al Equipo
+                {t.button}
                 <span className="ml-2" aria-hidden="true">
                   →
                 </span>

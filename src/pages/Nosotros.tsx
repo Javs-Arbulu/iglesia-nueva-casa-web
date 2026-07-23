@@ -6,33 +6,25 @@ import comunidadJpg from '@/assets/images/Carrusel2.jpg'
 import { Link } from 'react-router-dom'
 import { useScrollToHash } from '@/hooks/useScroll'
 import { useSiteMedia } from '@/hooks/useSiteMedia'
+import { useNosotrosText } from '@/hooks/useSiteText'
 import type { VisionItem } from '@/types'
 import SEO from '@/components/common/SEO'
 
-const visionItems: VisionItem[] = [
+const visionStyles: Pick<VisionItem, 'icon' | 'iconBg' | 'iconColor' | 'gradient'>[] = [
   {
     icon: <Users className="w-8 h-8" aria-hidden="true" />,
-    title: 'Comunidad Auténtica',
-    description:
-      'Un espacio seguro donde puedes participar antes de creer. Fomentamos relaciones genuinas y duraderas.',
     iconBg: 'bg-cyan-100',
     iconColor: 'text-cyan-600',
     gradient: 'from-cyan-500 to-blue-400',
   },
   {
     icon: <Zap className="w-8 h-8" aria-hidden="true" />,
-    title: 'Fe en Acción',
-    description:
-      'No solo hablamos de fe, la vivimos. Llevamos un mensaje de esperanza a las calles y servimos a nuestra ciudad.',
     iconBg: 'bg-yellow-100',
     iconColor: 'text-yellow-600',
     gradient: 'from-yellow-500 to-orange-400',
   },
   {
     icon: <TrendingUp className="w-8 h-8" aria-hidden="true" />,
-    title: 'Liderazgo Joven',
-    description:
-      'Creemos en tu potencial. Capacitamos y empoderamos a los líderes de mañana, hoy mismo.',
     iconBg: 'bg-purple-100',
     iconColor: 'text-purple-600',
     gradient: 'from-purple-500 to-pink-400',
@@ -43,6 +35,12 @@ export default function Nosotros() {
   // Scroll to #adn anchor when navigated with that hash
   useScrollToHash()
   const { nosotros } = useSiteMedia()
+  const t = useNosotrosText()
+  const visionItems: VisionItem[] = visionStyles.map((s, i) => ({
+    ...s,
+    title: t.vision.items[i]?.title ?? '',
+    description: t.vision.items[i]?.description ?? '',
+  }))
 
   return (
     <>
@@ -68,20 +66,17 @@ export default function Nosotros() {
             <div>
               <div className="inline-block mb-6">
                 <span className="text-xs md:text-sm font-semibold text-cyan-200 tracking-[0.3em] uppercase">
-                  # SOBRE NOSOTROS
+                  {t.hero.badge}
                 </span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                No solo una iglesia,{' '}
+                {t.hero.title}{' '}
                 <span className="font-hand font-bold text-cyan-200 text-5xl md:text-6xl lg:text-7xl">
-                  una familia.
+                  {t.hero.accent}
                 </span>
               </h1>
               <p className="text-white/90 text-base md:text-lg mb-8 leading-relaxed">
-                Bienvenido a un lugar donde puedes ser tú mismo. Creemos y
-                pertenecemos a la próxima generación para vivir con propósito y
-                pasión por Jesús. Aquí encontrarás amigos, fe y un futuro
-                brillante.
+                {t.hero.subtitle}
               </p>
               <Button
                 size="lg"
@@ -89,7 +84,7 @@ export default function Nosotros() {
                 asChild
                 className="border-2 border-white bg-transparent text-white hover:bg-white/10 font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 backdrop-blur-sm"
               >
-                <Link to="/contacto#info">Ver Horarios</Link>
+                <Link to="/contacto#info">{t.hero.button}</Link>
               </Button>
             </div>
 
@@ -118,9 +113,9 @@ export default function Nosotros() {
                   </picture>
                 )}
                 <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-xl">
-                  <p className="text-gray-900 font-semibold">Comunidad Joven</p>
+                  <p className="text-gray-900 font-semibold">{t.caption.title}</p>
                   <p className="text-cyan-600 text-sm font-medium">
-                    Reuniones cada Domingo 11AM
+                    {t.caption.subtitle}
                   </p>
                 </div>
               </div>
@@ -149,11 +144,10 @@ export default function Nosotros() {
         <div className="container mx-auto px-4 relative z-10">
           <header className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-              Nuestra Visión
+              {t.vision.title}
             </h2>
             <p className="text-gray-600 dark:text-slate-300 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-              Más que reuniones, construimos una comunidad viva y apasionada
-              donde cada persona encuentra su propósito.
+              {t.vision.subtitle}
             </p>
           </header>
 
@@ -237,11 +231,10 @@ export default function Nosotros() {
                   <span className="text-3xl">🤝</span>
                 </div>
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                  Estamos emocionados de conocerte
+                  {t.cta.title}
                 </h2>
                 <p className="text-gray-300 text-base md:text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
-                  No tienes que hacer esto solo. Ven tal como eres y sé parte de
-                  algo más grande. Tu historia importa aquí.
+                  {t.cta.paragraph}
                 </p>
                 <Button
                   size="lg"
@@ -249,7 +242,7 @@ export default function Nosotros() {
                   asChild
                   className="bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 font-semibold px-8 py-6 rounded-full text-base transition-all duration-300 border border-white/20"
                 >
-                  <Link to="/contacto">Contáctanos</Link>
+                  <Link to="/contacto">{t.cta.button}</Link>
                 </Button>
               </div>
             </div>

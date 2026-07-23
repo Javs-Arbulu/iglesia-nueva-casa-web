@@ -5,6 +5,7 @@ import HeroImage from '@/assets/images/Hero.jpg'
 import HeroImageWebP from '@/assets/images/Hero.webp'
 import { CHURCH_INFO, SOCIAL_HREFS } from '@/lib/constants'
 import { useSiteMedia } from '@/hooks/useSiteMedia'
+import { useHomeText } from '@/hooks/useSiteText'
 import type { Star } from '@/types'
 
 const generateStars = (): Star[] =>
@@ -24,6 +25,7 @@ const HeroSection = () => {
   // Keep stars stable even if the component re-mounts (e.g. HMR)
   const stars = useMemo(() => STARS, [])
   const { hero } = useSiteMedia()
+  const t = useHomeText().hero
 
   return (
     <section
@@ -79,22 +81,19 @@ const HeroSection = () => {
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="inline-block mb-6">
           <span className="text-xs md:text-sm font-semibold text-cyan-400 tracking-[0.3em] uppercase">
-            # BIENVENIDO A CASA
+            {t.badge}
           </span>
         </div>
 
         <h1 className="mb-6 text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight">
-          Aquí no vienes a un lugar,
-          <br />
-          llegas a{' '}
+          {t.title}{' '}
           <span className="font-hand font-bold text-cyan-300 text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
-            una familia.
+            {t.accent}
           </span>
         </h1>
 
         <p className="text-white/90 text-base md:text-lg lg:text-xl max-w-3xl mx-auto mb-10 px-4 leading-relaxed">
-          Somos una comunidad apasionada por Jesús, caminando juntos para
-          transformar vidas en nuestra comunidad.
+          {t.subtitle}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -109,7 +108,7 @@ const HeroSection = () => {
               rel="noopener noreferrer"
             >
               <MapPin className="w-5 h-5 mr-2" aria-hidden="true" />
-              Ver Nuestra Ubicación
+              {t.btnLocation}
             </a>
           </Button>
 
@@ -124,7 +123,7 @@ const HeroSection = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Ver Servicios en Vivo
+              {t.btnLive}
             </a>
           </Button>
         </div>

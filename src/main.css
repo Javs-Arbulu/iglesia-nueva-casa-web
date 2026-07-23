@@ -166,3 +166,41 @@
     animation: none;
   }
 }
+
+/* ─── Banner de anuncios: marquesina en bucle continuo ─────────────────────── */
+/* El track contiene el texto repetido en DOS grupos idénticos y se desplaza
+   -50%: al llegar, el segundo grupo queda donde estaba el primero → loop
+   perfectamente continuo y siempre lleno (sin lados vacíos). */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee {
+  overflow: hidden;
+}
+
+.marquee__track {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 30s) linear infinite;
+  will-change: transform;
+}
+
+/* Pausa al pasar el cursor (cómodo para leer / hacer clic en el enlace). */
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+
+/* Menos movimiento: sin desplazamiento (texto estático). */
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track {
+    animation: none;
+  }
+}

@@ -70,11 +70,18 @@ const Footer = () => {
                 />
                 <div>
                   <p className="font-semibold text-gray-900 dark:text-white mb-1">Reuniones</p>
-                  <p className="text-gray-600 dark:text-slate-300 text-sm">
-                    Domingos
-                    <br />
-                    11AM - Presencial y Online
-                  </p>
+                  <div className="text-gray-600 dark:text-slate-300 text-sm space-y-1.5">
+                    {contact.schedules.map((s, i) => (
+                      <p key={i}>
+                        {s.name && (
+                          <span className="block font-medium text-gray-700 dark:text-slate-200">
+                            {s.name}
+                          </span>
+                        )}
+                        {[s.day, s.time].filter(Boolean).join(' · ')}
+                      </p>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

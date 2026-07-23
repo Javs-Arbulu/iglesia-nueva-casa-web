@@ -13,6 +13,7 @@ import Carouse2WebP from '@/assets/images/Carrusel2.webp'
 import Carouse3 from '@/assets/images/Carrusel3.jpg'
 import Carouse3WebP from '@/assets/images/Carrusel3.webp'
 import { useSiteMedia } from '@/hooks/useSiteMedia'
+import { useHomeText } from '@/hooks/useSiteText'
 import type { CarouselImage, ValueCard } from '@/types'
 
 const defaultCarousel: CarouselImage[] = [
@@ -21,26 +22,10 @@ const defaultCarousel: CarouselImage[] = [
   { src: Carouse3, webp: Carouse3WebP, alt: 'Equipo de servicio' },
 ]
 
-const values: ValueCard[] = [
-  {
-    icon: <Heart className="w-5 h-5" aria-hidden="true" />,
-    title: 'Amor Genuino',
-    description:
-      'Amar a Dios y amar a las personas es nuestra prioridad número uno.',
-    iconColor: 'text-pink-400',
-  },
-  {
-    icon: <Users className="w-5 h-5" aria-hidden="true" />,
-    title: 'Comunidad',
-    description: 'No fuimos diseñados para vivir solos, crecemos juntos.',
-    iconColor: 'text-cyan-300',
-  },
-  {
-    icon: <Sparkles className="w-5 h-5" aria-hidden="true" />,
-    title: 'Servicio',
-    description: 'Vivimos para servir a Dios y a los demás.',
-    iconColor: 'text-yellow-300',
-  },
+const valueStyles: { icon: React.ReactNode; iconColor: string }[] = [
+  { icon: <Heart className="w-5 h-5" aria-hidden="true" />, iconColor: 'text-pink-400' },
+  { icon: <Users className="w-5 h-5" aria-hidden="true" />, iconColor: 'text-cyan-300' },
+  { icon: <Sparkles className="w-5 h-5" aria-hidden="true" />, iconColor: 'text-yellow-300' },
 ]
 
 const ValueCardItem = ({ value }: { value: ValueCard }) => (
@@ -53,9 +38,15 @@ const ValueCardItem = ({ value }: { value: ValueCard }) => (
 
 const ADNIntro = () => {
   const { carousel } = useSiteMedia()
+  const t = useHomeText().adn
   const carouselImages: CarouselImage[] = carousel
     ? carousel.map((c) => ({ src: c.url, alt: c.alt }))
     : defaultCarousel
+  const values: ValueCard[] = valueStyles.map((s, i) => ({
+    ...s,
+    title: t.values[i]?.title ?? '',
+    description: t.values[i]?.description ?? '',
+  }))
 
   return (
     <section
@@ -156,26 +147,21 @@ const ADNIntro = () => {
                 aria-hidden="true"
               />
               <span className="text-gray-600 dark:text-slate-300 font-semibold text-sm uppercase tracking-wider">
-                Nuestra Esencia
+                {t.tag}
               </span>
             </div>
 
             {/* Heading */}
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight lg:text-right">
-              <span className="block text-gray-900 dark:text-white">Descubre</span>
+              <span className="block text-gray-900 dark:text-white">{t.title}</span>
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-                Quiénes
-              </span>
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-                Somos
+                {t.accent}
               </span>
             </h2>
 
             {/* Description */}
             <p className="text-gray-600 dark:text-slate-300 text-lg md:text-xl leading-relaxed mb-8 max-w-xl lg:text-right">
-              Somos más que un edificio o una reunión de fin de semana. Somos
-              una familia unida por un propósito. Explora los valores que
-              definen el latido de nuestra cultura.
+              {t.description}
             </p>
 
             {/* CTA */}
@@ -184,7 +170,7 @@ const ADNIntro = () => {
                 to="/nosotros#adn"
                 className="inline-flex items-center justify-center gap-2 bg-cyan-400 hover:bg-cyan-500 text-black font-bold px-8 py-4 rounded-full text-base transition-all duration-300 hover:scale-105 shadow-lg shadow-cyan-400/30"
               >
-                Ver Nuestro ADN
+                {t.cta}
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
             </div>
