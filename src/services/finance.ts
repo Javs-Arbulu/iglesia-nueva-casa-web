@@ -48,18 +48,29 @@ export function formatPEN(amount: number): string {
   }).format(amount)
 }
 
-/** Resumen del mes en curso: ingresos, egresos y balance. */
-export function monthSummary(txs: FinanceTransaction[]) {
-  const now = new Date()
-  const y = now.getFullYear()
-  const m = now.getMonth()
+/** Suma ingresos, egresos y balance de una lista de movimientos. */
+export function summarize(txs: FinanceTransaction[]) {
   let ingresos = 0
   let egresos = 0
   for (const t of txs) {
-    const d = new Date(t.occurred_on)
-    if (d.getFullYear() !== y || d.getMonth() !== m) continue
     if (t.type === 'ingreso') ingresos += Number(t.amount)
     else egresos += Number(t.amount)
   }
   return { ingresos, egresos, balance: ingresos - egresos }
+}
+
+/** Clave de mes (YYYY-MM) de una fecha ISO/date. */
+export function monthKey(iso: string): string {
+  return iso.slice(0, 7)
+}
+
+/** Clave del mes en curso (YYYY-MM). */
+export function currentMonthKey(): string {
+  return new Date().toISOString().slice(0, 7)
+}
+
+/** Resumen del mes en curso: ingresos, egresos y balance. */
+export function monthSummary(txs: FinanceTransaction[]) {
+  const key = currentMonthKey()
+  return summarize(txs.filter((t) => monthKey(t.occurred_on) === key))
 }

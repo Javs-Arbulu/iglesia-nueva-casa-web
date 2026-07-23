@@ -73,3 +73,12 @@ export async function setMediaPublished(
     .eq('id', item.id)
   if (error) throw error
 }
+
+/** Actualiza el texto alternativo y/o la categoría de una imagen. */
+export async function updateMedia(
+  id: string,
+  patch: { alt?: string | null; category?: string }
+): Promise<void> {
+  const { error } = await getSupabase().from('media').update(patch).eq('id', id)
+  if (error) throw error
+}

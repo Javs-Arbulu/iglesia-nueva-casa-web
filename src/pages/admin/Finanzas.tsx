@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Loader2, Plus, Pencil, Trash2, ArrowUpCircle, ArrowDownCircle } from 'lucide-react'
 import {
   fetchTransactions,
@@ -6,13 +7,18 @@ import {
   updateTransaction,
   deleteTransaction,
   formatPEN,
-  monthSummary,
+  summarize,
+  monthKey,
+  currentMonthKey,
   type TxInput,
 } from '@/services/finance'
+import { useAsyncData } from '@/hooks/useAsyncData'
+import { useToast } from '@/features/toast/context'
+import AsyncState from '@/components/admin/AsyncState'
+import PageHeader from '@/components/admin/PageHeader'
 import Modal from '@/components/common/Modal'
+import { inputCls, listCardCls, primaryBtn, primaryBtnBlock } from '@/lib/adminUi'
 import type { FinanceTransaction, TransactionType } from '@/types'
-
-type Status = 'loading' | 'success' | 'error'
 
 const CATEGORIES = [
   'Diezmos',
@@ -35,41 +41,44 @@ const EMPTY = {
 }
 
 export default function Finanzas() {
-  const [txs, setTxs] = useState<FinanceTransaction[]>([])
-  const [status, setStatus] = useState<Status>('loading')
+  const toast = useToast()
+  const fetcher = useCallback(() => fetchTransactions(), [])
+  const { data: txs, status, refresh } = useAsyncData(fetcher, [] as FinanceTransaction[])
   const [busy, setBusy] = useState(false)
-  const [editingId, setEditingId] = useState<string | 'new' | null>(null)
+
+  // Abre el modal de alta al llegar desde el acceso rápido del dashboard (?nuevo=1).
+  const [searchParams] = useSearchParams()
+  const [editingId, setEditingId] = useState<string | 'new' | null>(
+    searchParams.get('nuevo') !== null ? 'new' : null
+  )
   const [form, setForm] = useState(EMPTY)
 
-  const load = useCallback(() => fetchTransactions(), [])
+  // Filtros de la bandeja.
+  const [filterMonth, setFilterMonth] = useState(currentMonthKey())
+  const [filterCategory, setFilterCategory] = useState('')
 
-  useEffect(() => {
-    let active = true
-    load()
-      .then((d) => {
-        if (!active) return
-        setTxs(d)
-        setStatus('success')
-      })
-      .catch((err) => {
-        if (!active) return
-        console.error(err)
-        setStatus('error')
-      })
-    return () => {
-      active = false
-    }
-  }, [load])
+  // Categorías presentes en los datos (para el desplegable de filtro).
+  const categoriesInUse = Array.from(
+    new Set(txs.map((t) => t.category).filter((c): c is string => !!c))
+  ).sort((a, b) => a.localeCompare(b, 'es'))
 
-  const refresh = async () => {
-    try {
-      setTxs(await load())
-    } catch (err) {
-      console.error(err)
-    }
-  }
+  // El resumen refleja el mes seleccionado (todas las categorías).
+  const monthTxs = txs.filter((t) => monthKey(t.occurred_on) === filterMonth)
+  const summary = summarize(monthTxs)
 
-  const summary = monthSummary(txs)
+  // La lista aplica mes + categoría.
+  const visibleTxs = monthTxs.filter(
+    (t) => !filterCategory || t.category === filterCategory
+  )
+
+  const monthLabel = (() => {
+    const [y, m] = filterMonth.split('-').map(Number)
+    if (!y || !m) return ''
+    return new Date(y, m - 1, 1).toLocaleDateString('es-PE', {
+      month: 'long',
+      year: 'numeric',
+    })
+  })()
 
   const openNew = () => {
     setForm(EMPTY)
@@ -102,9 +111,11 @@ export default function Finanzas() {
       if (editingId === 'new') await addTransaction(payload)
       else if (editingId) await updateTransaction(editingId, payload)
       await refresh()
+      toast.success(editingId === 'new' ? 'Movimiento registrado.' : 'Movimiento actualizado.')
       close()
     } catch (err) {
       console.error(err)
+      toast.error('No se pudo guardar el movimiento.')
     }
     setBusy(false)
   }
@@ -115,33 +126,65 @@ export default function Finanzas() {
     try {
       await deleteTransaction(t.id)
       await refresh()
+      toast.success('Movimiento eliminado.')
     } catch (err) {
       console.error(err)
+      toast.error('No se pudo eliminar el movimiento.')
     }
     setBusy(false)
   }
 
-  const inputCls =
-    'w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400'
-
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Finanzas</h1>
-        <button
-          onClick={openNew}
-          className="inline-flex items-center gap-2 bg-cyan-400 hover:bg-cyan-500 text-black font-semibold text-sm px-4 py-2 rounded-full transition-colors"
-        >
-          <Plus className="w-4 h-4" aria-hidden="true" />
-          Nuevo
-        </button>
+      <PageHeader
+        title="Finanzas"
+        action={
+          <button onClick={openNew} className={primaryBtn}>
+            <Plus className="w-4 h-4" aria-hidden="true" />
+            Nuevo
+          </button>
+        }
+      />
+
+      {/* Filtros */}
+      <div className="flex flex-wrap items-end gap-3 mb-4">
+        <div>
+          <label htmlFor="filter-month" className="block text-xs font-semibold text-gray-500 dark:text-slate-400 mb-1">
+            Mes
+          </label>
+          <input
+            id="filter-month"
+            type="month"
+            value={filterMonth}
+            onChange={(e) => setFilterMonth(e.target.value)}
+            className={`${inputCls} w-auto`}
+          />
+        </div>
+        <div>
+          <label htmlFor="filter-cat" className="block text-xs font-semibold text-gray-500 dark:text-slate-400 mb-1">
+            Categoría
+          </label>
+          <select
+            id="filter-cat"
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className={`${inputCls} w-auto`}
+          >
+            <option value="">Todas</option>
+            {categoriesInUse.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      {/* Resumen del mes */}
+      {/* Resumen del mes seleccionado */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <div className="bg-green-50 dark:bg-green-500/10 rounded-2xl p-4">
           <p className="text-xs font-semibold uppercase text-green-700 dark:text-green-300">
-            Ingresos del mes
+            Ingresos · {monthLabel}
           </p>
           <p className="text-2xl font-bold text-green-700 dark:text-green-300">
             {formatPEN(summary.ingresos)}
@@ -149,7 +192,7 @@ export default function Finanzas() {
         </div>
         <div className="bg-red-50 dark:bg-red-500/10 rounded-2xl p-4">
           <p className="text-xs font-semibold uppercase text-red-700 dark:text-red-300">
-            Egresos del mes
+            Egresos · {monthLabel}
           </p>
           <p className="text-2xl font-bold text-red-700 dark:text-red-300">
             {formatPEN(summary.egresos)}
@@ -157,7 +200,7 @@ export default function Finanzas() {
         </div>
         <div className="bg-slate-100 dark:bg-slate-800 rounded-2xl p-4">
           <p className="text-xs font-semibold uppercase text-gray-500 dark:text-slate-400">
-            Balance del mes
+            Balance · {monthLabel}
           </p>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
             {formatPEN(summary.balance)}
@@ -165,24 +208,18 @@ export default function Finanzas() {
         </div>
       </div>
 
-      {status === 'loading' && (
-        <div className="flex items-center gap-2 text-gray-500 dark:text-slate-400 py-10">
-          <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
-          Cargando…
-        </div>
-      )}
-      {status === 'error' && (
-        <p className="text-red-500">No se pudieron cargar los movimientos.</p>
-      )}
-      {status === 'success' && txs.length === 0 && (
-        <p className="text-gray-500 dark:text-slate-400">
-          Aún no hay movimientos. Registra el primero con “Nuevo”.
-        </p>
-      )}
-
-      {status === 'success' && txs.length > 0 && (
-        <ul className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 divide-y divide-gray-100 dark:divide-slate-800 overflow-hidden">
-          {txs.map((t) => {
+      <AsyncState
+        status={status}
+        isEmpty={visibleTxs.length === 0}
+        errorText="No se pudieron cargar los movimientos."
+        emptyText={
+          txs.length === 0
+            ? 'Aún no hay movimientos. Registra el primero con “Nuevo”.'
+            : 'No hay movimientos para este filtro.'
+        }
+      >
+        <ul className={listCardCls}>
+          {visibleTxs.map((t) => {
             const isIn = t.type === 'ingreso'
             return (
               <li key={t.id} className="flex items-center gap-3 p-3">
@@ -233,7 +270,7 @@ export default function Finanzas() {
             )
           })}
         </ul>
-      )}
+      </AsyncState>
 
       {/* Modal alta/edición */}
       <Modal
@@ -323,7 +360,7 @@ export default function Finanzas() {
           <button
             onClick={save}
             disabled={busy || !(Number(form.amount) > 0) || !form.occurred_on}
-            className="w-full inline-flex items-center justify-center gap-2 bg-cyan-400 hover:bg-cyan-500 text-black font-semibold py-2.5 rounded-full transition-colors disabled:opacity-60"
+            className={primaryBtnBlock}
           >
             {busy ? (
               <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />

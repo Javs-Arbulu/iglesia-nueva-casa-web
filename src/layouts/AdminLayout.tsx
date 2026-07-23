@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import type { AppRole } from '@/types'
 import { useAuth } from '@/features/auth/context'
+import { ToastProvider } from '@/features/toast/ToastProvider'
 import ThemeToggle from '@/components/common/ThemeToggle'
 
 interface NavItem {
@@ -73,6 +74,7 @@ export default function AdminLayout() {
   )
 
   return (
+    <ToastProvider>
     <div className="min-h-screen bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-white">
       {/* Top bar */}
       <header className="sticky top-0 z-40 h-14 flex items-center justify-between px-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-200 dark:border-slate-800">
@@ -140,5 +142,6 @@ export default function AdminLayout() {
         </div>
       )}
     </div>
+    </ToastProvider>
   )
 }
