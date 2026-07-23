@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { MapPin, Clock, Send, Loader2 } from 'lucide-react'
 import { useScrollToHash } from '@/hooks/useScroll'
@@ -72,7 +72,10 @@ export default function Contacto() {
   // Anti-spam: honeypot (campo oculto que solo los bots llenan) + tiempo mínimo
   // de llenado. Ninguno se envía a Supabase.
   const honeypotRef = useRef<HTMLInputElement>(null)
-  const formLoadedAt = useRef(Date.now())
+  const formLoadedAt = useRef(0)
+  useEffect(() => {
+    formLoadedAt.current = Date.now()
+  }, [])
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Loader2, Check, Pencil, Save } from 'lucide-react'
 import { getSupabase } from '@/services/supabase'
 import { useAuth } from '@/features/auth/context'
+import { useAsyncData } from '@/hooks/useAsyncData'
+import { useToast } from '@/features/toast/context'
+import AsyncState from '@/components/admin/AsyncState'
+import PageHeader from '@/components/admin/PageHeader'
 import Modal from '@/components/common/Modal'
+import { inputCls, listCardCls } from '@/lib/adminUi'
 import type { AppRole, Profile, UserWithRoles } from '@/types'
-
-type Status = 'loading' | 'success' | 'error'
 
 const ALL_ROLES: { role: AppRole; label: string }[] = [
   { role: 'admin', label: 'Admin' },
@@ -14,11 +17,39 @@ const ALL_ROLES: { role: AppRole; label: string }[] = [
   { role: 'miembro', label: 'Miembro' },
 ]
 
+async function fetchUsers(): Promise<UserWithRoles[]> {
+  const supabase = getSupabase()
+  const [{ data: profiles, error: pErr }, { data: roleRows, error: rErr }] =
+    await Promise.all([
+      supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false }),
+      supabase.from('user_roles').select('user_id, role'),
+    ])
+  if (pErr || rErr) throw pErr ?? rErr
+  const rolesByUser = new Map<string, AppRole[]>()
+  for (const r of (roleRows ?? []) as { user_id: string; role: AppRole }[]) {
+    rolesByUser.set(r.user_id, [...(rolesByUser.get(r.user_id) ?? []), r.role])
+  }
+  return ((profiles ?? []) as Profile[]).map((p) => ({
+    ...p,
+    roles: rolesByUser.get(p.id) ?? [],
+  }))
+}
+
 export default function Usuarios() {
   const { user } = useAuth()
-  const [users, setUsers] = useState<UserWithRoles[]>([])
-  const [status, setStatus] = useState<Status>('loading')
+  const toast = useToast()
+  const { data: users, status, refresh } = useAsyncData(
+    fetchUsers,
+    [] as UserWithRoles[]
+  )
   const [busy, setBusy] = useState(false)
+
+  // Filtros
+  const [query, setQuery] = useState('')
+  const [pendingOnly, setPendingOnly] = useState(false)
 
   // Edición en modal
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -28,52 +59,16 @@ export default function Usuarios() {
 
   const editing = users.find((u) => u.id === editingId) ?? null
 
-  const fetchUsers = useCallback(async (): Promise<UserWithRoles[]> => {
-    const supabase = getSupabase()
-    const [{ data: profiles, error: pErr }, { data: roleRows, error: rErr }] =
-      await Promise.all([
-        supabase
-          .from('profiles')
-          .select('*')
-          .order('created_at', { ascending: false }),
-        supabase.from('user_roles').select('user_id, role'),
-      ])
-    if (pErr || rErr) throw pErr ?? rErr
-    const rolesByUser = new Map<string, AppRole[]>()
-    for (const r of (roleRows ?? []) as { user_id: string; role: AppRole }[]) {
-      rolesByUser.set(r.user_id, [...(rolesByUser.get(r.user_id) ?? []), r.role])
-    }
-    return ((profiles ?? []) as Profile[]).map((p) => ({
-      ...p,
-      roles: rolesByUser.get(p.id) ?? [],
-    }))
-  }, [])
-
-  useEffect(() => {
-    let active = true
-    fetchUsers()
-      .then((data) => {
-        if (!active) return
-        setUsers(data)
-        setStatus('success')
-      })
-      .catch((err) => {
-        if (!active) return
-        console.error(err)
-        setStatus('error')
-      })
-    return () => {
-      active = false
-    }
-  }, [fetchUsers])
-
-  const refresh = async () => {
-    try {
-      setUsers(await fetchUsers())
-    } catch (err) {
-      console.error(err)
-    }
-  }
+  const pendingCount = users.filter((u) => u.status === 'pending').length
+  const q = query.trim().toLowerCase()
+  const visibleUsers = users.filter((u) => {
+    if (pendingOnly && u.status !== 'pending') return false
+    if (!q) return true
+    return (
+      (u.full_name ?? '').toLowerCase().includes(q) ||
+      (u.email ?? '').toLowerCase().includes(q)
+    )
+  })
 
   const openEdit = (u: UserWithRoles) => {
     setEditingId(u.id)
@@ -97,7 +92,12 @@ export default function Usuarios() {
         phone: phone.trim() || null,
       })
       .eq('id', editing.id)
-    if (error) console.error(error)
+    if (error) {
+      console.error(error)
+      toast.error('No se pudieron guardar los datos.')
+    } else {
+      toast.success('Datos guardados.')
+    }
     await refresh()
     setBusy(false)
   }
@@ -115,43 +115,79 @@ export default function Usuarios() {
           .eq('user_id', u.id)
           .eq('role', role)
       : await supabase.from('user_roles').insert({ user_id: u.id, role })
-    if (error) console.error(error)
+    if (error) {
+      console.error(error)
+      toast.error('No se pudo actualizar el rol.')
+    } else {
+      toast.success(has ? `Rol “${role}” quitado.` : `Rol “${role}” asignado.`)
+    }
     await refresh()
     setBusy(false)
   }
 
   const approve = async (u: UserWithRoles) => {
     setBusy(true)
-    const supabase = getSupabase()
-    await supabase.from('profiles').update({ status: 'active' }).eq('id', u.id)
-    if (!u.roles.includes('miembro')) {
-      await supabase.from('user_roles').insert({ user_id: u.id, role: 'miembro' })
+    try {
+      const supabase = getSupabase()
+      const { error: pErr } = await supabase
+        .from('profiles')
+        .update({ status: 'active' })
+        .eq('id', u.id)
+      if (pErr) throw pErr
+      if (!u.roles.includes('miembro')) {
+        const { error: rErr } = await supabase
+          .from('user_roles')
+          .insert({ user_id: u.id, role: 'miembro' })
+        if (rErr) throw rErr
+      }
+      toast.success('Usuario aprobado.')
+    } catch (err) {
+      console.error(err)
+      toast.error('No se pudo aprobar al usuario.')
     }
     await refresh()
     setBusy(false)
   }
 
-  const inputCls =
-    'w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400'
-
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Usuarios</h1>
+      <PageHeader title="Usuarios" />
 
-      {status === 'loading' && (
-        <div className="flex items-center gap-2 text-gray-500 dark:text-slate-400 py-10">
-          <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
-          Cargando…
-        </div>
-      )}
+      {/* Filtros */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Buscar por nombre o email…"
+          aria-label="Buscar usuarios"
+          className={`${inputCls} flex-1 min-w-[12rem]`}
+        />
+        <button
+          onClick={() => setPendingOnly((v) => !v)}
+          aria-pressed={pendingOnly}
+          className={`shrink-0 text-sm font-semibold px-4 py-2.5 rounded-xl border transition-colors ${
+            pendingOnly
+              ? 'bg-amber-500 text-white border-amber-500'
+              : 'bg-transparent text-gray-600 dark:text-slate-300 border-gray-200 dark:border-slate-700 hover:border-amber-400'
+          }`}
+        >
+          Solo pendientes{pendingCount > 0 ? ` (${pendingCount})` : ''}
+        </button>
+      </div>
 
-      {status === 'error' && (
-        <p className="text-red-500">No se pudieron cargar los usuarios.</p>
-      )}
-
-      {status === 'success' && (
-        <ul className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 divide-y divide-gray-100 dark:divide-slate-800 overflow-hidden">
-          {users.map((u) => (
+      <AsyncState
+        status={status}
+        isEmpty={visibleUsers.length === 0}
+        errorText="No se pudieron cargar los usuarios."
+        emptyText={
+          users.length === 0
+            ? 'Aún no hay usuarios.'
+            : 'Ningún usuario coincide con el filtro.'
+        }
+      >
+        <ul className={listCardCls}>
+          {visibleUsers.map((u) => (
             <li key={u.id} className="flex items-center gap-3 p-3">
               <div className="min-w-0 flex-1">
                 <p className="font-medium text-gray-900 dark:text-white truncate">
@@ -189,7 +225,7 @@ export default function Usuarios() {
             </li>
           ))}
         </ul>
-      )}
+      </AsyncState>
 
       {/* Modal de edición */}
       <Modal

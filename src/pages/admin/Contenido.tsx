@@ -9,13 +9,16 @@ import {
   type ContactContent,
   type Schedule,
 } from '@/services/content'
+import { useToast } from '@/features/toast/context'
+import PageHeader from '@/components/admin/PageHeader'
+import { inputCls, cardCls, primaryBtn } from '@/lib/adminUi'
 
 export default function Contenido() {
+  const toast = useToast()
   const [ann, setAnn] = useState<Announcement | null>(null)
   const [contact, setContact] = useState<ContactContent | null>(null)
   const [savingAnn, setSavingAnn] = useState(false)
   const [savingContact, setSavingContact] = useState(false)
-  const [saved, setSaved] = useState<string | null>(null)
 
   useEffect(() => {
     let active = true
@@ -29,19 +32,15 @@ export default function Contenido() {
     }
   }, [])
 
-  const flash = (msg: string) => {
-    setSaved(msg)
-    setTimeout(() => setSaved(null), 2500)
-  }
-
   const saveAnn = async () => {
     if (!ann) return
     setSavingAnn(true)
     try {
       await saveBlock('announcement', ann)
-      flash('Anuncio guardado')
+      toast.success('Anuncio guardado.')
     } catch (e) {
       console.error(e)
+      toast.error('No se pudo guardar el anuncio.')
     }
     setSavingAnn(false)
   }
@@ -51,9 +50,10 @@ export default function Contenido() {
     setSavingContact(true)
     try {
       await saveBlock('contact', contact)
-      flash('Horarios guardados')
+      toast.success('Horarios guardados.')
     } catch (e) {
       console.error(e)
+      toast.error('No se pudieron guardar los horarios.')
     }
     setSavingContact(false)
   }
@@ -78,13 +78,6 @@ export default function Contenido() {
       c ? { ...c, schedules: c.schedules.filter((_, idx) => idx !== i) } : c
     )
 
-  const inputCls =
-    'w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400'
-  const cardCls =
-    'bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 p-5'
-  const primaryBtn =
-    'inline-flex items-center gap-2 bg-cyan-400 hover:bg-cyan-500 text-black font-semibold text-sm px-4 py-2 rounded-full transition-colors disabled:opacity-60'
-
   if (!ann || !contact) {
     return (
       <div className="flex items-center gap-2 text-gray-500 dark:text-slate-400 py-10">
@@ -96,14 +89,7 @@ export default function Contenido() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Contenido</h1>
-        {saved && (
-          <span className="text-sm text-green-600 dark:text-green-400">
-            {saved} ✓
-          </span>
-        )}
-      </div>
+      <PageHeader title="Contenido" />
 
       {/* Anuncio / banner */}
       <section className={cardCls}>
