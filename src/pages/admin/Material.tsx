@@ -15,6 +15,7 @@ import { useAuth } from '@/features/auth/context'
 import AsyncState from '@/components/admin/AsyncState'
 import PageHeader from '@/components/admin/PageHeader'
 import Modal from '@/components/common/Modal'
+import CategoryPicker from '@/components/admin/CategoryPicker'
 import { inputCls, primaryBtn, primaryBtnBlock } from '@/lib/adminUi'
 
 const albumLabel = (c: string) => c.charAt(0).toUpperCase() + c.slice(1)
@@ -252,22 +253,15 @@ export default function Material() {
             />
           </div>
           <div>
-            <label htmlFor="mat-cat" className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1">
               Categoría
             </label>
-            <input
-              id="mat-cat"
-              list="material-cats"
+            <CategoryPicker
               value={form.category}
-              onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+              onChange={(v) => setForm((f) => ({ ...f, category: v }))}
+              options={categories}
               placeholder="Ej: Estudios, Cursos, Anuncios"
-              className={inputCls}
             />
-            <datalist id="material-cats">
-              {categories.map((c) => (
-                <option key={c} value={c} />
-              ))}
-            </datalist>
           </div>
           <div>
             <label htmlFor="mat-desc" className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1">
