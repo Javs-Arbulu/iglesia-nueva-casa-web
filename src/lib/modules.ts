@@ -7,6 +7,7 @@ import {
   MessageSquare,
   Users,
   ShieldCheck,
+  Library,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -32,6 +33,7 @@ export const MODULES: AdminModule[] = [
   { id: 'eventos', label: 'Eventos', to: '/admin/eventos', icon: CalendarDays, actions: ['view', 'edit', 'delete'] },
   { id: 'fotos', label: 'Fotos', to: '/admin/fotos', icon: ImageIcon, actions: ['view', 'edit', 'delete'] },
   { id: 'contenido', label: 'Contenido', to: '/admin/contenido', icon: FileText, actions: ['view', 'edit'] },
+  { id: 'material', label: 'Material', to: '/admin/material', icon: Library, actions: ['view', 'edit', 'delete'] },
   { id: 'finanzas', label: 'Finanzas', to: '/admin/finanzas', icon: Wallet, actions: ['view', 'edit', 'delete'] },
   { id: 'mensajes', label: 'Mensajes', to: '/admin/mensajes', icon: MessageSquare, actions: ['view', 'edit', 'delete'] },
   { id: 'usuarios', label: 'Usuarios', to: '/admin/usuarios', icon: Users, actions: ['view', 'edit'] },
