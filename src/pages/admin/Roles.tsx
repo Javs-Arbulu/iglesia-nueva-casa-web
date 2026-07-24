@@ -221,11 +221,14 @@ export default function Roles() {
             <>
               <ul className="divide-y divide-gray-100 dark:divide-slate-800">
                 {MODULES.map((m) => (
-                  <li key={m.id} className="flex items-center justify-between gap-3 py-2.5">
+                  <li
+                    key={m.id}
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-2.5"
+                  >
                     <span className="text-sm font-medium text-gray-800 dark:text-slate-100">
                       {m.label}
                     </span>
-                    <div className="flex gap-1.5 shrink-0">
+                    <div className="flex flex-wrap gap-1.5 shrink-0">
                       {m.actions.map((a) => {
                         const on = matrix[selectedKey]?.[m.id]?.[a] ?? false
                         return (

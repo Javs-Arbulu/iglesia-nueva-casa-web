@@ -133,7 +133,7 @@ export default function Portal() {
             </p>
           ) : openFolder === null ? (
             /* Vista de carpetas (categorías) */
-            <ul className="grid grid-cols-2 gap-3">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {materialCategories.map((cat) => {
                 const count = material.filter((m) => m.category === cat).length
                 return (

@@ -165,7 +165,7 @@ export default function Material() {
                 .map((m) => (
                   <li
                     key={m.id}
-                    className="flex items-center gap-3 p-3 rounded-2xl bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800"
+                    className="flex items-center gap-2 p-3 rounded-2xl bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800"
                   >
                     <div className="w-10 h-10 shrink-0 rounded-lg bg-red-50 dark:bg-red-500/10 flex items-center justify-center">
                       <FileText className="w-5 h-5 text-red-500" aria-hidden="true" />
@@ -184,7 +184,7 @@ export default function Material() {
                       disabled={busyId === m.id}
                       aria-label="Abrir PDF"
                       title="Abrir PDF"
-                      className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 disabled:opacity-60"
+                      className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 disabled:opacity-60"
                     >
                       <ExternalLink className="w-4 h-4" aria-hidden="true" />
                     </button>
@@ -211,7 +211,7 @@ export default function Material() {
                       <button
                         onClick={() => openEdit(m)}
                         aria-label={`Editar ${m.title}`}
-                        className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800"
+                        className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800"
                       >
                         <Pencil className="w-4 h-4" aria-hidden="true" />
                       </button>
@@ -221,7 +221,7 @@ export default function Material() {
                         onClick={() => remove(m)}
                         disabled={busyId === m.id}
                         aria-label={`Eliminar ${m.title}`}
-                        className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-60"
+                        className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-60"
                       >
                         <Trash2 className="w-4 h-4" aria-hidden="true" />
                       </button>
