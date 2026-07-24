@@ -146,6 +146,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     []
   )
 
+  const signInWithProvider = useCallback(async (provider: 'google' | 'apple') => {
+    try {
+      const { error } = await getSupabase().auth.signInWithOAuth({
+        provider,
+        // Volvemos a /login para reutilizar el redirect por rol ya existente.
+        options: { redirectTo: `${window.location.origin}/login` },
+      })
+      return { error: error?.message ?? null }
+    } catch {
+      return { error: 'Supabase no está configurado.' }
+    }
+  }, [])
+
   const signOut = useCallback(async () => {
     try {
       await getSupabase().auth.signOut()
@@ -177,6 +190,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signIn,
     signUp,
     signOut,
+    signInWithProvider,
     hasRole,
     can,
   }

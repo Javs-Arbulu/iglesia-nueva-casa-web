@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { House, Loader2 } from 'lucide-react'
 import { useAuth } from '@/features/auth/context'
+import SocialAuthButtons from '@/components/common/SocialAuthButtons'
 import SEO from '@/components/common/SEO'
 
 export default function Login() {
@@ -116,6 +117,8 @@ export default function Login() {
               'Entrar'
             )}
           </button>
+
+          <SocialAuthButtons />
 
           <p className="text-center text-sm text-gray-500 dark:text-slate-400">
             ¿No tienes cuenta?{' '}
