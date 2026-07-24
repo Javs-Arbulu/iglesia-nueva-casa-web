@@ -3,15 +3,19 @@ import { Link } from 'react-router-dom'
 import {
   House,
   LogOut,
-  Download,
+  FileText,
   Calendar,
   MapPin,
   Clock,
   ShieldCheck,
+  ExternalLink,
+  Copy,
+  Check,
 } from 'lucide-react'
 import { useAuth } from '@/features/auth/context'
 import ThemeToggle from '@/components/common/ThemeToggle'
 import { fetchUpcomingEvents, formatEventDate } from '@/services/events'
+import { fetchPublishedMaterial, type MaterialItem } from '@/services/material'
 import type { Evento } from '@/types'
 import SEO from '@/components/common/SEO'
 
@@ -21,22 +25,44 @@ const controlCls =
 export default function Portal() {
   const { profile, hasRole, signOut } = useAuth()
   const isStaff = hasRole('admin', 'editor', 'finanzas')
-  const isMember = hasRole('miembro') || isStaff
+  // Acceso al contenido: staff o miembro APROBADO (estado activo). Un miembro
+  // pendiente tiene el rol pero aún no ve el material.
+  const canUse = isStaff || profile?.status === 'active'
 
   const [events, setEvents] = useState<Evento[]>([])
+  const [material, setMaterial] = useState<MaterialItem[]>([])
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+
   useEffect(() => {
-    if (!isMember) return
+    if (!canUse) return
     let active = true
     fetchUpcomingEvents(3)
       .then((d) => active && setEvents(d))
       .catch((err) => console.error(err))
+    fetchPublishedMaterial()
+      .then((d) => active && setMaterial(d))
+      .catch((err) => console.error(err))
     return () => {
       active = false
     }
-  }, [isMember])
+  }, [canUse])
+
+  const copyLink = async (id: string) => {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/material/${id}`)
+      setCopiedId(id)
+      setTimeout(() => setCopiedId((c) => (c === id ? null : c)), 2000)
+    } catch {
+      /* ignore */
+    }
+  }
+
+  const materialCategories = Array.from(new Set(material.map((m) => m.category))).sort((a, b) =>
+    a.localeCompare(b, 'es')
+  )
 
   // Cuenta creada pero aún sin aprobar → mensaje amable.
-  if (!isMember) {
+  if (!canUse) {
     return (
       <main className="min-h-screen bg-gray-50 dark:bg-slate-950 flex flex-col items-center justify-center text-center px-6">
         <SEO title="Portal | Iglesia Nueva Casa" url="https://nuevacasa.pe/portal" />
@@ -101,18 +127,71 @@ export default function Portal() {
           Bienvenido al área de miembros de Nueva Casa.
         </p>
 
-        {/* Material y descargas (próximamente) */}
+        {/* Material y descargas */}
         <section className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 p-5 mb-4">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-xl bg-cyan-100 dark:bg-slate-800 flex items-center justify-center">
-              <Download className="w-5 h-5 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
+              <FileText className="w-5 h-5 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
             </div>
-            <h2 className="text-lg font-bold">Material y descargas</h2>
+            <h2 className="text-lg font-bold">Material</h2>
           </div>
-          <p className="text-gray-600 dark:text-slate-300 text-sm">
-            Pronto encontrarás aquí recursos y material para descargar. ¡Estamos
-            preparándolo!
-          </p>
+
+          {material.length === 0 ? (
+            <p className="text-gray-600 dark:text-slate-300 text-sm">
+              Aún no hay material disponible. ¡Pronto compartiremos recursos aquí!
+            </p>
+          ) : (
+            <div className="space-y-5">
+              {materialCategories.map((cat) => (
+                <div key={cat}>
+                  <p className="text-xs font-bold uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-2">
+                    {cat}
+                  </p>
+                  <ul className="space-y-2">
+                    {material
+                      .filter((m) => m.category === cat)
+                      .map((m) => (
+                        <li
+                          key={m.id}
+                          className="flex items-center gap-3 rounded-xl bg-gray-50 dark:bg-slate-800 p-3"
+                        >
+                          <FileText className="w-5 h-5 text-red-500 shrink-0" aria-hidden="true" />
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium text-gray-900 dark:text-white truncate">
+                              {m.title}
+                            </p>
+                            {m.description && (
+                              <p className="text-sm text-gray-500 dark:text-slate-400 truncate">
+                                {m.description}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => copyLink(m.id)}
+                            aria-label="Copiar enlace para compartir"
+                            title="Copiar enlace"
+                            className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-gray-500 dark:text-slate-400 hover:bg-gray-200 dark:hover:bg-slate-700"
+                          >
+                            {copiedId === m.id ? (
+                              <Check className="w-4 h-4 text-green-500" aria-hidden="true" />
+                            ) : (
+                              <Copy className="w-4 h-4" aria-hidden="true" />
+                            )}
+                          </button>
+                          <Link
+                            to={`/material/${m.id}`}
+                            className="shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold bg-cyan-400 hover:bg-cyan-500 text-black px-3 py-1.5 rounded-full transition-colors"
+                          >
+                            <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                            Abrir
+                          </Link>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Próximos eventos */}

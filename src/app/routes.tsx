@@ -16,6 +16,7 @@ const NotFound = lazy(() => import('@/pages/NotFound'))
 const Login = lazy(() => import('@/pages/Login'))
 const Registro = lazy(() => import('@/pages/Registro'))
 const Portal = lazy(() => import('@/pages/Portal'))
+const MaterialViewer = lazy(() => import('@/pages/MaterialViewer'))
 const AdminLayout = lazy(() => import('@/layouts/AdminLayout'))
 const AdminDashboard = lazy(() => import('@/pages/admin/Dashboard'))
 const Mensajes = lazy(() => import('@/pages/admin/Mensajes'))
@@ -25,6 +26,7 @@ const Fotos = lazy(() => import('@/pages/admin/Fotos'))
 const Contenido = lazy(() => import('@/pages/admin/Contenido'))
 const Finanzas = lazy(() => import('@/pages/admin/Finanzas'))
 const Roles = lazy(() => import('@/pages/admin/Roles'))
+const Material = lazy(() => import('@/pages/admin/Material'))
 
 // Minimal spinner shown during page-level code-splitting loads.
 // Defined as JSX element (not a component) so this file only exports non-components,
@@ -126,6 +128,17 @@ export const router = createBrowserRouter([
     ),
   },
   {
+    // Página de un material (destino de los links para compartir). Requiere login.
+    path: '/material/:id',
+    element: (
+      <Suspense fallback={pageFallback}>
+        <AuthGuard>
+          <MaterialViewer />
+        </AuthGuard>
+      </Suspense>
+    ),
+  },
+  {
     path: '/admin',
     element: (
       <Suspense fallback={pageFallback}>
@@ -211,6 +224,16 @@ export const router = createBrowserRouter([
           <Suspense fallback={pageFallback}>
             <PermissionGuard module="roles">
               <Roles />
+            </PermissionGuard>
+          </Suspense>
+        ),
+      },
+      {
+        path: 'material',
+        element: (
+          <Suspense fallback={pageFallback}>
+            <PermissionGuard module="material">
+              <Material />
             </PermissionGuard>
           </Suspense>
         ),
