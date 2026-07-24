@@ -19,6 +19,10 @@ export interface AuthContextValue {
     lastName: string
   ) => Promise<{ error: string | null }>
   signOut: () => Promise<void>
+  /** Inicia sesión con un proveedor OAuth (Google/Apple). Redirige al proveedor. */
+  signInWithProvider: (
+    provider: 'google' | 'apple'
+  ) => Promise<{ error: string | null }>
   hasRole: (...roles: AppRole[]) => boolean
   /** ¿El usuario puede realizar `action` en el módulo? (admin siempre true). */
   can: (moduleId: string, action: ModuleAction) => boolean

@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { House, Loader2, CheckCircle2 } from 'lucide-react'
 import { useAuth } from '@/features/auth/context'
+import SocialAuthButtons from '@/components/common/SocialAuthButtons'
 import SEO from '@/components/common/SEO'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -228,6 +229,8 @@ export default function Registro() {
                 'Registrarme'
               )}
             </button>
+
+            <SocialAuthButtons />
 
             <p className="text-center text-sm text-gray-500 dark:text-slate-400">
               ¿Ya tienes cuenta?{' '}
