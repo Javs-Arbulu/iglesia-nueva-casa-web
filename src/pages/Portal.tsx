@@ -9,8 +9,9 @@ import {
   Clock,
   ShieldCheck,
   ExternalLink,
-  Copy,
-  Check,
+  FolderOpen,
+  ChevronRight,
+  ArrowLeft,
 } from 'lucide-react'
 import { useAuth } from '@/features/auth/context'
 import ThemeToggle from '@/components/common/ThemeToggle'
@@ -31,7 +32,7 @@ export default function Portal() {
 
   const [events, setEvents] = useState<Evento[]>([])
   const [material, setMaterial] = useState<MaterialItem[]>([])
-  const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [openFolder, setOpenFolder] = useState<string | null>(null)
 
   useEffect(() => {
     if (!canUse) return
@@ -46,16 +47,6 @@ export default function Portal() {
       active = false
     }
   }, [canUse])
-
-  const copyLink = async (id: string) => {
-    try {
-      await navigator.clipboard.writeText(`${window.location.origin}/material/${id}`)
-      setCopiedId(id)
-      setTimeout(() => setCopiedId((c) => (c === id ? null : c)), 2000)
-    } catch {
-      /* ignore */
-    }
-  }
 
   const materialCategories = Array.from(new Set(material.map((m) => m.category))).sort((a, b) =>
     a.localeCompare(b, 'es')
@@ -140,56 +131,75 @@ export default function Portal() {
             <p className="text-gray-600 dark:text-slate-300 text-sm">
               Aún no hay material disponible. ¡Pronto compartiremos recursos aquí!
             </p>
+          ) : openFolder === null ? (
+            /* Vista de carpetas (categorías) */
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {materialCategories.map((cat) => {
+                const count = material.filter((m) => m.category === cat).length
+                return (
+                  <li key={cat}>
+                    <button
+                      onClick={() => setOpenFolder(cat)}
+                      className="w-full flex items-center gap-3 rounded-xl bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 p-3 text-left transition-colors"
+                    >
+                      <div className="w-10 h-10 shrink-0 rounded-xl bg-cyan-100 dark:bg-slate-700 flex items-center justify-center">
+                        <FolderOpen className="w-5 h-5 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-gray-900 dark:text-white truncate">{cat}</p>
+                        <p className="text-xs text-gray-500 dark:text-slate-400">
+                          {count} archivo{count > 1 ? 's' : ''}
+                        </p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 shrink-0 text-gray-400" aria-hidden="true" />
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
           ) : (
-            <div className="space-y-5">
-              {materialCategories.map((cat) => (
-                <div key={cat}>
-                  <p className="text-xs font-bold uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-2">
-                    {cat}
-                  </p>
-                  <ul className="space-y-2">
-                    {material
-                      .filter((m) => m.category === cat)
-                      .map((m) => (
-                        <li
-                          key={m.id}
-                          className="flex items-center gap-3 rounded-xl bg-gray-50 dark:bg-slate-800 p-3"
-                        >
-                          <FileText className="w-5 h-5 text-red-500 shrink-0" aria-hidden="true" />
-                          <div className="min-w-0 flex-1">
-                            <p className="font-medium text-gray-900 dark:text-white truncate">
-                              {m.title}
-                            </p>
-                            {m.description && (
-                              <p className="text-sm text-gray-500 dark:text-slate-400 truncate">
-                                {m.description}
-                              </p>
-                            )}
-                          </div>
-                          <button
-                            onClick={() => copyLink(m.id)}
-                            aria-label="Copiar enlace para compartir"
-                            title="Copiar enlace"
-                            className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-gray-500 dark:text-slate-400 hover:bg-gray-200 dark:hover:bg-slate-700"
-                          >
-                            {copiedId === m.id ? (
-                              <Check className="w-4 h-4 text-green-500" aria-hidden="true" />
-                            ) : (
-                              <Copy className="w-4 h-4" aria-hidden="true" />
-                            )}
-                          </button>
-                          <Link
-                            to={`/material/${m.id}`}
-                            className="shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold bg-cyan-400 hover:bg-cyan-500 text-black px-3 py-1.5 rounded-full transition-colors"
-                          >
-                            <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                            Abrir
-                          </Link>
-                        </li>
-                      ))}
-                  </ul>
-                </div>
-              ))}
+            /* Contenido de una carpeta */
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <button
+                  onClick={() => setOpenFolder(null)}
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-600 dark:text-cyan-400 hover:underline"
+                >
+                  <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                  Carpetas
+                </button>
+                <span className="text-gray-300 dark:text-slate-600" aria-hidden="true">/</span>
+                <span className="font-semibold">{openFolder}</span>
+              </div>
+              <ul className="space-y-2">
+                {material
+                  .filter((m) => m.category === openFolder)
+                  .map((m) => (
+                    <li
+                      key={m.id}
+                      className="flex items-center gap-3 rounded-xl bg-gray-50 dark:bg-slate-800 p-3"
+                    >
+                      <FileText className="w-5 h-5 text-red-500 shrink-0" aria-hidden="true" />
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-gray-900 dark:text-white truncate">
+                          {m.title}
+                        </p>
+                        {m.description && (
+                          <p className="text-sm text-gray-500 dark:text-slate-400 truncate">
+                            {m.description}
+                          </p>
+                        )}
+                      </div>
+                      <Link
+                        to={`/material/${m.id}`}
+                        className="shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold bg-cyan-400 hover:bg-cyan-500 text-black px-3 py-1.5 rounded-full transition-colors"
+                      >
+                        <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                        Abrir
+                      </Link>
+                    </li>
+                  ))}
+              </ul>
             </div>
           )}
         </section>
